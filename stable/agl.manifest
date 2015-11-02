@@ -1,6 +1,6 @@
-63d7f35=stable-w1537     meta-agl-demo            origin=https://github.com/iotbzh/meta-agl-demo.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-4d71b6f=stable-w1537     meta-agl                 origin=https://github.com/iotbzh/meta-agl.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-853dcfa=stable-w1537     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded upstream=git://git.openembedded.org/meta-openembedded
-bf30de6=stable-w1537     meta-renesas             origin=https://github.com/iotbzh/meta-renesas.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-5f0d251=stable-w1537     poky                     origin=git://git.yoctoproject.org/poky upstream=git://git.yoctoproject.org/poky
+63d7f35=stable-w1538     meta-agl-demo            origin=https://github.com/iotbzh/meta-agl-demo.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+4d71b6f=stable-w1538     meta-agl                 origin=https://github.com/iotbzh/meta-agl.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+853dcfa=stable-w1538     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded upstream=git://git.openembedded.org/meta-openembedded
+bf30de6=stable-w1538     meta-renesas             origin=https://github.com/iotbzh/meta-renesas.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+b38454c=stable-w1538     poky                     origin=git://git.yoctoproject.org/poky upstream=git://git.yoctoproject.org/poky
 
