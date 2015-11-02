@@ -1,7 +1,8 @@
-REVISION=BRANCHNAME   meta-agl-demo            iotbzh=https://github.com/iotbzh/meta-agl-demo.git     upstream=gerrit.automotivelinux.org:AGL/meta-agl-demo
-REVISION=BRANCHNAME   meta-agl                 iotbzh=https://github.com/iotbzh/meta-agl.git          upstream=gerrit.automotivelinux.org:AGL/meta-agl
-REVISION=BRANCHNAME   meta-intel-iot-security  01org=git@github.com:01org/meta-intel-iot-security.git iotbzh=git@github.com:iotbzh/meta-intel-iot-security.git                origin=https://github.com/pohly/meta-intel-iot-security.git
-REVISION=BRANCHNAME   meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-REVISION=BRANCHNAME   meta-qt5                 origin=git@github.com:meta-qt5/meta-qt5.git
-REVISION=BRANCHNAME   meta-renesas             iotbzh=https://github.com/iotbzh/meta-renesas.git      upstream=gerrit.automotivelinux.org:AGL/meta-renesas
-REVISION=BRANCHNAME   poky                     origin=git://git.yoctoproject.org/poky
+origin/dizzy-next=iotbzh-w1545     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+origin/dizzy=iotbzh-w1545          poky                     origin=git://git.yoctoproject.org/poky 
+bcffdc9=iotbzh-w1545               meta-agl-demo            iotbzh=https://github.com/iotbzh/meta-agl-demo.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+1f1621f=iotbzh-w1545               meta-agl                 iotbzh=https://github.com/iotbzh/meta-agl.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+147da13=iotbzh-w1545               meta-intel-iot-security  01org=git@github.com:01org/meta-intel-iot-security.git iotbzh=git@github.com:iotbzh/meta-intel-iot-security.git                origin=https://github.com/pohly/meta-intel-iot-security.git
+adeca0d=iotbzh-w1545               meta-qt5                 origin=git@github.com:meta-qt5/meta-qt5.git
+0cf2435=iotbzh-w1545               meta-renesas             iotbzh=https://github.com/iotbzh/meta-renesas.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+
