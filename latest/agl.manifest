@@ -1,6 +1,6 @@
 origin/master=latest     meta-agl-demo            iotbzh=https://github.com/iotbzh/meta-agl-demo.git     origin=gerrit.automotivelinux.org:AGL/meta-agl-demo
 origin/master=latest     meta-agl                 iotbzh=https://github.com/iotbzh/meta-agl.git          origin=gerrit.automotivelinux.org:AGL/meta-agl
 origin/dizzy=latest      meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-origin/dizzy=latest      meta-qt5                 origin=git@github.com:meta-qt5/meta-qt5.git
+origin/dizzy=latest      meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 origin/master=latest     meta-renesas             iotbzh=https://github.com/iotbzh/meta-renesas.git      origin=gerrit.automotivelinux.org:AGL/meta-renesas
 origin/dizzy=latest      poky                     origin=git://git.yoctoproject.org/poky
