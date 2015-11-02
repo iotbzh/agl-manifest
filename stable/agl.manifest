@@ -1,6 +1,7 @@
-63d7f35=stable-w1538     meta-agl-demo            origin=https://github.com/iotbzh/meta-agl-demo.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-4d71b6f=stable-w1538     meta-agl                 origin=https://github.com/iotbzh/meta-agl.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-853dcfa=stable-w1538     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded upstream=git://git.openembedded.org/meta-openembedded
-bf30de6=stable-w1538     meta-renesas             origin=https://github.com/iotbzh/meta-renesas.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-b38454c=stable-w1538     poky                     origin=git://git.yoctoproject.org/poky upstream=git://git.yoctoproject.org/poky
+d295022=stable-w1540     meta-agl-demo            origin=https://github.com/iotbzh/meta-agl-demo.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+e0cb14a=stable-w1540     meta-agl                 origin=https://github.com/iotbzh/meta-agl.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+5b6f39c=stable-w1540     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded upstream=git://git.openembedded.org/meta-openembedded
+adeca0d=stable-w1540     meta-qt5                 origin=git@github.com:meta-qt5/meta-qt5.git upstream=git@github.com:meta-qt5/meta-qt5.git
+67a55c1=stable-w1540     meta-renesas             origin=https://github.com/iotbzh/meta-renesas.git upstream=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+b38454c=stable-w1540     poky                     origin=git://git.yoctoproject.org/poky upstream=git://git.yoctoproject.org/poky
 
