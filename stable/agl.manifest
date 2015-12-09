@@ -1,7 +1,6 @@
-d295022=stable-w1540     meta-agl-demo            iotbzh=https://github.com/iotbzh/meta-agl-demo.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-e0cb14a=stable-w1540     meta-agl                 iotbzh=https://github.com/iotbzh/meta-agl.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-5b6f39c=stable-w1540     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-adeca0d=stable-w1540     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
-67a55c1=stable-w1540     meta-renesas             iotbzh=https://github.com/iotbzh/meta-renesas.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-b38454c=stable-w1540     poky                     origin=git://git.yoctoproject.org/poky 
-
+e0cb14a=stable     meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+d295022=stable     meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+67a55c1=stable     meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+adeca0d=stable     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+5b6f39c=stable     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+b38454c=stable     poky                     origin=git://git.yoctoproject.org/poky
