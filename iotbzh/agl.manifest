@@ -1,8 +1,7 @@
-origin/dizzy-next=iotbzh-w1545     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-origin/dizzy=iotbzh-w1545          poky                     origin=git://git.yoctoproject.org/poky 
-bcffdc9=iotbzh-w1545               meta-agl-demo            iotbzh=https://github.com/iotbzh/meta-agl-demo.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-1f1621f=iotbzh-w1545               meta-agl                 iotbzh=https://github.com/iotbzh/meta-agl.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-147da13=iotbzh-w1545               meta-intel-iot-security  01org=https://github.com/01org/meta-intel-iot-security.git iotbzh=https://github.com/iotbzh/meta-intel-iot-security.git                origin=https://github.com/pohly/meta-intel-iot-security.git
-adeca0d=iotbzh-w1545               meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
-0cf2435=iotbzh-w1545               meta-renesas             iotbzh=https://github.com/iotbzh/meta-renesas.git origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-
+6df1067=testing          meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+38a51bc=testing          meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+147da13=iotbzh           meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+b67bced=testing          meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+4f20886=testing          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+origin/dizzy=testing     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+origin/dizzy=testing     poky                     origin=git://git.yoctoproject.org/poky
