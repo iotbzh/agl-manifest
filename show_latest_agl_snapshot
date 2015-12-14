@@ -1,0 +1,22 @@
+#!/bin/bash
+
+ispkg=1
+
+URL=https://download.automotivelinux.org/AGL/snapshots/master/latest/qemux86-64/qemux86-64_repo_default.xml
+SNAPSHOTID=$(curl -s  https://download.automotivelinux.org/AGL/snapshots/master/latest.txt)
+
+tmpout=$(mktemp /tmp/$(basename $0).XXXXXXXX)
+trap "rm -f $tmpout" STOP INT QUIT EXIT ERR
+
+curl -s $URL >$tmpout
+
+cat $tmpout
+
+echo "------------------ $SNAPSHOTID -------------------"
+
+for elm in $(xml sel -t -v "/manifest/project/@name|/manifest/project/@revision" <$tmpout); do
+	[[ $ispkg == 1 ]] && { pkg=$elm; ispkg=0; continue; }
+	rev=$elm
+	ispkg=1
+	echo "$pkg;${rev:0:7}"
+done

@@ -1,6 +1,6 @@
-6df1067=testing          meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-38a51bc=testing          meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-b67bced=testing          meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-4f20886=testing          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+89801f3=testing          meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+ab12ca5=testing          meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+f424f00=testing          meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+0454fb0=testing          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 origin/dizzy=testing     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/dizzy=testing     poky                     origin=git://git.yoctoproject.org/poky
