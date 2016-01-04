@@ -1,4 +1,4 @@
-# AGL 0.9rc2 - https://download.automotivelinux.org/AGL/release/albacore/latest/qemux86-64/qemux86-64_repo_default.xml
+# AGL 1.0 - https://download.automotivelinux.org/AGL/release/albacore/1.0/qemux86-64/qemux86-64_repo_default.xml
 
 840de7f=stable     meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 72686e1=stable     meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
