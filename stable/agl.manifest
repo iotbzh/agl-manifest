@@ -1,8 +1,8 @@
 # AGL 0.9rc2 - https://download.automotivelinux.org/AGL/release/albacore/latest/qemux86-64/qemux86-64_repo_default.xml
 
 840de7f=stable     meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-065099b=stable     meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-ef242cf=stable     meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+72686e1=stable     meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+93b1674=stable     meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 d5536e3=stable     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 7f1df52=stable     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 6d34267=stable     poky                     origin=git://git.yoctoproject.org/poky
