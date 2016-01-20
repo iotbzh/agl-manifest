@@ -2,5 +2,6 @@ origin/master=unstable    meta-agl                 origin=https://gerrit.automot
 origin/master=unstable    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/agl-1.0-bsp-1.8.0=unstable   meta-renesas   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/jethro=unstable    meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
-origin/dizzy=unstable     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-origin/dizzy=unstable     poky                     origin=git://git.yoctoproject.org/poky
+origin/jethro=unstable    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+origin/jethro=unstable    poky                     origin=git://git.yoctoproject.org/poky
+origin/jethro=unstable    meta-intel               origin=git://git.yoctoproject.org/meta-intel
