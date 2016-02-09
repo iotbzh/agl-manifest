@@ -1,5 +1,4 @@
-################################### TARGET: PORTER board #############################
-# This file contains target specific options appended to local.conf file at build time
+# this file is loaded from local.conf at build time (target specific)
 
 # For running GStreamer on wayland (experimental).
 IMAGE_INSTALL_append_porter = " \

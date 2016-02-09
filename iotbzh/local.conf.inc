@@ -1,5 +1,4 @@
-################################### GLOBAL OPTIONS ##########################
-# This file contains global options appended to local.conf file at build time
+# this file is loaded from local.conf at build time
 
 OVERRIDES .= ":smack"
 DISTRO_FEATURES_append = " smack dbus-cynara"

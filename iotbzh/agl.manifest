@@ -5,5 +5,5 @@ d5536e3=iotbzh          meta-qt5                 origin=https://github.com/meta-
 origin/jethro=iotbzh    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/jethro=iotbzh    poky                     origin=git://git.yoctoproject.org/poky
 6a38543=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
-b91c12b=iotbzh          meta-iot-agl             origin=https://github.com/iotbzh/meta-iot-agl.git
+origin/master=iotbzh    meta-iot-agl             origin=https://github.com/iotbzh/meta-iot-agl.git
 
