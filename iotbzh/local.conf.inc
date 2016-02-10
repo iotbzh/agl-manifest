@@ -24,6 +24,8 @@ IMAGE_CMD_TAR = "tar --xattrs-include='*'"
 IMAGE_DEPENDS_tar_append = " tar-replacement-native"
 EXTRANATIVEPATH += "tar-native"
 
+GCCVERSION = "4.9%"
+
 #-------------------- options for SDK ----------------------
 
 # add eclipse debug stuff
