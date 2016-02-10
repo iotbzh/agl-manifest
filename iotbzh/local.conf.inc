@@ -24,3 +24,12 @@ IMAGE_CMD_TAR = "tar --xattrs-include='*'"
 IMAGE_DEPENDS_tar_append = " tar-replacement-native"
 EXTRANATIVEPATH += "tar-native"
 
+#-------------------- options for SDK ----------------------
+
+# add eclipse debug stuff
+EXTRA_IMAGE_FEATURES = "debug-tweaks eclipse-debug tools-debug tools-profile"
+
+# disable install of debug files in SDK
+# initial value: SDKIMAGE_FEATURES="dev-pkgs dbg-pkgs staticdev-pkgs"
+SDKIMAGE_FEATURES="dev-pkgs"
+
