@@ -1,0 +1,270 @@
+#!/bin/bash 
+
+set -e 
+
+function usage() {
+	echo "$0 <manifest file> [destination dir] [-l|--localmirror directory] [-r|--remotemirror url] [-p|--proprietary git_url] [-e|--enable <option>] [-d|--disable <option>] [-t|--target <name>]" >&2
+	echo >&2
+	echo "Example: $0 agl-manifest/iotbzh/agl.manifest /tmp/xdt -l /ssd/mirror -p http://git.vannes.iot/git/renesas/proprietary-renesas-r-car -t porter" >&2
+	exit 1
+}
+
+TEMP=$(getopt -o l:r:p:e:d:t: --long localmirror,remotemirror,proprietary,enable,disable,target -n $(basename $0) -- "$@")
+[[ $? != 0 ]] && usage
+eval set -- "$TEMP"
+
+LOCALMIRROR=
+REMOTEMIRROR=
+PROPRIETARY_RENESAS_GIT=
+TARGET=porter
+while true; do
+	case "$1" in
+		-l|--localmirror) LOCALMIRROR=$2; shift 2;;
+		-r|--remotemirror) REMOTEMIRROR=$2; shift 2;;
+		-p|--proprietary) PROPRIETARY_RENESAS_GIT=$2; shift 2;;
+		-e|--enable) eval option_$2=1; shift 2;;
+		-d|--disable) eval option_$2=0; shift 2;;
+		-t|--target) TARGET=$2; shift 2;;
+		--) shift; break;;
+		*) echo "Internal error"; exit 1;;
+	esac
+done
+
+# parse remaining args
+
+# determine manifest and source dir
+MANIFEST=$1 
+shift || usage
+[[ ! -f $MANIFEST ]] && usage
+SRCDIR=$(cd $(dirname $MANIFEST) && pwd -P)
+MANIFEST=$SRCDIR/$(basename $MANIFEST)
+
+# destination dir
+DSTDIR=$1
+shift
+[[ ! -d $DSTDIR ]] && usage
+
+################################ populate meta ############################
+
+function checkout_gits() {
+	local DESTDIR=$(cd ${1:-.} && pwd -P)
+	LANG=
+
+	sed 's/#.*$//g' | # suppress comments
+		awk '/[^[:space:]]+/ { print "DIR  "$2; for(i=3;i<=NF;i++) { print "REPO "$i}; print "HASH "$1 }' |
+		while read tag value; do
+			case $tag in
+				DIR)
+					[[ -d "$DESTDIR/$value" ]] || mkdir "$DESTDIR/$value"
+					[[ -d "$DESTDIR/$value/.git" ]] || git init "$DESTDIR/$value"
+					echo ========= $value ==============
+					cd "$DESTDIR/$value"
+					;;
+				REPO)
+					name="${value%%=*}"
+					url="${value#*=}"
+					echo "Repository: $value"
+					if ! git remote | grep -q "^$name\$"; then
+						git remote add "$name" "$url"
+					elif ! git remote -v | awk '$1=="'$name'" && $2!="'$url'" {exit 1}'; then
+						git remote set-url "$name" "$url"
+					fi
+					;;
+				HASH)
+					echo "Using revision $value"
+					sha="${value%%=*}"
+					branch="${value#*=}"
+					git fetch --all
+					git checkout -f "$sha" -B "$branch"
+					;;
+			esac
+		done
+}
+
+function clone_or_pull() {
+	url=$1
+	dir=$(basename $url .git)
+
+	if [[ ! -d $dir ]]; then
+		git clone $url
+	else
+		pushd $dir
+			git pull
+		popd
+	fi
+}
+
+mkdir -p $DSTDIR/meta
+
+# init from mirror if any
+for dir in ${LOCALMIRROR//:/ }; do
+	if [[ -d $dir/meta ]]; then
+		echo "Copying $dir/meta to $DSTDIR/meta"
+		rsync -a $dir/meta/ $DSTDIR/meta/
+		break
+	fi
+done
+
+pushd $DSTDIR/meta #{
+
+	checkout_gits . <$MANIFEST
+
+	[[ -n "$PROPRIETARY_RENESAS_GIT" ]] && clone_or_pull $PROPRIETARY_RENESAS_GIT
+
+popd #}
+
+##################################### apply patches ####################################
+
+pushd $DSTDIR/meta #{
+	for file in $SRCDIR/patches/*/*.patch; do
+		# file may be the pattern itself if no matches
+		if [[ -f $file ]]; then
+			meta=$(basename $(dirname $file))
+
+			echo "Patching meta $meta with patch $file"
+
+			pushd $DSTDIR/meta/$meta
+				patch -p1 <$file
+			popd
+		fi
+
+	done
+	
+popd #}
+
+##################################### setup build ######################################
+
+mkdir -p $DSTDIR/build
+mkdir -p $DSTDIR/downloads
+mkdir -p $DSTDIR/sstate-cache
+
+pushd $DSTDIR/meta #{
+
+	case "$TARGET" in
+		porter|koelsch|silk)
+			if [[ -z "$PROPRIETARY_RENESAS_GIT" ]]; then
+				echo "Initializing for porter board without proprietary drivers"
+				export TEMPLATECONF=$TEMPXDT/meta/meta-renesas/meta-rcar-gen2/conf
+				source poky/oe-init-build-env $TEMPXDT/build
+			else
+				echo "Using proprietary Renesas drivers for target $TARGET"
+				# this will install the proprietary drivers at the right place and setup environment
+				# XDG_DOWNLOAD_DIR is used by meta-renesas/meta-rcar-gen2/scripts/setup_mm_packages.sh script to find zip files
+				export XDG_DOWNLOAD_DIR=$DSTDIR/meta/proprietary-renesas-r-car 
+				source meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build
+				# temp binary dir is not cleaned up
+				rm -rf binary-tmp
+			fi
+			;;
+		*)
+			source meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build
+			;;
+	esac
+
+popd #}
+
+pushd $DSTDIR/build #{
+
+	# ----------------------- snapshot specific options -------------------------------
+	cat <<EOF >conf/build.conf
+# options to generate snapshots in containers
+
+# remove intermediate files
+# uncomment if work dir is to be copied
+#INHERIT += "rm_work"
+
+# download cache location
+DL_DIR = "$DSTDIR/downloads"
+
+# generate tarballs from git source directorys in download cache
+# uncomment when generating a reference download cache
+#BB_GENERATE_MIRROR_TARBALLS = "1"
+
+# dump stats to be view by:
+# poky/scripts/pybootchartgui/pybootchartgui.py -m 100 tmp/buildstats/<sometimestamp>
+# USER_CLASSES += "buildstats"
+
+# set state cache locations
+SSTATE_DIR = "$DSTDIR/sstate-cache"
+EOF
+
+	# --------------------------- download caches ----------------------------------------
+
+	# local caches must be copied to current download dir to be used as a reference when copying
+	for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/downloads; done); do
+		[[ -d $mirror ]] && rsync -a ${mirror}/ $DSTDIR/downloads/
+	done
+
+	# remote cache can only be referenced
+	if [[ -n "$REMOTEMIRROR" ]]; then
+		# add remote mirror
+		cat <<EOF >>conf/build.conf
+
+# define remote download cache mirror
+PREMIRRORS += "\
+	git://.*/.*   $REMOTEMIRROR/downloads \n \
+	ftp://.*/.*   $REMOTEMIRROR/downloads \n \
+	http://.*/.*  $REMOTEMIRROR/downloads \n \
+	https://.*/.* $REMOTEMIRROR/downloads \n"
+EOF
+	fi
+
+	# ----------------------------- sstate-cache ----------------------------
+
+	# local cache copied, as previously
+	for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/sstate-cache; done); do
+		[[ -d $mirror ]] && rsync -a ${mirror}/ $DSTDIR/sstate-cache/
+	done
+
+	# remote cache, simply referenced
+	if [[ -n "$REMOTEMIRROR" ]]; then
+		cat <<EOF >>conf/build.conf
+
+# define remote shared state cache mirror
+SSTATE_MIRRORS += "file://.* $REMOTEMIRROR/sstate-cache/PATH \n"
+EOF
+	fi
+
+	# ----------------------------------- ccache -----------------------------
+
+	if [[ "$option_ccache" == 1 ]]; then
+		for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/ccache; done); do
+			[[ -d $mirror ]] && rsync -a ${mirror}/ $DSTDIR/ccache/
+		done
+		
+		mkdir -p $DSTDIR/ccache
+		CCACHE_DIR=$DSTDIR/ccache ccache -M 8G # set cache max size to 8G
+
+		cat <<EOF >>conf/build.conf
+
+# enable CCACHE
+INHERIT += "ccache"
+CCACHE_DIR = "$DSTDIR/ccache"
+# workaround ncurses build problem with ccache
+ENABLE_WIDEC_class-native = "false"
+ENABLE_WIDEC_class-nativesdk = "false"
+EOF
+	fi
+
+	# ------------------------------- include build.conf in local.conf ------------------------------------
+	
+	cat <<'EOF' >>conf/local.conf
+# include extra conf files
+require conf/build.conf
+EOF
+
+	# --------------------------- handle extra config files coming with agl-manifest -----------------------
+
+	for tgtfile in bblayers local; do
+		for file in ${tgtfile}.conf.inc ${TARGET}_${tgtfile}.conf.inc; do
+			if [[ -f $SRCDIR/$file ]]; then
+				sed "s|@METADIR@|$DSTDIR/meta|g" <$SRCDIR/$file >conf/$file
+			else
+				touch conf/$file
+			fi
+			echo "require conf/$file" >>conf/${tgtfile}.conf
+		done
+	done
+
+popd #}
+
