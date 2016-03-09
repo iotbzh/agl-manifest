@@ -1,11 +1,14 @@
 #!/bin/bash 
 
+# global variable containing the git repository where all manifests are stored
+MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git 
+
 set -e 
 
 function usage() {
-	echo "$0 <manifest file> [destination dir] [-l|--localmirror directory] [-r|--remotemirror url] [-p|--proprietary git_url] [-e|--enable <option>] [-d|--disable <option>] [-t|--target <name>]" >&2
+	echo "$BASH_SOURCE <manifest flavour[/tag_or_revision]> [destination dir] [-l|--localmirror directory] [-r|--remotemirror url] [-p|--proprietary git_url] [-e|--enable <option>] [-d|--disable <option>] [-t|--target <name>]" >&2
 	echo >&2
-	echo "Example: $0 agl-manifest/iotbzh/agl.manifest /tmp/xdt -l /ssd/mirror -p http://git.vannes.iot/git/renesas/proprietary-renesas-r-car -t porter" >&2
+	echo "Example: $BASH_SOURCE iotbzh/HEAD /tmp/xdt -l /ssd/mirror -p http://git.vannes.iot/git/renesas/proprietary-renesas-r-car -t porter" >&2
 	exit 1
 }
 
@@ -13,7 +16,7 @@ function info() {
 	echo "$@" >&2
 }
 
-TEMP=$(getopt -o l:r:p:e:d:t: --long localmirror,remotemirror,proprietary,enable,disable,target -n $(basename $0) -- "$@")
+TEMP=$(getopt -o l:r:p:e:d:t: --long localmirror,remotemirror,proprietary,enable,disable,target -n $(basename $BASH_SOURCE) -- "$@")
 [[ $? != 0 ]] && usage
 eval set -- "$TEMP"
 
@@ -23,7 +26,7 @@ PROPRIETARY_RENESAS_GIT=
 TARGET=porter
 while true; do
 	case "$1" in
-		-l|--localmirror) LOCALMIRROR=$2; shift 2;;
+		-l|--localmirror) LOCALMIRROR=$(cd $2 && pwd -P); shift 2;;
 		-r|--remotemirror) REMOTEMIRROR=$2; shift 2;;
 		-p|--proprietary) PROPRIETARY_RENESAS_GIT=$2; shift 2;;
 		-e|--enable) eval option_$2=1; shift 2;;
@@ -39,14 +42,68 @@ done
 # determine manifest and source dir
 MANIFEST=$1 
 shift || usage
-[[ ! -f $MANIFEST ]] && usage
-SRCDIR=$(cd $(dirname $MANIFEST) && pwd -P)
-MANIFEST=$SRCDIR/$(basename $MANIFEST)
 
 # destination dir
 DSTDIR=$1
-shift
+shift || usage
 [[ ! -d $DSTDIR ]] && usage
+
+# check git presence
+which git || { info "Unable to find git command."; exit 1; }
+
+info "=============== SUMMARY =================="
+for v in LOCALMIRROR REMOTEMIRROR PROPRIETARY_RENESAS_GIT TARGET MANIFEST DSTDIR; do
+	info "$v : ${!v}"
+done
+info "=========================================="
+
+################################ clone agl-manifest ############################
+
+function clone_or_pull() {
+	url=$1
+	rev=${2:-}
+	dir=$(basename $url .git)
+
+	info "=== cloning $url / $rev into $dir"
+	if [[ ! -d $dir ]]; then
+		git clone $url
+	else
+		pushd $dir >/dev/null
+			git fetch --all
+		popd >/dev/null
+	fi
+
+	pushd $dir >/dev/null
+		git checkout -f $rev
+	popd >/dev/null
+}
+
+mkdir -p $DSTDIR/meta
+
+pushd $DSTDIR/meta >/dev/null #{
+	if [[ "$MANIFEST" =~ / ]]; then
+		flavour=${MANIFEST%%/*}
+		rev=${MANIFEST#*/}
+	else
+		flavour=$MANIFEST
+		rev=
+	fi
+
+	clone_or_pull $MANIFEST_URL $rev
+
+	SRCDIR=$DSTDIR/meta/$(basename $MANIFEST_URL .git)/$flavour
+	[[ ! -d $SRCDIR ]] && { info "Unable to find flavour '$flavour'"; exit 1; }
+	info "=== SRCDIR: $SRCDIR"
+
+	# use latest manifest file
+	for x in $SRCDIR/*.manifest; do
+		[[ -n "$MANIFEST_FILE" ]] && info "Multiple manifest files found. Skipping $MANIFEST_FILE."
+		MANIFEST_FILE=$x
+	done
+	[[ ! -f $MANIFEST_FILE ]] && { info "Unable to find manifest file in $MANIFEST"; exit 1; }
+	info "=== MANIFEST_FILE: $MANIFEST_FILE"
+
+popd >/dev/null #}
 
 ################################ populate meta ############################
 
@@ -61,7 +118,7 @@ function checkout_gits() {
 				DIR)
 					[[ -d "$DESTDIR/$value" ]] || mkdir "$DESTDIR/$value"
 					[[ -d "$DESTDIR/$value/.git" ]] || git init "$DESTDIR/$value"
-					info "========= fetch/checkout $value =============="
+					info "=== fetch/checkout $value"
 					cd "$DESTDIR/$value"
 					;;
 				REPO)
@@ -85,42 +142,27 @@ function checkout_gits() {
 		done
 }
 
-function clone_or_pull() {
-	url=$1
-	dir=$(basename $url .git)
-
-	if [[ ! -d $dir ]]; then
-		git clone $url
-	else
-		pushd $dir
-			git pull
-		popd
-	fi
-}
-
-mkdir -p $DSTDIR/meta
-
 # init from mirror if any
 for dir in ${LOCALMIRROR//:/ }; do
 	if [[ -d $dir/meta ]]; then
-		info "=============== Copying $dir/meta to $DSTDIR/meta ====================="
+		info "=== Copying $dir/meta to $DSTDIR/meta"
 		rsync -a $dir/meta/ $DSTDIR/meta/
 		break
 	fi
 done
 
-pushd $DSTDIR/meta #{
+pushd $DSTDIR/meta >/dev/null #{
 
-	checkout_gits . <$MANIFEST
+	checkout_gits . <$MANIFEST_FILE
 
 	[[ -n "$PROPRIETARY_RENESAS_GIT" ]] && clone_or_pull $PROPRIETARY_RENESAS_GIT
 
-popd #}
+popd >/dev/null #}
 
 ##################################### apply patches ####################################
 
-info "================ apply patches ======================="
-pushd $DSTDIR/meta #{
+info "=== apply patches"
+pushd $DSTDIR/meta >/dev/null #{
 	for file in $SRCDIR/patches/*/*.patch; do
 		# file may be the pattern itself if no matches
 		if [[ -f $file ]]; then
@@ -128,51 +170,47 @@ pushd $DSTDIR/meta #{
 
 			info "Patching meta $meta with patch $file"
 
-			pushd $DSTDIR/meta/$meta
+			pushd $DSTDIR/meta/$meta >/dev/null
 				patch -p1 <$file
-			popd
+			popd >/dev/null
 		fi
 
 	done
 	
-popd #}
+popd >/dev/null #}
 
 ##################################### setup build ######################################
 
-info "=============== setup build for $TARGET ====================="
+info "=== setup build for $TARGET"
 
 mkdir -p $DSTDIR/build
 mkdir -p $DSTDIR/downloads
 mkdir -p $DSTDIR/sstate-cache
 
-pushd $DSTDIR/meta #{
+case "$TARGET" in
+	porter|koelsch|silk)
+		if [[ -z "$PROPRIETARY_RENESAS_GIT" ]]; then
+			echo "Initializing for porter board without proprietary drivers"
+			export TEMPLATECONF=$DSTDIR/meta/meta-renesas/meta-rcar-gen2/conf
+			source $DSTDIR/meta/poky/oe-init-build-env $DSTDIR/build >/dev/null
+		else
+			echo "Using proprietary Renesas drivers for target $TARGET"
+			# this will install the proprietary drivers at the right place and setup environment
+			# XDG_DOWNLOAD_DIR is used by meta-renesas/meta-rcar-gen2/scripts/setup_mm_packages.sh script to find zip files
+			export XDG_DOWNLOAD_DIR=$DSTDIR/meta/proprietary-renesas-r-car 
+			source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
+			# temp binary dir is not cleaned up
+			rm -rf $DSTDIR/meta/binary-tmp
+		fi
+		;;
+	*)
+		source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
+		;;
+esac
 
-	case "$TARGET" in
-		porter|koelsch|silk)
-			if [[ -z "$PROPRIETARY_RENESAS_GIT" ]]; then
-				echo "Initializing for porter board without proprietary drivers"
-				export TEMPLATECONF=$TEMPXDT/meta/meta-renesas/meta-rcar-gen2/conf
-				source poky/oe-init-build-env $TEMPXDT/build
-			else
-				echo "Using proprietary Renesas drivers for target $TARGET"
-				# this will install the proprietary drivers at the right place and setup environment
-				# XDG_DOWNLOAD_DIR is used by meta-renesas/meta-rcar-gen2/scripts/setup_mm_packages.sh script to find zip files
-				export XDG_DOWNLOAD_DIR=$DSTDIR/meta/proprietary-renesas-r-car 
-				source meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build
-				# temp binary dir is not cleaned up
-				rm -rf binary-tmp
-			fi
-			;;
-		*)
-			source meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build
-			;;
-	esac
+pushd $DSTDIR/build >/dev/null #{
 
-popd #}
-
-pushd $DSTDIR/build #{
-
-	info "=============== conf: build.conf ====================="
+	info "=== conf: build.conf"
 
 	# ----------------------- snapshot specific options -------------------------------
 	cat <<EOF >conf/build.conf
@@ -199,7 +237,7 @@ EOF
 
 	# --------------------------- download caches ----------------------------------------
 
-	info "=============== conf: download caches ====================="
+	info "=== conf: download caches"
 
 	# local caches must be copied to current download dir to be used as a reference when copying
 	for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/downloads; done); do
@@ -222,7 +260,7 @@ EOF
 
 	# ----------------------------- sstate-cache ----------------------------
 
-	info "=============== conf: sstate caches ====================="
+	info "=== conf: sstate caches"
 
 	# local cache copied, as previously
 	for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/sstate-cache; done); do
@@ -240,9 +278,9 @@ EOF
 
 	# ----------------------------------- ccache -----------------------------
 
-	info "=============== conf: ccache ====================="
 
 	if [[ "$option_ccache" == 1 ]]; then
+		info "=== conf: ccache"
 		for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/ccache; done); do
 			[[ -d $mirror ]] && rsync -a ${mirror}/ $DSTDIR/ccache/
 		done
@@ -263,7 +301,7 @@ EOF
 
 	# ------------------------------- include build.conf in local.conf ------------------------------------
 	
-	info "=============== conf: local.conf ====================="
+	info "=== conf: local.conf"
 
 	cat <<'EOF' >>conf/local.conf
 # include extra conf files
@@ -273,7 +311,7 @@ EOF
 	# --------------------------- handle extra config files coming with agl-manifest -----------------------
 
 	for tgtfile in bblayers local; do
-		info "=============== conf: ${tftfile}.conf ====================="
+		info "=== conf: ${tgtfile}.conf"
 
 		for file in ${tgtfile}.conf.inc ${TARGET}_${tgtfile}.conf.inc; do
 			if [[ -f $SRCDIR/$file ]]; then
@@ -281,9 +319,24 @@ EOF
 			else
 				touch conf/$file
 			fi
-			echo "require conf/$file" >>conf/${tgtfile}.conf
+			grep "^require conf/$file" conf/${tgtfile}.conf &>/dev/null || echo "require conf/$file" >>conf/${tgtfile}.conf
 		done
 	done
 
-popd #}
+popd >/dev/null #}
+
+cat <<EOF
+=====================================================================
+
+Build environment is ready. To use it, run:
+
+# source $DSTDIR/meta/poky/oe-init-build-env $DSTDIR/build 
+
+then
+
+# bitbake agl-demo-platform
+
+=====================================================================
+EOF
+
 
