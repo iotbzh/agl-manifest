@@ -231,6 +231,7 @@ pushd $DSTDIR/meta >/dev/null #{
 				source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
 				# temp binary dir is not cleaned up
 				rm -rf $DSTDIR/meta/binary-tmp
+				option_proprietary=1
 			else
 				echo "Initializing for porter board without proprietary drivers"
 				export TEMPLATECONF=$DSTDIR/meta/meta-renesas/meta-rcar-gen2/conf
@@ -346,12 +347,14 @@ EOF
 	# --------------------------- handle extra config files coming with agl-manifest -----------------------
 
 	for tgtfile in bblayers local; do
-		info "=== conf: ${tgtfile}.conf"
-
-		for file in ${tgtfile}.conf.inc ${TARGET}_${tgtfile}.conf.inc; do
+		[[ "$option_proprietary" == 1 ]] && PROPFILES="${tgtfile}_proprietary.conf.inc ${TARGET}_${tgtfile}_proprietary.conf.inc"
+	
+		for file in ${tgtfile}.conf.inc ${TARGET}_${tgtfile}.conf.inc $PROPFILES; do
 			if [[ -f $SRCDIR/$file ]]; then
+				info "=== conf: $file -> ${tgtfile}.conf"
 				sed "s|@METADIR@|$DSTDIR/meta|g" <$SRCDIR/$file >conf/$file
 			else
+				info "=== conf: $file is empty"
 				touch conf/$file
 			fi
 			grep "^require conf/$file" conf/${tgtfile}.conf &>/dev/null || echo "require conf/$file" >>conf/${tgtfile}.conf
