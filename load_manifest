@@ -6,9 +6,40 @@ MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git
 set -e 
 
 function usage() {
-	echo "$BASH_SOURCE <manifest flavour[/tag_or_revision]> [destination dir] [-l|--localmirror directory] [-r|--remotemirror url] [-p|--proprietary git_url] [-e|--enable <option>] [-d|--disable <option>] [-t|--target <name>]" >&2
-	echo >&2
-	echo "Example: $BASH_SOURCE iotbzh/HEAD /tmp/xdt -l /ssd/mirror -p http://git.vannes.iot/git/renesas/proprietary-renesas-r-car -t porter" >&2
+	cat <<EOF >&2
+$BASH_SOURCE [options]
+
+Options:
+   -f|--flavour <flavour[/tag_or_revision]>
+      what flavour to us
+      default: 'iotbzh'
+      possible values: 'stable','unstable','testing', 'iotbzh' ... see agl-manifest git repository
+   -o|--outputdir <destination_dir>
+      output directory where subdirectories will be created: meta, build, ...
+      default: current directory (.)
+   -l|--localmirror <directory>
+      specifies a local mirror directory to initialize meta, download_dir or sstate-cache
+	  default: none
+   -r|--remotemirror <url>
+      specifies a remote mirror directory to be used at build time for download_dir or sstate-cache
+	  default: none
+   -p|--proprietary <git_url>
+      git repo containing Renesas proprietary drivers for RCar platform
+	  default: none
+   -e|--enable <option>
+      enable a specific option
+	  available options: ccache
+   -d|--disable <option>
+      disable a specific option
+	  available options: ccache
+   -t|--target <name>
+      target platform
+	  default: porter
+
+Example:
+	$BASH_SOURCE -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p http://git.vannes.iot/git/renesas/proprietary-renesas-r-car -t porter
+	
+EOF
 	exit 1
 }
 
@@ -16,16 +47,20 @@ function info() {
 	echo "$@" >&2
 }
 
-TEMP=$(getopt -o l:r:p:e:d:t: --long localmirror,remotemirror,proprietary,enable,disable,target -n $(basename $BASH_SOURCE) -- "$@")
+TEMP=$(getopt -o f:o:l:r:p:e:d:t: --long flavour,outputdir,localmirror,remotemirror,proprietary,enable,disable,target -n $(basename $BASH_SOURCE) -- "$@")
 [[ $? != 0 ]] && usage
 eval set -- "$TEMP"
 
+FLAVOUR=iotbzh
+DSTDIR=.
 LOCALMIRROR=
 REMOTEMIRROR=
 PROPRIETARY_RENESAS_GIT=
 TARGET=porter
 while true; do
 	case "$1" in
+		-f|--flavour) FLAVOUR=$2; shift 2;;
+		-o|--outputdir) DSTDIR=$(cd $2 && pwd -P); shift 2;; 
 		-l|--localmirror) LOCALMIRROR=$(cd $2 && pwd -P); shift 2;;
 		-r|--remotemirror) REMOTEMIRROR=$2; shift 2;;
 		-p|--proprietary) PROPRIETARY_RENESAS_GIT=$2; shift 2;;
@@ -37,22 +72,22 @@ while true; do
 	esac
 done
 
-# parse remaining args
-
-# determine manifest and source dir
-MANIFEST=$1 
-shift || usage
-
-# destination dir
-DSTDIR=$1
-shift || usage
-[[ ! -d $DSTDIR ]] && usage
+# no remaining args allowed
+[[ $# != 0 ]] && usage
 
 # check git presence
 which git || { info "Unable to find git command."; exit 1; }
 
 info "=============== SUMMARY =================="
-for v in LOCALMIRROR REMOTEMIRROR PROPRIETARY_RENESAS_GIT TARGET MANIFEST DSTDIR; do
+for v in \
+	FLAVOUR \
+	DSTDIR \
+	TARGET \
+	MANIFEST_URL \
+	LOCALMIRROR \
+	REMOTEMIRROR \
+	PROPRIETARY_RENESAS_GIT \
+	; do
 	info "$v : ${!v}"
 done
 info "=========================================="
@@ -64,7 +99,7 @@ function clone_or_pull() {
 	rev=${2:-}
 	dir=$(basename $url .git)
 
-	info "=== cloning $url / $rev into $dir"
+	info "=== cloning $url / $rev into $PWD/$dir"
 	if [[ ! -d $dir ]]; then
 		git clone $url
 	else
@@ -81,11 +116,11 @@ function clone_or_pull() {
 mkdir -p $DSTDIR/meta
 
 pushd $DSTDIR/meta >/dev/null #{
-	if [[ "$MANIFEST" =~ / ]]; then
-		flavour=${MANIFEST%%/*}
-		rev=${MANIFEST#*/}
+	if [[ "$FLAVOUR" =~ / ]]; then
+		flavour=${FLAVOUR%%/*}
+		rev=${FLAVOUR#*/}
 	else
-		flavour=$MANIFEST
+		flavour=$FLAVOUR
 		rev=
 	fi
 
@@ -100,7 +135,7 @@ pushd $DSTDIR/meta >/dev/null #{
 		[[ -n "$MANIFEST_FILE" ]] && info "Multiple manifest files found. Skipping $MANIFEST_FILE."
 		MANIFEST_FILE=$x
 	done
-	[[ ! -f $MANIFEST_FILE ]] && { info "Unable to find manifest file in $MANIFEST"; exit 1; }
+	[[ ! -f $MANIFEST_FILE ]] && { info "Unable to find manifest file for flavour $FLAVOUR"; exit 1; }
 	info "=== MANIFEST_FILE: $MANIFEST_FILE"
 
 popd >/dev/null #}
