@@ -23,8 +23,8 @@ Options:
    -r|--remotemirror <url>
       specifies a remote mirror directory to be used at build time for download_dir or sstate-cache
 	  default: none
-   -p|--proprietary <git_url>
-      git repo containing Renesas proprietary drivers for RCar platform
+   -p|--proprietary <directory>
+      Directory containing Renesas proprietary drivers for RCar platform (2 zip files)
 	  default: none
    -e|--enable <option>
       enable a specific option
@@ -37,7 +37,7 @@ Options:
 	  default: porter
 
 Example:
-	$BASH_SOURCE -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p http://git.vannes.iot/git/renesas/proprietary-renesas-r-car -t porter
+	$BASH_SOURCE -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter
 	
 EOF
 	exit 1
@@ -55,7 +55,7 @@ FLAVOUR=iotbzh
 DSTDIR=.
 LOCALMIRROR=
 REMOTEMIRROR=
-PROPRIETARY_RENESAS_GIT=
+PROPRIETARY_RENESAS_DIR=
 TARGET=porter
 while true; do
 	case "$1" in
@@ -63,7 +63,7 @@ while true; do
 		-o|--outputdir) DSTDIR=$(cd $2 && pwd -P); shift 2;; 
 		-l|--localmirror) LOCALMIRROR=$(cd $2 && pwd -P); shift 2;;
 		-r|--remotemirror) REMOTEMIRROR=$2; shift 2;;
-		-p|--proprietary) PROPRIETARY_RENESAS_GIT=$2; shift 2;;
+		-p|--proprietary) PROPRIETARY_RENESAS_DIR=$(cd $2 && pwd -P); shift 2;;
 		-e|--enable) eval option_$2=1; shift 2;;
 		-d|--disable) eval option_$2=0; shift 2;;
 		-t|--target) TARGET=$2; shift 2;;
@@ -86,7 +86,7 @@ for v in \
 	MANIFEST_URL \
 	LOCALMIRROR \
 	REMOTEMIRROR \
-	PROPRIETARY_RENESAS_GIT \
+	PROPRIETARY_RENESAS_DIR \
 	; do
 	info "$v : ${!v}"
 done
@@ -190,8 +190,6 @@ pushd $DSTDIR/meta >/dev/null #{
 
 	checkout_gits . <$MANIFEST_FILE
 
-	[[ -n "$PROPRIETARY_RENESAS_GIT" ]] && clone_or_pull $PROPRIETARY_RENESAS_GIT
-
 popd >/dev/null #}
 
 ##################################### apply patches ####################################
@@ -222,26 +220,28 @@ mkdir -p $DSTDIR/build
 mkdir -p $DSTDIR/downloads
 mkdir -p $DSTDIR/sstate-cache
 
-case "$TARGET" in
-	porter|koelsch|silk)
-		if [[ -z "$PROPRIETARY_RENESAS_GIT" ]]; then
-			echo "Initializing for porter board without proprietary drivers"
-			export TEMPLATECONF=$DSTDIR/meta/meta-renesas/meta-rcar-gen2/conf
-			source $DSTDIR/meta/poky/oe-init-build-env $DSTDIR/build >/dev/null
-		else
-			echo "Using proprietary Renesas drivers for target $TARGET"
-			# this will install the proprietary drivers at the right place and setup environment
-			# XDG_DOWNLOAD_DIR is used by meta-renesas/meta-rcar-gen2/scripts/setup_mm_packages.sh script to find zip files
-			export XDG_DOWNLOAD_DIR=$DSTDIR/meta/proprietary-renesas-r-car 
+pushd $DSTDIR/meta >/dev/null #{
+	case "$TARGET" in
+		porter|koelsch|silk)
+			if [[ -d "$PROPRIETARY_RENESAS_DIR" ]]; then
+				echo "Using proprietary Renesas drivers for target $TARGET"
+				# this will install the proprietary drivers at the right place and setup environment
+				# XDG_DOWNLOAD_DIR is used by meta-renesas/meta-rcar-gen2/scripts/setup_mm_packages.sh script to find zip files
+				export XDG_DOWNLOAD_DIR=$PROPRIETARY_RENESAS_DIR
+				source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
+				# temp binary dir is not cleaned up
+				rm -rf $DSTDIR/meta/binary-tmp
+			else
+				echo "Initializing for porter board without proprietary drivers"
+				export TEMPLATECONF=$DSTDIR/meta/meta-renesas/meta-rcar-gen2/conf
+				source $DSTDIR/meta/poky/oe-init-build-env $DSTDIR/build >/dev/null
+			fi
+			;;
+		*)
 			source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
-			# temp binary dir is not cleaned up
-			rm -rf $DSTDIR/meta/binary-tmp
-		fi
-		;;
-	*)
-		source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
-		;;
-esac
+			;;
+	esac
+popd >/dev/null #}
 
 pushd $DSTDIR/build >/dev/null #{
 
