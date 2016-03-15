@@ -35,6 +35,8 @@ Options:
    -t|--target <name>
       target platform
 	  default: porter
+   -h|--help
+      get this help
 
 Example:
 	$BASH_SOURCE -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter
@@ -47,12 +49,12 @@ function info() {
 	echo "$@" >&2
 }
 
-TEMP=$(getopt -o f:o:l:r:p:e:d:t: --long flavour,outputdir,localmirror,remotemirror,proprietary,enable,disable,target -n $(basename $BASH_SOURCE) -- "$@")
+TEMP=$(getopt -o f:o:l:r:p:e:d:t:h --long flavour,outputdir,localmirror,remotemirror,proprietary,enable,disable,target,help -n $(basename $BASH_SOURCE) -- "$@")
 [[ $? != 0 ]] && usage
 eval set -- "$TEMP"
 
 FLAVOUR=iotbzh
-DSTDIR=.
+DSTDIR=$(pwd -P)
 LOCALMIRROR=
 REMOTEMIRROR=
 PROPRIETARY_RENESAS_DIR=
@@ -67,10 +69,13 @@ while true; do
 		-e|--enable) eval option_$2=1; shift 2;;
 		-d|--disable) eval option_$2=0; shift 2;;
 		-t|--target) TARGET=$2; shift 2;;
+		-h|--help) HELP=1; shift ;;
 		--) shift; break;;
 		*) info "Internal error"; exit 1;;
 	esac
 done
+
+[[ "$HELP" == 1 ]] && usage
 
 # no remaining args allowed
 [[ $# != 0 ]] && usage
