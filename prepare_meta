@@ -3,11 +3,16 @@
 # global variable containing the git repository where all manifests are stored
 MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git 
 
+SCRIPT=$(basename $BASH_SOURCE)
+
+# this script canonical url
+SELF_URL=https://raw.githubusercontent.com/iotbzh/agl-manifest/master/$SCRIPT
+
 set -e 
 
 function usage() {
 	cat <<EOF >&2
-$BASH_SOURCE [options]
+$SCRIPT [options]
 
 Options:
    -f|--flavour <flavour[/tag_or_revision]>
@@ -28,10 +33,10 @@ Options:
 	  default: none
    -e|--enable <option>
       enable a specific option
-	  available options: ccache
+	  available options: ccache, upgrade
    -d|--disable <option>
       disable a specific option
-	  available options: ccache
+	  available options: ccache, upgrade
    -t|--target <name>
       target platform
 	  default: porter
@@ -39,7 +44,7 @@ Options:
       get this help
 
 Example:
-	$BASH_SOURCE -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter
+	$SCRIPT -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter
 	
 EOF
 	exit 1
@@ -49,7 +54,7 @@ function info() {
 	echo "$@" >&2
 }
 
-TEMP=$(getopt -o f:o:l:r:p:e:d:t:h --long flavour,outputdir,localmirror,remotemirror,proprietary,enable,disable,target,help -n $(basename $BASH_SOURCE) -- "$@")
+TEMP=$(getopt -o f:o:l:r:p:e:d:t:h --long flavour:,outputdir:,localmirror:,remotemirror:,proprietary:,enable:,disable:,target:,help -n $SCRIPT -- "$@")
 [[ $? != 0 ]] && usage
 eval set -- "$TEMP"
 
@@ -59,6 +64,11 @@ LOCALMIRROR=
 REMOTEMIRROR=
 PROPRIETARY_RENESAS_DIR=
 TARGET=porter
+
+#default options values
+option_ccache=0
+option_upgrade=1
+
 while true; do
 	case "$1" in
 		-f|--flavour) FLAVOUR=$2; shift 2;;
@@ -92,10 +102,62 @@ for v in \
 	LOCALMIRROR \
 	REMOTEMIRROR \
 	PROPRIETARY_RENESAS_DIR \
+	SELF_URL \
 	; do
 	info "$v : ${!v}"
 done
 info "=========================================="
+
+################################ upgrade script ################################
+
+function upgrade() {
+	# get remote script
+	local tempfile=$(mktemp /tmp/$SCRIPT.XXXXXXXX)
+	trap "rm -f $tempfile" STOP INT QUIT EXIT
+
+	echo -n  "Checking for upgrade ... "
+	# first, download reference script
+	wget --quiet -O $tempfile $SELF_URL || { info "Unable to check for upgrade. Remote script not accessible"; rm -f $tempfile; return 0; }
+
+	local rc
+	{ diff -q $BASH_SOURCE $tempfile &>/dev/null; rc=$?; } || true # don't exit on error
+	case $rc in
+		0)
+			info "Script $SCRIPT is up to date."
+			rm $tempfile
+			return 0
+			;;
+		1)
+			info "a newer version of the script $SCRIPT is available."
+			;;
+		*)
+			info "Error while checking for upgrade on script $SCRIPT"
+			rm $tempfile
+			return 0
+			;;
+	esac
+
+	local ans
+	read -p "Do you want to proceed with upgrade ? [Y/n] " ans
+	case $ans in
+		Y|y)
+			info "Upgrading script..."
+			cp -v $BASH_SOURCE ${BASH_SOURCE}.old
+			cp -v $tempfile $BASH_SOURCE
+			chmod +x $BASH_SOURCE
+			rm $tempfile
+			info "Upgraded successfully"
+			exec $BASH_SOURCE "$@" --disable upgrade
+			;;
+		*)
+			;;
+	esac
+
+	info "Skipping upgrade."
+	rm -f $tempfile
+}
+
+[[ "$option_upgrade" == "1" ]] && upgrade
 
 ################################ clone agl-manifest ############################
 
