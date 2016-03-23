@@ -12,6 +12,7 @@ IMAGE_INSTALL_append = " \
     powertop \
     latencytop \
     systemtap \
+	screen \
 "
 
 IMAGE_INSTALL_append = " qtwebengine"
