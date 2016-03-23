@@ -55,6 +55,9 @@ function info() {
 	echo "$@" >&2
 }
 
+# save global args in case we reuse them after upgrade
+GLOBAL_ARGS=("$@")
+
 TEMP=$(getopt -o f:o:l:r:p:e:d:t:h --long flavour:,outputdir:,localmirror:,remotemirror:,proprietary:,enable:,disable:,target:,help -n $SCRIPT -- "$@")
 [[ $? != 0 ]] && usage
 eval set -- "$TEMP"
@@ -148,7 +151,7 @@ function upgrade() {
 			chmod +x $BASH_SOURCE
 			rm $tempfile
 			info "Upgraded successfully"
-			exec $BASH_SOURCE "$@" --disable upgrade
+			exec $BASH_SOURCE "${GLOBAL_ARGS[@]}" --disable upgrade
 			;;
 		*)
 			;;
@@ -170,9 +173,11 @@ function clone_or_pull() {
 	info "=== cloning $url / $rev into $PWD/$dir"
 	if [[ ! -d $dir ]]; then
 		git clone $url
+		[[ -z "$rev" ]] && rev=$(cd $dir && git rev-parse FETCH_HEAD)
 	else
 		pushd $dir >/dev/null
 			git fetch --all
+			[[ -z "$rev" ]] && rev=$(git rev-parse FETCH_HEAD)
 		popd >/dev/null
 	fi
 
@@ -183,6 +188,15 @@ function clone_or_pull() {
 }
 
 mkdir -p $DSTDIR/meta
+
+# init meta from mirror if any
+for dir in ${LOCALMIRROR//:/ }; do
+	if [[ -d $dir/meta ]]; then
+		info "=== Copying $dir/meta to $DSTDIR/meta"
+		rsync -a $dir/meta/ $DSTDIR/meta/
+		break
+	fi
+done
 
 pushd $DSTDIR/meta >/dev/null #{
 	if [[ "$FLAVOUR" =~ / ]]; then
@@ -245,15 +259,6 @@ function checkout_gits() {
 			esac
 		done
 }
-
-# init from mirror if any
-for dir in ${LOCALMIRROR//:/ }; do
-	if [[ -d $dir/meta ]]; then
-		info "=== Copying $dir/meta to $DSTDIR/meta"
-		rsync -a $dir/meta/ $DSTDIR/meta/
-		break
-	fi
-done
 
 pushd $DSTDIR/meta >/dev/null #{
 
@@ -408,10 +413,12 @@ EOF
 	
 	info "=== conf: local.conf"
 
-	cat <<'EOF' >>conf/local.conf
+	if ! grep -q "^require conf/build.conf" conf/local.conf; then
+		cat <<'EOF' >>conf/local.conf
 # include extra conf files
 require conf/build.conf
 EOF
+	fi
 
 	# --------------------------- handle extra config files coming with agl-manifest -----------------------
 
@@ -441,7 +448,6 @@ Build environment is ready. To use it, run:
 
 then
 
-# export MACHINE=$TARGET
 # bitbake agl-demo-platform
 
 =====================================================================
