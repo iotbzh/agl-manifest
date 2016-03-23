@@ -40,6 +40,7 @@ Options:
    -t|--target <name>
       target platform
 	  default: porter
+	  valid options: intel-corei7-64, qemux86, qemux86-64, wandboard
    -h|--help
       get this help
 
@@ -440,6 +441,7 @@ Build environment is ready. To use it, run:
 
 then
 
+# export MACHINE=$TARGET
 # bitbake agl-demo-platform
 
 =====================================================================
