@@ -173,15 +173,13 @@ function clone_or_pull() {
 	info "=== cloning $url / $rev into $PWD/$dir"
 	if [[ ! -d $dir ]]; then
 		git clone $url
-		[[ -z "$rev" ]] && rev=$(cd $dir && git rev-parse FETCH_HEAD)
-	else
-		pushd $dir >/dev/null
-			git fetch --all
-			[[ -z "$rev" ]] && rev=$(git rev-parse FETCH_HEAD)
-		popd >/dev/null
 	fi
 
 	pushd $dir >/dev/null
+		for x in $(git remote); do
+			git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/*
+		done
+		[[ -z "$rev" ]] && rev=$(git rev-parse FETCH_HEAD)
 		git reset --hard 
 		git clean -fd
 		git checkout -f $rev
@@ -254,7 +252,9 @@ function checkout_gits() {
 					info "Using revision $value"
 					sha="${value%%=*}"
 					branch="${value#*=}"
-					git fetch --all
+					for x in $(git remote); do
+						git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/*
+					done
 					git checkout -f "$sha" -B "$branch"
 					git clean -fd
 					;;
