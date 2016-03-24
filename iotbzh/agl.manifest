@@ -6,5 +6,4 @@
 origin/jethro=iotbzh    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/jethro=iotbzh    poky                     origin=git://git.yoctoproject.org/poky
 74584c8=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
-origin/master=iotbzh    meta-iot-agl             origin=https://github.com/iotbzh/meta-iot-agl.git
-
+origin/master=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
