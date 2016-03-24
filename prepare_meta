@@ -183,6 +183,7 @@ function clone_or_pull() {
 
 	pushd $dir >/dev/null
 		git reset --hard 
+		git clean -fd
 		git checkout -f $rev
 	popd >/dev/null
 }
@@ -255,6 +256,7 @@ function checkout_gits() {
 					branch="${value#*=}"
 					git fetch --all
 					git checkout -f "$sha" -B "$branch"
+					git clean -fd
 					;;
 			esac
 		done
