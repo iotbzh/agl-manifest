@@ -1,6 +1,23 @@
 #!/bin/bash 
 
+################################################################################
+
+# The MIT License (MIT)
+# 
+# Copyright (c) 2016 Stéphane Desneux <sdx@iot.bzh>
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+################################################################################
+
 # global variable containing the git repository where all manifests are stored
+
+VERSION=1.0.0
+
 MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git 
 
 SCRIPT=$(basename $BASH_SOURCE)
@@ -12,7 +29,9 @@ set -e
 
 function usage() {
 	cat <<EOF >&2
-$SCRIPT [options]
+Usage: $SCRIPT [options]
+
+Version: $VERSION
 
 Options:
    -f|--flavour <flavour[/tag_or_revision]>
@@ -24,23 +43,26 @@ Options:
       default: current directory (.)
    -l|--localmirror <directory>
       specifies a local mirror directory to initialize meta, download_dir or sstate-cache
-	  default: none
+      default: none
    -r|--remotemirror <url>
       specifies a remote mirror directory to be used at build time for download_dir or sstate-cache
-	  default: none
+      default: none
    -p|--proprietary <directory>
       Directory containing Renesas proprietary drivers for RCar platform (2 zip files)
-	  default: none
+      default: none
    -e|--enable <option>
       enable a specific option
-	  available options: ccache, upgrade, wipeconfig
+      available options:
+         * upgrade: allow the script to check for upgrades (default: enabled)
+         * ccache: setup bitbake configuration with ccache (default: disabled)
+         * wipeconfig: clear existing bitbake configuration if any (default: disabled)
    -d|--disable <option>
       disable a specific option
-	  available options: ccache, upgrade, wipeconfig
+      available options: same as --enable
    -t|--target <name>
       target platform
-	  default: porter
-	  valid options: intel-corei7-64, qemux86, qemux86-64, wandboard
+      default: porter
+      valid options: intel-corei7-64, qemux86, qemux86-64, wandboard
    -h|--help
       get this help
 
