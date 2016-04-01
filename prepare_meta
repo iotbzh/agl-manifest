@@ -33,10 +33,10 @@ Options:
 	  default: none
    -e|--enable <option>
       enable a specific option
-	  available options: ccache, upgrade
+	  available options: ccache, upgrade, wipeconfig
    -d|--disable <option>
       disable a specific option
-	  available options: ccache, upgrade
+	  available options: ccache, upgrade, wipeconfig
    -t|--target <name>
       target platform
 	  default: porter
@@ -72,6 +72,7 @@ TARGET=porter
 #default options values
 option_ccache=0
 option_upgrade=1
+option_wipeconfig=0
 
 while true; do
 	case "$1" in
@@ -295,6 +296,9 @@ info "=== setup build for $TARGET"
 mkdir -p $DSTDIR/build
 mkdir -p $DSTDIR/downloads
 mkdir -p $DSTDIR/sstate-cache
+
+# wipe config if requested to do so
+[[ "$option_wipeconfig" == "1" ]] && rm -rf $DSTDIR/build/conf
 
 pushd $DSTDIR/meta >/dev/null #{
 	case "$TARGET" in
