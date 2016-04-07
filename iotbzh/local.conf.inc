@@ -31,6 +31,11 @@ IMAGE_INSTALL_append = " \
 	connman-tools \
 "
 
+##### USB tools
+IMAGE_INSTALL_append = " \
+	usbutils \
+"
+
 IMAGE_CMD_TAR = "tar --xattrs-include='*'"
 IMAGE_DEPENDS_tar_append = " tar-replacement-native"
 EXTRANATIVEPATH += "tar-native"
