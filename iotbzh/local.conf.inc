@@ -29,6 +29,7 @@ IMAGE_INSTALL_append = " \
 	connman-client \
 	connman-tests \
 	connman-tools \
+	connman-ncurses \
 "
 
 ##### USB tools
