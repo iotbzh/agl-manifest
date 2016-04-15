@@ -23,15 +23,6 @@ IMAGE_INSTALL_append = " qtsmarthome cinematicexperience qt5everywheredemo qt5-d
 #IMAGE_INSTALL_append = " weston-ivi-shell-config"
 #PACKAGECONFIG_append_pn-qtbase = " examples"
 
-##### connman packages
-IMAGE_INSTALL_append = " \
-	connman \
-	connman-client \
-	connman-tests \
-	connman-tools \
-	connman-ncurses \
-"
-
 ##### USB tools
 IMAGE_INSTALL_append = " \
 	usbutils \
