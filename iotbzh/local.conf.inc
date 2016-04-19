@@ -43,3 +43,11 @@ EXTRA_IMAGE_FEATURES = "debug-tweaks eclipse-debug tools-debug tools-profile"
 # initial value: SDKIMAGE_FEATURES="dev-pkgs dbg-pkgs staticdev-pkgs"
 SDKIMAGE_FEATURES="dev-pkgs"
 
+#--------------------- security flags ------------------------
+# require ../poky/meta/conf/distro/include/security_flags.inc
+
+#--------------------- initramfs -----------------------------
+IMAGE_CLASSES += "image_types_uboot"
+INITRAMFS_FSTYPES = "ext4.gz.u-boot"
+INITRAMFS_IMAGE = "initramfs-debug-image"
+

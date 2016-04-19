@@ -7,5 +7,6 @@ BBLAYERS += " \
     @METADIR@/meta-iot-agl/meta-rcar-gen2 \
     @METADIR@/meta-iot-agl/meta-connectivity \
     @METADIR@/meta-agl/meta-agl-security \
+    @METADIR@/meta-openembedded/meta-initramfs \
     "
 
