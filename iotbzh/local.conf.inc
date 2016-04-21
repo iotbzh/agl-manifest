@@ -23,15 +23,6 @@ IMAGE_INSTALL_append = " qtsmarthome cinematicexperience qt5everywheredemo qt5-d
 #IMAGE_INSTALL_append = " weston-ivi-shell-config"
 #PACKAGECONFIG_append_pn-qtbase = " examples"
 
-##### connman packages
-IMAGE_INSTALL_append = " \
-	connman \
-	connman-client \
-	connman-tests \
-	connman-tools \
-	connman-ncurses \
-"
-
 ##### USB tools
 IMAGE_INSTALL_append = " \
 	usbutils \
@@ -51,4 +42,12 @@ EXTRA_IMAGE_FEATURES = "debug-tweaks eclipse-debug tools-debug tools-profile"
 # disable install of debug files in SDK
 # initial value: SDKIMAGE_FEATURES="dev-pkgs dbg-pkgs staticdev-pkgs"
 SDKIMAGE_FEATURES="dev-pkgs"
+
+#--------------------- security flags ------------------------
+# require ../poky/meta/conf/distro/include/security_flags.inc
+
+#--------------------- initramfs -----------------------------
+IMAGE_CLASSES += "image_types_uboot"
+INITRAMFS_FSTYPES = "ext4.gz.u-boot"
+INITRAMFS_IMAGE = "initramfs-debug-image"
 
