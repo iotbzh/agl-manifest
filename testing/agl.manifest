@@ -4,3 +4,4 @@ ddf0d5d=testing          meta-agl                 origin=https://gerrit.automoti
 ea37a0b=testing          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 origin/jethro=testing    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/jethro=testing    poky                     origin=git://git.yoctoproject.org/poky
+origin/master=testing    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
