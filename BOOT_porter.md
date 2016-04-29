@@ -7,7 +7,7 @@ These options are common to all configurations:
 setenv 'bootkfile' 'uImage+dtb'
 setenv 'bootkaddr' '0x40007fc0'
 
-setenv 'bootifile' 'initramfs-debug-image-porter.ext4.gz.u-boot'
+setenv 'bootifile' 'initramfs-netboot-image-porter.ext4.gz.u-boot'
 setenv 'bootiaddr' '0x50000000'
 
 setenv 'bootargs_console' 'console=ttySC6,38400 ignore_loglevel'
@@ -42,6 +42,6 @@ setenv 'serverip' '10.20.1.22'
 setenv 'bootargs_root' 'root=/dev/ram0 ramdisk_size=16384 ip=dhcp'
 setenv 'bootkload_net' 'tftp ${bootkaddr} porter/${bootkfile}'
 setenv 'bootiload_net' 'tftp ${bootiaddr} porter/${bootifile}'
-setenv 'bootcmd' 'setenv bootargs ${bootargs_console} ${bootargs_video} ${bootargs_root} ${bootargs_extra}; run bootkload_net; run bootiload_net; bootm ${bootkaddr} ${bootiaddr}'
+setenv 'bootcmd' 'setenv bootargs ${bootargs_console} ${bootargs_video} ${bootargs_root} ${bootargs_extra} nbd.server=${serverip}; run bootkload_net; run bootiload_net; bootm ${bootkaddr} ${bootiaddr}'
 
 

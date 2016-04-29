@@ -49,7 +49,7 @@ SDKIMAGE_FEATURES="dev-pkgs"
 #--------------------- initramfs -----------------------------
 IMAGE_CLASSES += "image_types_uboot"
 INITRAMFS_FSTYPES = "ext4.gz.u-boot"
-INITRAMFS_IMAGE = "initramfs-debug-image"
+INITRAMFS_IMAGE = "initramfs-netboot-image"
 
 # also build an image with ext4 format, ready for sharing with NBD
 IMAGE_FSTYPES += "ext4"
