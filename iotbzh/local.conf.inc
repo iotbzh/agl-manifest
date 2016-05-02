@@ -32,8 +32,6 @@ IMAGE_CMD_TAR = "tar --xattrs-include='*'"
 IMAGE_DEPENDS_tar_append = " tar-replacement-native"
 EXTRANATIVEPATH += "tar-native"
 
-#GCCVERSION = "4.9%"
-
 #-------------------- options for SDK ----------------------
 
 # add eclipse debug stuff
@@ -46,10 +44,3 @@ SDKIMAGE_FEATURES="dev-pkgs"
 #--------------------- security flags ------------------------
 # require ../poky/meta/conf/distro/include/security_flags.inc
 
-#--------------------- initramfs -----------------------------
-IMAGE_CLASSES += "image_types_uboot"
-INITRAMFS_FSTYPES = "ext4.gz.u-boot"
-INITRAMFS_IMAGE = "initramfs-netboot-image"
-
-# also build an image with ext4 format, ready for sharing with NBD
-IMAGE_FSTYPES += "ext4"

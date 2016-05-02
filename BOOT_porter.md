@@ -32,11 +32,9 @@ setenv 'bootcmd' 'setenv bootargs ${bootargs_console} ${bootargs_video} ${bootar
 # Boot on network through TFTP
 
 ## SDX office
-setenv 'ipaddr' '10.0.0.27'
 setenv 'serverip' '10.0.0.15'
 
 ## IoT office
-setenv 'ipaddr' '10.20.1.72'
 setenv 'serverip' '10.20.1.22'
 
 setenv 'bootargs_root' 'root=/dev/ram0 ramdisk_size=16384 ip=dhcp'
