@@ -3,6 +3,8 @@ ee55488=iotbzh          meta-agl-demo            origin=https://gerrit.automotiv
 e79ae20=iotbzh          meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 2397181=iotbzh          meta-intel               origin=git://git.yoctoproject.org/meta-intel
 ea37a0b=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+395cde5=iotbzh			meta-rust				 origin=https://github.com/jmesmon/meta-rust
+69146ea=iotbzh			meta-oic				 origin=git://git.yoctoproject.org/meta-oic
 origin/jethro=iotbzh    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/jethro=iotbzh    poky                     origin=git://git.yoctoproject.org/poky
 74584c8=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
