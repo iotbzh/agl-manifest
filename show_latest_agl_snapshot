@@ -2,7 +2,7 @@
 
 ispkg=1
 
-URL=https://download.automotivelinux.org/AGL/snapshots/master/latest/qemux86-64/qemux86-64_repo_default.xml
+URL=https://download.automotivelinux.org/AGL/snapshots/master/latest/intel-corei7-64/intel-corei7-64_repo_default.xml
 SNAPSHOTID=$(curl -s  https://download.automotivelinux.org/AGL/snapshots/master/latest.txt)
 
 tmpout=$(mktemp /tmp/$(basename $0).XXXXXXXX)
