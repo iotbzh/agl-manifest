@@ -1,4 +1,4 @@
-084ab21=iotbzh          meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+a1e6f20=iotbzh          meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 ee55488=iotbzh          meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 e79ae20=iotbzh          meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 2397181=iotbzh          meta-intel               origin=git://git.yoctoproject.org/meta-intel
@@ -7,5 +7,6 @@ ea37a0b=iotbzh          meta-qt5                 origin=https://github.com/meta-
 69146ea=iotbzh			meta-oic				 origin=git://git.yoctoproject.org/meta-oic
 origin/jethro=iotbzh    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/jethro=iotbzh    poky                     origin=git://git.yoctoproject.org/poky
+d6db6a1=iotbzh			meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 74584c8=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 origin/master=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
