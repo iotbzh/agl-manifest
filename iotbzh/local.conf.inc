@@ -15,10 +15,10 @@ IMAGE_INSTALL_append = " \
 	screen \
 "
 
-IMAGE_INSTALL_append = " qtwebengine"
+#IMAGE_INSTALL_append = " qtwebengine"
 # Add webkit as workaround as webengine is broken right now
 IMAGE_INSTALL_append = " qtwebkit qtwebkit-examples-examples"
-IMAGE_INSTALL_append = " qtsmarthome cinematicexperience qt5everywheredemo qt5-demo-extrafiles"
+#IMAGE_INSTALL_append = " qtsmarthome cinematicexperience qt5everywheredemo qt5-demo-extrafiles"
 #IMAGE_INSTALL_append = " qtwebengine-examples"
 #IMAGE_INSTALL_append = " weston-ivi-shell-config"
 #PACKAGECONFIG_append_pn-qtbase = " examples"
@@ -44,3 +44,5 @@ SDKIMAGE_FEATURES="dev-pkgs"
 #--------------------- security flags ------------------------
 # require ../poky/meta/conf/distro/include/security_flags.inc
 
+# enable netboot
+INHERIT += "netboot"
