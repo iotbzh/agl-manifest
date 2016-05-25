@@ -1,5 +1,5 @@
 7712131=iotbzh          meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-ee55488=iotbzh          meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+a4bb343=iotbzh          meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 e79ae20=iotbzh          meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 2397181=iotbzh          meta-intel               origin=git://git.yoctoproject.org/meta-intel
 ea37a0b=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
