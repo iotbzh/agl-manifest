@@ -5,7 +5,6 @@ BBLAYERS += " \
     @METADIR@/meta-intel-iot-security/meta-security-framework \
     @METADIR@/meta-iot-agl/meta-app-framework \
     @METADIR@/meta-iot-agl/meta-rcar-gen2 \
-    @METADIR@/meta-iot-agl/meta-netboot \
     @METADIR@/meta-agl/meta-agl-security \
     @METADIR@/meta-openembedded/meta-initramfs \
     "
