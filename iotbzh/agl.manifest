@@ -9,6 +9,6 @@ ea37a0b=iotbzh          meta-qt5                 origin=https://github.com/meta-
 d6db6a1=iotbzh			meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 origin/jethro=iotbzh    poky                     origin=git://git.yoctoproject.org/poky
 ef3495b=iotbzh			meta-amb				 origin=https://github.com/tripzero/meta-amb
-74584c8=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+c5906a1=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 origin/master=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
 
