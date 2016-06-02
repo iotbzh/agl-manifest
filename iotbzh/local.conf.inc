@@ -1,13 +1,11 @@
 # this file is loaded from local.conf at build time
 
-OVERRIDES .= ":smack"
-DISTRO_FEATURES_append = " smack dbus-cynara"
-
 # add debug and perf tools to image
 IMAGE_INSTALL_append = " \
 	strace \
 	ldd \
 	gdb \
+	valgrind \
     perf \
     powertop \
     latencytop \
@@ -27,10 +25,6 @@ IMAGE_INSTALL_append = " qtwebkit qtwebkit-examples-examples"
 IMAGE_INSTALL_append = " \
 	usbutils \
 "
-
-IMAGE_CMD_TAR = "tar --xattrs-include='*'"
-IMAGE_DEPENDS_tar_append = " tar-replacement-native"
-EXTRANATIVEPATH += "tar-native"
 
 #-------------------- options for SDK ----------------------
 
