@@ -1,5 +1,8 @@
 # this file is loaded from local.conf at build time
 
+OVERRIDES .= ":smack"
+DISTRO_FEATURES_append = " smack dbus-cynara"
+
 # add debug and perf tools to image
 IMAGE_INSTALL_append = " \
 	strace \
@@ -14,7 +17,7 @@ IMAGE_INSTALL_append = " \
 
 #IMAGE_INSTALL_append = " qtwebengine"
 # Add webkit as workaround as webengine is broken right now
-#IMAGE_INSTALL_append = " qtwebkit qtwebkit-examples-examples"
+IMAGE_INSTALL_append = " qtwebkit qtwebkit-examples-examples"
 #IMAGE_INSTALL_append = " qtsmarthome cinematicexperience qt5everywheredemo qt5-demo-extrafiles"
 #IMAGE_INSTALL_append = " qtwebengine-examples"
 #IMAGE_INSTALL_append = " weston-ivi-shell-config"
@@ -24,6 +27,10 @@ IMAGE_INSTALL_append = " \
 IMAGE_INSTALL_append = " \
 	usbutils \
 "
+
+IMAGE_CMD_TAR = "tar --xattrs-include='*'"
+IMAGE_DEPENDS_tar_append = " tar-replacement-native"
+EXTRANATIVEPATH += "tar-native"
 
 #-------------------- options for SDK ----------------------
 
@@ -37,10 +44,6 @@ SDKIMAGE_FEATURES="dev-pkgs"
 #--------------------- security flags ------------------------
 # require ../poky/meta/conf/distro/include/security_flags.inc
 
-#--------------------- initramfs -----------------------------
-IMAGE_CLASSES += "image_types_uboot"
-INITRAMFS_FSTYPES = "ext4.gz.u-boot"
-INITRAMFS_IMAGE = "initramfs-netboot-image"
+# enable netboot
+#INHERIT += "netboot"
 
-# also build an image with ext4 format, ready for sharing with NBD
-IMAGE_FSTYPES += "ext4"
