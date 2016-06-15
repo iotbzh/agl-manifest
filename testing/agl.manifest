@@ -10,5 +10,4 @@ d6db6a1=iotbzh			meta-security-isafw      origin=https://github.com/01org/meta-s
 ddbc131=iotbzh          poky                     origin=git://git.yoctoproject.org/poky
 ef3495b=iotbzh			meta-amb				 origin=https://github.com/tripzero/meta-amb
 c5906a1=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
-ba4ab18=iotbzh          meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
-
+15f5470=iotbzh          meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
