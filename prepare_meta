@@ -29,9 +29,11 @@ set -e
 
 function usage() {
 	cat <<EOF >&2
-Usage: $SCRIPT [options]
+Usage: $SCRIPT [options] [agl_features]
 
 Version: $VERSION
+
+AGL Features: $AGL_FEATURES
 
 Options:
    -f|--flavour <flavour[/tag_or_revision]>
@@ -67,7 +69,7 @@ Options:
       get this help
 
 Example:
-	$SCRIPT -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter
+	$SCRIPT -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter agl-demo
 	
 EOF
 	exit 1
@@ -85,6 +87,7 @@ TEMP=$(getopt -o f:o:l:r:p:e:d:t:h --long flavour:,outputdir:,localmirror:,remot
 eval set -- "$TEMP"
 
 FLAVOUR=iotbzh
+AGL_FEATURES="agl-devel agl-netboot agl-appfw-smack agl-demo agl-localdev"
 DSTDIR=$(pwd -P)
 LOCALMIRROR=
 REMOTEMIRROR=
@@ -114,8 +117,8 @@ done
 
 [[ "$HELP" == 1 ]] && usage
 
-# no remaining args allowed
-[[ $# != 0 ]] && usage
+# remaining args are AGL_FEATURES (if present, otherwise we use the default)
+[[ $# != 0 ]] && AGL_FEATURES="$@"
 
 # check git presence
 which git || { info "Unable to find git command."; exit 1; }
@@ -330,7 +333,12 @@ pushd $DSTDIR/meta >/dev/null #{
 				# this will install the proprietary drivers at the right place and setup environment
 				# XDG_DOWNLOAD_DIR is used by meta-renesas/meta-rcar-gen2/scripts/setup_mm_packages.sh script to find zip files
 				export XDG_DOWNLOAD_DIR=$PROPRIETARY_RENESAS_DIR
-				source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
+				if [[ -f $DSTDIR/meta/meta-agl/scripts/aglsetup.sh ]]; then
+					source $DSTDIR/meta/meta-agl/scripts/aglsetup.sh -m porter -b $DSTDIR/build $AGL_FEATURES >/dev/null
+				else
+					# old setup script
+					source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
+				fi
 				# temp binary dir is not cleaned up
 				rm -rf $DSTDIR/meta/binary-tmp
 				option_proprietary=1
@@ -341,7 +349,12 @@ pushd $DSTDIR/meta >/dev/null #{
 			fi
 			;;
 		*)
-			source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
+			if [[ -f $DSTDIR/meta/meta-agl/scripts/aglsetup.sh ]]; then
+				source $DSTDIR/meta/meta-agl/scripts/aglsetup.sh -m $TARGET -b $DSTDIR/build $AGL_FEATURES >/dev/null
+			else
+				# old setup script
+				source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
+			fi
 			;;
 	esac
 popd >/dev/null #}
@@ -472,7 +485,15 @@ cat <<EOF
 
 Build environment is ready. To use it, run:
 
-# source $DSTDIR/meta/poky/oe-init-build-env $DSTDIR/build 
+EOF
+
+if [[ -f $DSTDIR/build/agl-init-build-env ]]; then
+	echo ". $DSTDIR/build/agl-init-build-env"
+else
+	echo "# . $DSTDIR/meta/poky/oe-init-build-env $DSTDIR/build"
+fi
+
+cat <<EOF
 
 then
 
