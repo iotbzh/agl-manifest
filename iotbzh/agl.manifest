@@ -1,9 +1,10 @@
-origin/sandbox/sdesneux/sdk=iotbzh    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/sandbox/sdesneux/sdk=iotbzh    meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/master=iotbzh    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/master=iotbzh    meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/master=iotbzh    meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 origin/master=iotbzh    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/agl-1.0-bsp-1.8.0=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-395cde5=iotbzh			meta-rust				 origin=https://github.com/konsulko/meta-rust
-2397181=iotbzh          meta-intel               origin=git://git.yoctoproject.org/meta-intel
+64074c9=iotbzh			meta-rust				 origin=https://github.com/konsulko/meta-rust
+aca8652=iotbzh          meta-intel               origin=git://git.yoctoproject.org/meta-intel
 c5906a1=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 69146ea=iotbzh			meta-oic				 origin=git://git.yoctoproject.org/meta-oic
 origin/jethro=iotbzh    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
