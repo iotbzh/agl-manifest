@@ -10,8 +10,9 @@ d715f2c=iotbzh          meta-qt5                 origin=https://github.com/meta-
 
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/krogoth=iotbzh   meta-intel               origin=git://git.yoctoproject.org/meta-intel
+cc64d63=iotbzh          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
-origin/1.0.1=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
+origin/1.1.1=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
 
 origin/master=iotbzh	meta-amb				 origin=https://github.com/tripzero/meta-amb
 origin/krogoth=iotbzh	meta-rust				 origin=https://github.com/konsulko/meta-rust
