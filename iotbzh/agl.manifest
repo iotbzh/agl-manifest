@@ -18,7 +18,7 @@ origin/master=iotbzh	meta-amb				 origin=https://github.com/tripzero/meta-amb
 origin/krogoth=iotbzh	meta-rust				 origin=https://github.com/konsulko/meta-rust
 
 origin/master=iotbzh	meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
-c5906a1=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 
 origin/master=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
 
