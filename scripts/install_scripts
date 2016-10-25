@@ -6,7 +6,7 @@ mkdir -p ~/bin
 
 for x in *; do 
 	[[ "$x" == "$(basename $0)" ]] && continue
-	cp $x ~/bin/
+	cp -v $x ~/bin/
 	chmod +x ~/bin/$x
 done
 
