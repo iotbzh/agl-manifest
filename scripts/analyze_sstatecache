@@ -1,0 +1,11 @@
+#!/bin/bash
+
+. /etc/xdtrc
+
+cd ${1:-$XDT_SSTATECACHE}
+
+for x in $(find . -type f  | cut -f8 -d':' | cut -f2- -d_ | sort | uniq ); do  
+	du -ks $(find . -name "*$x") | awk '{ i=i+$1; } END { printf("%d",i); }'
+	echo " $x"
+done | sort -n
+

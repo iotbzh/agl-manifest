@@ -1,0 +1,23 @@
+#!/bin/bash
+
+. /etc/xdtrc
+
+MIRRORDIR=${1:-~/mirror}
+
+SRCDIR=$XDT_DIR
+
+$XDT_META/poky/scripts/sstate-cache-management.sh \
+	--cache-dir=$XDT_SSTATECACHE \
+	--remove-duplicated --yes --verbose
+
+$SRCDIR/meta/poky/scripts/sstate-cache-management.sh \
+	--cache-dir=$XDT_SSTATECACHE \
+	--stamps-dir=$XDT_BUILD/tmp/stamps \
+	--yes \
+	--verbose
+
+for dir in $XDT_META $XDT_DOWNLOADCACHE $XDT_SSTATECACHE; do
+	rsync -Pav --delete $dir/ $MIRRORDIR/$(basename $dir)/
+done
+
+

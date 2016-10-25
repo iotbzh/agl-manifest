@@ -2,8 +2,11 @@
 
 cd $(dirname $0)
 
+mkdir -p ~/bin
+
 for x in *; do 
 	[[ "$x" == "$(basename $0)" ]] && continue
-	cp $x ~/
+	cp $x ~/bin/
+	chmod +x ~/bin/$x
 done
 
