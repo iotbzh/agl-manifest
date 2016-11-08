@@ -15,7 +15,7 @@ origin/krogoth=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.o
 origin/1.1.1=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
 
 origin/master=iotbzh	meta-amb				 origin=https://github.com/tripzero/meta-amb
-d066363=iotbzh	        meta-rust				 origin=https://github.com/konsulko/meta-rust
+d066363=iotbzh	        meta-rust				 origin=https://github.com/meta-rust/meta-rust
 
 origin/master=iotbzh	meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
