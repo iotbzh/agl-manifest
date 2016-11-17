@@ -1,0 +1,16 @@
+#!/bin/bash
+
+ispkg=1
+
+URL="https://gerrit.automotivelinux.org/gerrit/gitweb?p=AGL/AGL-repo.git;a=blob_plain;f=default.xml;hb=HEAD"
+
+tmpout=$(mktemp /tmp/$(basename $0).XXXXXXXX)
+trap "rm -f $tmpout" STOP INT QUIT EXIT ERR
+
+curl -s $URL >$tmpout
+
+#cat $tmpout
+
+echo "------------------ latest -------------------"
+
+egrep "<.*project" $tmpout
