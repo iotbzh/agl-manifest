@@ -9,6 +9,7 @@ origin/krogoth=iotbzh   meta-openembedded        origin=git://git.openembedded.o
 origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/v2.12.0=iotbzh	meta-rcar				 origin=https://github.com/CogentEmbedded/meta-rcar
 origin/krogoth=iotbzh   meta-intel               origin=git://git.yoctoproject.org/meta-intel
 origin/krogoth=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
