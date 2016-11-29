@@ -64,7 +64,7 @@ Options:
    -t|--target <name>
       target platform
       default: porter
-      valid options: intel-corei7-64, qemux86, qemux86-64, wandboard
+      valid options: porter, m3ulcb, intel-corei7-64, qemux86, qemux86-64, wandboard
    -h|--help
       get this help
 
@@ -327,14 +327,14 @@ mkdir -p $DSTDIR/sstate-cache
 
 pushd $DSTDIR/meta >/dev/null #{
 	case "$TARGET" in
-		porter|koelsch|silk)
+		porter|m3ulcb)
 			if [[ -d "$PROPRIETARY_RENESAS_DIR" ]]; then
 				echo "Using proprietary Renesas drivers for target $TARGET"
 				# this will install the proprietary drivers at the right place and setup environment
 				# XDG_DOWNLOAD_DIR is used by meta-renesas/meta-rcar-gen2/scripts/setup_mm_packages.sh script to find zip files
 				export XDG_DOWNLOAD_DIR=$PROPRIETARY_RENESAS_DIR
 				if [[ -f $DSTDIR/meta/meta-agl/scripts/aglsetup.sh ]]; then
-					source $DSTDIR/meta/meta-agl/scripts/aglsetup.sh -m porter -b $DSTDIR/build $AGL_FEATURES >/dev/null
+					source $DSTDIR/meta/meta-agl/scripts/aglsetup.sh -m $TARGET -b $DSTDIR/build $AGL_FEATURES >/dev/null
 				else
 					# old setup script
 					source $DSTDIR/meta/meta-agl/scripts/envsetup.sh $TARGET $DSTDIR/build >/dev/null
@@ -343,7 +343,7 @@ pushd $DSTDIR/meta >/dev/null #{
 				rm -rf $DSTDIR/meta/binary-tmp
 				option_proprietary=1
 			else
-				echo "Initializing for porter board without proprietary drivers"
+				echo "Initializing for $TARGET board without proprietary drivers"
 				export TEMPLATECONF=$DSTDIR/meta/meta-renesas/meta-rcar-gen2/conf
 				source $DSTDIR/meta/poky/oe-init-build-env $DSTDIR/build >/dev/null
 			fi
