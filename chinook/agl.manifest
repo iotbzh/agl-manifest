@@ -1,8 +1,9 @@
+# Chinook RC2 manifest
 # AGL
-origin/chinook=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/chinook=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/chinook=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-origin/chinook=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+b164497=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+5999238=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+092ccd7=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+32b8cd3=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 # Distri
 origin/krogoth=iotbzh   meta-openembedded       origin=git://git.openembedded.org/meta-openembedded
@@ -12,38 +13,16 @@ origin/krogoth=iotbzh   poky                    origin=git://git.yoctoproject.or
 origin/morty=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/chinook=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/master=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/v2.12.0=iotbzh	meta-rcar		 origin=https://github.com/CogentEmbedded/meta-rcar
 origin/krogoth=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
 origin/krogoth=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
-origin/1.1.1=iotbzh		meta-oic		 origin=git://git.yoctoproject.org/meta-oic
+origin/1.2.0=iotbzh		meta-oic		 origin=git://git.yoctoproject.org/meta-oic
 
 d066363=iotbzh		meta-rust		 origin=https://github.com/meta-rust/meta-rust
-ef3495b=iotbzh		meta-amb		 origin=https://github.com/tripzero/meta-amb
+#ef3495b=iotbzh		meta-amb		 origin=https://github.com/tripzero/meta-amb
 
 # Security
 f44f15b=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
-
-#<project name="Freescale/meta-fsl-arm-extra" path="meta-fsl-arm-extra" remote="github" revision="e95f4ae61fdaf6452d6dfa9cb59dbdf9cdf73c99" upstream="krogoth"/>
-#<project name="meta-fsl-arm" remote="yocto" revision="8c384e0221a8b0b598abf2e9638e89a8bdbf1c8b" upstream="krogoth"/>
-#<project name="meta-qcom" remote="yocto" revision="3bfe83535358289aa7f7342ed0977c076e7550c8" upstream="krogoth"/>
-#<project name="meta-ti" remote="yocto" revision="d69015a0f3b6532bc8e6d4fdcfffe0fc49cb145c" upstream="krogoth"/>
-#
-#<project name="AGL/meta-agl" path="meta-agl" revision="1a70e5e8f48f17f604ab243dfb3ff01f7aa435f6" upstream="master"/>
-#<project name="AGL/meta-agl-demo" path="meta-agl-demo" revision="e416218176328ef20ac8ff130af5bff5da51b284" upstream="master"/>
-#<project name="AGL/meta-agl-devel" path="meta-agl-devel" revision="092ccd7f65025efc1da47ff25746be014c723556" upstream="master"/>
-#<project name="AGL/meta-agl-extra" path="meta-agl-extra" revision="a79a0100e61acc714a1f6b28476182b7daeede74" upstream="master"/>
-#<project name="AGL/meta-renesas" path="meta-renesas" revision="d21c6598eff91f6ff739e340f708b13a566f9b57" upstream="master"/>
-#<project name="meta-rust/meta-rust" path="meta-rust" remote="github" revision="d0663639a08ed60bb83fd6eb99e3e2045b21b53c"/>
-#<project name="meta-intel" remote="yocto" revision="10feb903cfd69e6699f81a668b7128120e396dbf" upstream="krogoth"/>
-#<project name="meta-intel-iot-security" remote="01org" revision="20bbb97f6d5400b126ae96ef446c3e60c7e16285"/>
-#<project name="meta-oic" remote="yocto" revision="4d215eb63a27b5fe14216a25a760092002d13a33" upstream="1.1.1"/>
-#<project name="meta-openembedded" remote="openembedded" revision="55c8a76da5dc099a7bc3838495c672140cedb78e" upstream="krogoth"/>
-#<project name="meta-qt5/meta-qt5" path="meta-qt5" remote="github" revision="9aa870eecf6dc7a87678393bd55b97e21033ab48" upstream="morty"/>
-#<project name="meta-security-isafw" remote="01org" revision="f44f15bb54057dd60399bb5dc7e0ecc7822168a2" upstream="master"/>
-#<project name="poky" remote="yocto" revision="ae9b341ecfcc60e970f29cfe04306411ad26c0cf" upstream="krogoth"/>
-#<project name="tripzero/meta-amb" path="meta-amb" remote="github" revision="ef3495bb8d6543709f6d1f7b657cb894d32c1757" upstream="master"/>
-#<project name="meta-raspberrypi" remote="yocto" revision="a5f9b07a820d50ae5fb62e07306cd4e72d8638a9" upstream="krogoth"/>
-#<project name="CogentEmbedded/meta-rcar" path="meta-rcar" remote="github" revision="438ceeca6847831bd0f7f54207ef7ec369622db9" upstream="v2.12.0"/>

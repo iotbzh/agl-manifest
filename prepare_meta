@@ -232,7 +232,7 @@ pushd $DSTDIR/meta >/dev/null #{
 		rev=
 	fi
 
-	clone_or_pull $MANIFEST_URL $rev
+	#clone_or_pull $MANIFEST_URL $rev
 
 	SRCDIR=$DSTDIR/meta/$(basename $MANIFEST_URL .git)/$flavour
 	[[ ! -d $SRCDIR ]] && { info "Unable to find flavour '$flavour'"; exit 1; }
