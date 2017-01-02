@@ -13,7 +13,7 @@ origin/v2.12.0=iotbzh	meta-rcar				 origin=https://github.com/CogentEmbedded/met
 origin/krogoth=iotbzh   meta-intel               origin=git://git.yoctoproject.org/meta-intel
 origin/krogoth=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
-origin/1.1.1=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
+origin/1.2.0=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
 
 origin/master=iotbzh	meta-amb				 origin=https://github.com/tripzero/meta-amb
 d066363=iotbzh	        meta-rust				 origin=https://github.com/meta-rust/meta-rust
