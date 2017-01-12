@@ -1,9 +1,9 @@
-# Chinook RC2 manifest
+# Chinook manifest
 # AGL
-b164497=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-5999238=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-092ccd7=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-32b8cd3=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/chinook=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/chinook=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/chinook=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/chinook=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 # Distri
 origin/krogoth=iotbzh   meta-openembedded       origin=git://git.openembedded.org/meta-openembedded
@@ -13,7 +13,7 @@ origin/krogoth=iotbzh   poky                    origin=git://git.yoctoproject.or
 origin/morty=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/master=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/chinook=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/v2.12.0=iotbzh	meta-rcar		 origin=https://github.com/CogentEmbedded/meta-rcar
 origin/krogoth=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
 origin/krogoth=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
@@ -21,7 +21,6 @@ origin/krogoth=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.o
 origin/1.2.0=iotbzh		meta-oic		 origin=git://git.yoctoproject.org/meta-oic
 
 d066363=iotbzh		meta-rust		 origin=https://github.com/meta-rust/meta-rust
-#ef3495b=iotbzh		meta-amb		 origin=https://github.com/tripzero/meta-amb
 
 # Security
 f44f15b=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
