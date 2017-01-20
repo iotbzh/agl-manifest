@@ -3,19 +3,18 @@ origin/master=iotbzh    meta-agl-extra           origin=https://gerrit.automotiv
 origin/master=iotbzh    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/master=iotbzh    meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
-origin/krogoth=iotbzh   poky                     origin=git://git.yoctoproject.org/poky
-origin/krogoth=iotbzh   meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+origin/morty=iotbzh   poky                     origin=git://git.yoctoproject.org/poky
+origin/morty=iotbzh   meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 
 origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/v2.12.0=iotbzh	meta-rcar				 origin=https://github.com/CogentEmbedded/meta-rcar
-origin/krogoth=iotbzh   meta-intel               origin=git://git.yoctoproject.org/meta-intel
-origin/krogoth=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
+origin/morty=iotbzh   meta-intel               origin=git://git.yoctoproject.org/meta-intel
+origin/master=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
-origin/1.1.1=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
+origin/1.2.0=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
 
-origin/master=iotbzh	meta-amb				 origin=https://github.com/tripzero/meta-amb
 d066363=iotbzh	        meta-rust				 origin=https://github.com/meta-rust/meta-rust
 
 origin/master=iotbzh	meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
