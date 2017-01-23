@@ -205,7 +205,7 @@ function clone_or_pull() {
 		for x in $(git remote); do
 			git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/*
 		done
-		[[ -z "$rev" ]] && rev=$(git rev-parse FETCH_HEAD)
+		[[ -z "$rev" ]] && rev=$(git rev-parse origin/HEAD)
 		git reset --hard 
 		git clean -fd
 		git checkout -f $rev
