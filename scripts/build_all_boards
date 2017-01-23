@@ -5,6 +5,11 @@ echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
 . /xdt/build/agl-init-build-env
 bitbake agl-demo-platform-crosssdk
 
+prepare_meta -f iotbzh -o /xdt -l ~/mirror/ -t qemux86-64 -e wipeconfig "$@"
+echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
+. /xdt/build/agl-init-build-env
+bitbake agl-demo-platform-crosssdk
+
 prepare_meta -f iotbzh -o /xdt -l ~/mirror/ -t m3ulcb -p ~/mirror/proprietary-renesas-r-car/ -e wipeconfig "$@"
 echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
 . /xdt/build/agl-init-build-env

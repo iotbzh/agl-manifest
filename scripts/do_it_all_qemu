@@ -1,0 +1,6 @@
+prepare_meta -f iotbzh -o /xdt -l ~/mirror/ -t qemux86-64 -e wipeconfig "$@"
+
+rm -rf /xdt/build/tmp/
+. /xdt/build/agl-init-build-env
+bitbake agl-demo-platform-crosssdk
+
