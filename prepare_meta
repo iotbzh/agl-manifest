@@ -39,7 +39,7 @@ Options:
    -f|--flavour <flavour[/tag_or_revision]>
       what flavour to us
       default: 'iotbzh'
-      possible values: 'stable','unstable','testing', 'iotbzh' ... see agl-manifest git repository
+      possible values: 'chinook','chinook_next','rel2.0', 'iotbzh' ... see agl-manifest git repository
    -o|--outputdir <destination_dir>
       output directory where subdirectories will be created: meta, build, ...
       default: current directory (.)
