@@ -232,7 +232,7 @@ pushd $DSTDIR/meta >/dev/null #{
 		rev=
 	fi
 
-	clone_or_pull $MANIFEST_URL $rev
+	#clone_or_pull $MANIFEST_URL $rev
 
 	SRCDIR=$DSTDIR/meta/$(basename $MANIFEST_URL .git)/$flavour
 	[[ ! -d $SRCDIR ]] && { info "Unable to find flavour '$flavour'"; exit 1; }
@@ -279,7 +279,7 @@ function checkout_gits() {
 					sha="${value%%=*}"
 					branch="${value#*=}"
 					for x in $(git remote); do
-						git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/*
+						git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/* +refs/tags/*:refs/remote/tags/*
 					done
 					git checkout -f "$sha" -B "$branch"
 					git clean -fd

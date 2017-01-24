@@ -1,9 +1,9 @@
 # Chinook manifest
 # AGL
-origin/chinook_3.0.0=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/chinook_3.0.0=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/chinook_3.0.0=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-origin/chinook_3.0.0=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+chinook_3.0.0=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+chinook_3.0.0=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+chinook_3.0.0=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+chinook_3.0.0=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 # Distri
 55c8a76=iotbzh   meta-openembedded       origin=git://git.openembedded.org/meta-openembedded
@@ -13,7 +13,7 @@ ae9b341=iotbzh   poky                    origin=git://git.yoctoproject.org/poky
 9aa870e=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/chinook_3.0.0=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+chinook_3.0.0=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 e15ae27=iotbzh	meta-rcar		 origin=https://github.com/CogentEmbedded/meta-rcar
 10feb90=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
 a5f9b07=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
