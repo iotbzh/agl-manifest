@@ -58,6 +58,7 @@ Options:
          * upgrade: allow the script to check for upgrades (default: enabled)
          * ccache: setup bitbake configuration with ccache (default: disabled)
          * wipeconfig: clear existing bitbake configuration if any (default: disabled)
+         * keepcache: do not overwrite sstate-cache or download dir (default: disabled)
    -d|--disable <option>
       disable a specific option
       available options: same as --enable
@@ -98,6 +99,7 @@ TARGET=porter
 option_ccache=0
 option_upgrade=1
 option_wipeconfig=0
+option_keepcache=0
 
 while true; do
 	case "$1" in
@@ -392,7 +394,7 @@ EOF
 
 	# local caches must be copied to current download dir to be used as a reference when copying
 	for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/downloads; done); do
-		[[ -d $mirror ]] && rsync -a ${mirror}/ $DSTDIR/downloads/
+		[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a ${mirror}/ $DSTDIR/downloads/
 	done
 
 	# remote cache can only be referenced
@@ -415,7 +417,7 @@ EOF
 
 	# local cache copied, as previously
 	for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/sstate-cache; done); do
-		[[ -d $mirror ]] && rsync -a ${mirror}/ $DSTDIR/sstate-cache/
+		[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a ${mirror}/ $DSTDIR/sstate-cache/
 	done
 
 	# remote cache, simply referenced
@@ -433,7 +435,7 @@ EOF
 	if [[ "$option_ccache" == 1 ]]; then
 		info "=== conf: ccache"
 		for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/ccache; done); do
-			[[ -d $mirror ]] && rsync -a ${mirror}/ $DSTDIR/ccache/
+			[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a ${mirror}/ $DSTDIR/ccache/
 		done
 		
 		mkdir -p $DSTDIR/ccache
