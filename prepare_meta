@@ -1,15 +1,15 @@
-#!/bin/bash 
+#!/bin/bash
 
 ################################################################################
 
 # The MIT License (MIT)
-# 
+#
 # Copyright (c) 2016 Stéphane Desneux <sdx@iot.bzh>
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ################################################################################
@@ -18,14 +18,14 @@
 
 VERSION=1.0.0
 
-MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git 
+MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git
 
 SCRIPT=$(basename $BASH_SOURCE)
 
 # this script canonical url
 SELF_URL=https://raw.githubusercontent.com/iotbzh/agl-manifest/master/$SCRIPT
 
-set -e 
+set -e
 
 function usage() {
 	cat <<EOF >&2
@@ -59,6 +59,7 @@ Options:
          * ccache: setup bitbake configuration with ccache (default: disabled)
          * wipeconfig: clear existing bitbake configuration if any (default: disabled)
          * keepcache: do not overwrite sstate-cache or download dir (default: disabled)
+         * rm_work: do not keep working directory after each yocto package build. (Save LOT of space. default: disabled)
    -d|--disable <option>
       disable a specific option
       available options: same as --enable
@@ -71,7 +72,7 @@ Options:
 
 Example:
 	$SCRIPT -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter agl-demo
-	
+
 EOF
 	exit 1
 }
@@ -100,11 +101,12 @@ option_ccache=0
 option_upgrade=1
 option_wipeconfig=0
 option_keepcache=0
+option_rm_work=0
 
 while true; do
 	case "$1" in
 		-f|--flavour) FLAVOUR=$2; shift 2;;
-		-o|--outputdir) DSTDIR=$(cd $2 && pwd -P); shift 2;; 
+		-o|--outputdir) DSTDIR=$(cd $2 && pwd -P); shift 2;;
 		-l|--localmirror) LOCALMIRROR=$(cd $2 && pwd -P); shift 2;;
 		-r|--remotemirror) REMOTEMIRROR=$2; shift 2;;
 		-p|--proprietary) PROPRIETARY_RENESAS_DIR=$(cd $2 && pwd -P); shift 2;;
@@ -208,7 +210,7 @@ function clone_or_pull() {
 			git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/*
 		done
 		[[ -z "$rev" ]] && rev=$(git rev-parse origin/HEAD)
-		git reset --hard 
+		git reset --hard
 		git clean -fd
 		git checkout -f $rev
 	popd >/dev/null
@@ -313,7 +315,7 @@ pushd $DSTDIR/meta >/dev/null #{
 		fi
 
 	done
-	
+
 popd >/dev/null #}
 
 ##################################### setup build ######################################
@@ -329,7 +331,7 @@ mkdir -p $DSTDIR/sstate-cache
 
 pushd $DSTDIR/meta >/dev/null #{
 	case "$TARGET" in
-		porter|m3ulcb)
+		porter|m3ulcb|h3ulcb)
 			if [[ -d "$PROPRIETARY_RENESAS_DIR" ]]; then
 				echo "Using proprietary Renesas drivers for target $TARGET"
 				# this will install the proprietary drivers at the right place and setup environment
@@ -437,7 +439,7 @@ EOF
 		for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/ccache; done); do
 			[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a ${mirror}/ $DSTDIR/ccache/
 		done
-		
+
 		mkdir -p $DSTDIR/ccache
 		CCACHE_DIR=$DSTDIR/ccache ccache -M 8G # set cache max size to 8G
 
@@ -452,8 +454,16 @@ ENABLE_WIDEC_class-nativesdk = "false"
 EOF
 	fi
 
+	# ----------------------------------- rm_work -----------------------------
+
+
+	if [[ "$option_rm_work" == 1 ]]; then
+		info "=== conf: rm_work"
+		sed -ri 's:^#(INHERIT.*"rm_work") *$:\1:' conf/build.conf
+	fi
+
 	# ------------------------------- include build.conf in local.conf ------------------------------------
-	
+
 	info "=== conf: local.conf"
 
 	if ! grep -q "^require conf/build.conf" conf/local.conf; then
@@ -467,7 +477,7 @@ EOF
 
 	for tgtfile in bblayers local; do
 		[[ "$option_proprietary" == 1 ]] && PROPFILES="${tgtfile}_proprietary.conf.inc ${TARGET}_${tgtfile}_proprietary.conf.inc"
-	
+
 		for file in ${tgtfile}.conf.inc ${TARGET}_${tgtfile}.conf.inc $PROPFILES; do
 			if [[ -f $SRCDIR/$file ]]; then
 				info "=== conf: $file -> ${tgtfile}.conf"
@@ -503,5 +513,4 @@ then
 
 =====================================================================
 EOF
-
 
