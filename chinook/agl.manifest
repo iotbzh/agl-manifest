@@ -1,21 +1,21 @@
 # Chinook manifest
 # AGL
-chinook_3.0.0=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-chinook_3.0.0=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-chinook_3.0.0=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-chinook_3.0.0=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+chinook_3.0.1=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+chinook_3.0.1=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+chinook_3.0.1=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+chinook_3.0.1=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 # Distri
 55c8a76=iotbzh   meta-openembedded       origin=git://git.openembedded.org/meta-openembedded
 ae9b341=iotbzh   poky                    origin=git://git.yoctoproject.org/poky
 
 # Graphic
-9aa870e=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+4020adf=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-chinook_3.0.0=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-e15ae27=iotbzh	meta-rcar		 origin=https://github.com/CogentEmbedded/meta-rcar
-10feb90=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
+chinook_3.0.1=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+21bc3f7=iotbzh	meta-rcar		 origin=https://github.com/CogentEmbedded/meta-rcar
+1f8dd1b=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
 a5f9b07=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
 0bdd959=iotbzh		meta-oic		 origin=git://git.yoctoproject.org/meta-oic
