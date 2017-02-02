@@ -334,6 +334,8 @@ pushd $DSTDIR/meta >/dev/null #{
 		porter|m3ulcb|h3ulcb)
 			if [[ -d "$PROPRIETARY_RENESAS_DIR" ]]; then
 				echo "Using proprietary Renesas drivers for target $TARGET"
+				# cleanup spurious temp dir if any (may contain partially extracted files which lead to errors in rcar-genX setup scripts)
+				rm -rf $DSTDIR/meta/binary-tmp
 				# this will install the proprietary drivers at the right place and setup environment
 				# XDG_DOWNLOAD_DIR is used by meta-renesas/meta-rcar-gen2/scripts/setup_mm_packages.sh script to find zip files
 				export XDG_DOWNLOAD_DIR=$PROPRIETARY_RENESAS_DIR
