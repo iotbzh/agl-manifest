@@ -16,7 +16,7 @@
 
 # global variable containing the git repository where all manifests are stored
 
-VERSION=1.0.0
+VERSION=1.0.1
 
 MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git
 
@@ -67,6 +67,8 @@ Options:
       target platform
       default: porter
       valid options: porter, m3ulcb, intel-corei7-64, qemux86, qemux86-64, wandboard
+   -u|--upgrade
+      Check for and perform an update to the script without prompting user, then exit.
    -h|--help
       get this help
 
@@ -84,7 +86,7 @@ function info() {
 # save global args in case we reuse them after upgrade
 GLOBAL_ARGS=("$@")
 
-TEMP=$(getopt -o f:o:l:r:p:e:d:t:h --long flavour:,outputdir:,localmirror:,remotemirror:,proprietary:,enable:,disable:,target:,help -n $SCRIPT -- "$@")
+TEMP=$(getopt -o f:o:l:r:p:e:d:t:uh --long flavour:,outputdir:,localmirror:,remotemirror:,proprietary:,enable:,disable:,target:,upgrade,help -n $SCRIPT -- "$@")
 [[ $? != 0 ]] && usage
 eval set -- "$TEMP"
 
@@ -95,6 +97,7 @@ LOCALMIRROR=
 REMOTEMIRROR=
 PROPRIETARY_RENESAS_DIR=
 TARGET=porter
+JUST_UPGRADE=
 
 #default options values
 option_ccache=0
@@ -113,6 +116,7 @@ while true; do
 		-e|--enable) eval option_$2=1; shift 2;;
 		-d|--disable) eval option_$2=0; shift 2;;
 		-t|--target) TARGET=$2; shift 2;;
+		-u|--upgrade) JUST_UPGRADE=1; shift ;;
 		-h|--help) HELP=1; shift ;;
 		--) shift; break;;
 		*) info "Internal error"; exit 1;;
@@ -120,6 +124,9 @@ while true; do
 done
 
 [[ "$HELP" == 1 ]] && usage
+
+# Ensure upgrades are enabled if -u|--update specified
+[[ "$JUST_UPGRADE" == 1 ]] && option_upgrade=1
 
 # remaining args are AGL_FEATURES (if present, otherwise we use the default)
 [[ $# != 0 ]] && AGL_FEATURES="$@"
@@ -155,11 +162,15 @@ function upgrade() {
 
 	local rc
 	{ diff -q $BASH_SOURCE $tempfile &>/dev/null; rc=$?; } || true # don't exit on error
+
+	local return_or_exit=return
+	[[ $JUST_UPGRADE ]] && return_or_exit=exit
+
 	case $rc in
 		0)
 			info "Script $SCRIPT is up to date."
 			rm $tempfile
-			return 0
+			$return_or_exit 0
 			;;
 		1)
 			info "a newer version of the script $SCRIPT is available."
@@ -167,12 +178,18 @@ function upgrade() {
 		*)
 			info "Error while checking for upgrade on script $SCRIPT"
 			rm $tempfile
-			return 0
+			$return_or_exit 0
 			;;
 	esac
 
 	local ans
-	read -p "Do you want to proceed with upgrade ? [Y/n] " ans
+	if [[ "$JUST_UPGRADE" == "1" ]]; then
+		#  No interactive query if -u|--upgrade specified
+		ans=Y
+	else
+		read -p "Do you want to proceed with upgrade ? [Y/n] " ans
+	fi
+
 	case $ans in
 		Y|y)
 			info "Upgrading script..."
@@ -181,6 +198,7 @@ function upgrade() {
 			chmod +x $BASH_SOURCE
 			rm $tempfile
 			info "Upgraded successfully"
+			[[ "$JUST_UPGRADE" == "1" ]] && exit 0
 			exec $BASH_SOURCE "${GLOBAL_ARGS[@]}" --disable upgrade
 			;;
 		*)
