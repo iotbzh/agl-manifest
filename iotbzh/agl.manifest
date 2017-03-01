@@ -1,7 +1,8 @@
 #origin/master=iotbzh    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/sandbox/ronan/sandbox_rcargen3_v2.16.0=iotbzh    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=iotbzh    meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/master=iotbzh    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+#origin/master=iotbzh    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/sandbox/jsmoeller/meta-qt5-58=iotbzh    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/master=iotbzh    meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 origin/morty=iotbzh     poky                     origin=git://git.yoctoproject.org/poky
@@ -10,7 +11,7 @@ origin/morty=iotbzh     meta-openembedded        origin=git://git.openembedded.o
 origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-origin/morty=iotbzh	    meta-rcar					 origin=https://github.com/iotbzh/meta-renesas-rcar-gen3 
+origin/morty=iotbzh	    meta-rcar				 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 origin/morty=iotbzh     meta-intel               origin=git://git.yoctoproject.org/meta-intel
 origin/master=iotbzh    meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
