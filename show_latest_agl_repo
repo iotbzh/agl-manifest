@@ -9,8 +9,4 @@ trap "rm -f $tmpout" STOP INT QUIT EXIT ERR
 
 curl -s $URL >$tmpout
 
-#cat $tmpout
-
-echo "------------------ latest -------------------"
-
-egrep "<.*project" $tmpout
+$(dirname $0)/repo2manifest $tmpout
