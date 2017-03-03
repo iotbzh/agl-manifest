@@ -1,32 +1,44 @@
+FLAVOUR=iotbzh
+
+LOG=/xdt/build/build_all.log
+
 rm -rf /xdt/build/tmp/
+rm -f $LOG
+
+function runbitbake() {
+	bitbake "$@" 
+	rc=$?
+	eval $(bitbake -e | grep ^MACHINE_ARCH)
+	echo ${MACHINE_ARCH:-unknown} $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") >>$LOG
+	return $rc
+}
 
 opts="-e wipeconfig"
-
-prepare_meta -f iotbzh -o /xdt -l ~/mirror/ -t porter -p ~/mirror/proprietary-renesas-r-car/ $opts "$@"
+prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t porter -p ~/mirror/proprietary-renesas-r-car/ $opts "$@"
 echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
 . /xdt/build/agl-init-build-env
-bitbake agl-demo-platform-crosssdk
+runbitbake agl-demo-platform-crosssdk
 
 # add option "keepcache" after first build
 opts="$opts -e keepcache"
 
-prepare_meta -f iotbzh -o /xdt -l ~/mirror/ -t m3ulcb -p ~/mirror/proprietary-renesas-r-car/ $opts "$@"
+prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t m3ulcb -p ~/mirror/proprietary-renesas-r-car/ $opts "$@"
 echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
 . /xdt/build/agl-init-build-env
-bitbake agl-demo-platform-crosssdk
+runbitbake agl-demo-platform-crosssdk
 
-prepare_meta -f iotbzh -o /xdt -l ~/mirror/ -t qemux86-64 $opts "$@"
+prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t qemux86-64 $opts "$@"
 echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
 . /xdt/build/agl-init-build-env
-bitbake agl-demo-platform-crosssdk
+runbitbake agl-demo-platform-crosssdk
 
-prepare_meta -f iotbzh -o /xdt -l ~/mirror/ -t raspberrypi3 $opts "$@"
+prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t raspberrypi3 $opts "$@"
 echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
 . /xdt/build/agl-init-build-env
-bitbake agl-demo-platform-crosssdk
+runbitbake agl-demo-platform-crosssdk
 
-prepare_meta -f iotbzh -o /xdt -l ~/mirror/ -t intel-corei7-64 $opts "$@"
+prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t intel-corei7-64 $opts "$@"
 echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
 . /xdt/build/agl-init-build-env
-bitbake agl-demo-platform-crosssdk
+runbitbake agl-demo-platform-crosssdk
 
