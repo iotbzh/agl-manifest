@@ -13,7 +13,7 @@ origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/morty=iotbzh	    meta-renesas-rcar-gen3	 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 origin/morty=iotbzh     meta-intel               origin=git://git.yoctoproject.org/meta-intel
-origin/master=iotbzh    meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
+69c5675=iotbzh    meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
 origin/morty=iotbzh		meta-linaro				 origin=https://git.linaro.org/openembedded/meta-linaro.git
 
