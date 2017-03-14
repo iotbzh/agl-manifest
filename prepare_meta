@@ -132,7 +132,7 @@ done
 [[ $# != 0 ]] && AGL_FEATURES="$@"
 
 # check git presence
-which git || { info "Unable to find git command."; exit 1; }
+which git 2>&1 >/dev/null || { info "Unable to find git command."; exit 1; }
 
 info "=============== SUMMARY =================="
 for v in \
