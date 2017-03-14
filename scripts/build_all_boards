@@ -1,44 +1,50 @@
-FLAVOUR=iotbzh
+#!/bin/bash
 
-LOG=/xdt/build/build_all.log
+BUILD_FLAVOUR=iotbzh
+BUILD_MACHINES="porter m3ulcb qemux86-64 raspberrypi3 intel-corei7-64"
 
-rm -rf /xdt/build/tmp/
+. /etc/xdtrc
+
+# source conf file for this script if any
+CONF=$(basename $0).conf
+for x in /etc/$CONF $XDT_DIR/$CONF $HOME/$CONF; do
+	[[ -f $x ]] && { echo "Loading config file $x"; . $x; }
+done
+
+LOG=$XDT_DIR/build/build_all.log
+
+rm -rf $XDT_BUILD/tmp/
 rm -f $LOG
 
 function runbitbake() {
 	bitbake "$@" 
 	rc=$?
 	eval $(bitbake -e | grep ^MACHINE_ARCH)
-	echo ${MACHINE_ARCH:-unknown} $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") >>$LOG
+	echo ${MACHINE_ARCH:-unknown} $BUILD_FLAVOUR $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") >>$LOG
 	return $rc
 }
 
-opts="-e wipeconfig"
-prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t porter -p ~/mirror/proprietary-renesas-r-car/ $opts "$@"
-echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
-. /xdt/build/agl-init-build-env
-runbitbake agl-demo-platform-crosssdk
+baseopts="-f $BUILD_FLAVOUR -o $XDT_DIR -l $HOME/mirror/ -e wipeconfig"
+extraopts=""
 
-# add option "keepcache" after first build
-opts="$opts -e keepcache"
+for machine in $BUILD_MACHINES; do
+	case $machine in
+		porter|m3ulcb|h3ulcb)
+			opts="$baseopts -t $machine -p $HOME/mirror/proprietary-renesas-r-car/ $extraopts"
+			;;
+		*)
+			opts="$baseopts -t $machine $extraopts"
+			;;
+	esac
 
-prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t m3ulcb -p ~/mirror/proprietary-renesas-r-car/ $opts "$@"
-echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
-. /xdt/build/agl-init-build-env
-runbitbake agl-demo-platform-crosssdk
+	prepare_meta $opts 
+	echo 'INHERIT += "rm_work"' >>$XDT_BUILD/conf/local.conf
+	. $XDT_BUILD/agl-init-build-env
+	runbitbake agl-demo-platform-crosssdk
+			
+	# add option "keepcache" after first build
+	extraopts="-e keepcache"
+done
 
-prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t qemux86-64 $opts "$@"
-echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
-. /xdt/build/agl-init-build-env
-runbitbake agl-demo-platform-crosssdk
-
-prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t raspberrypi3 $opts "$@"
-echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
-. /xdt/build/agl-init-build-env
-runbitbake agl-demo-platform-crosssdk
-
-prepare_meta -f $FLAVOUR -o /xdt -l ~/mirror/ -t intel-corei7-64 $opts "$@"
-echo 'INHERIT += "rm_work"' >>/xdt/build/conf/local.conf
-. /xdt/build/agl-init-build-env
-runbitbake agl-demo-platform-crosssdk
-
+echo "=========== BUILD SUMMARY ============"
+cat $LOG
