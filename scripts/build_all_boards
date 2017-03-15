@@ -11,16 +11,24 @@ for x in /etc/$CONF $XDT_DIR/$CONF $HOME/$CONF; do
 	[[ -f $x ]] && { echo "Loading config file $x"; . $x; }
 done
 
-LOG=$XDT_DIR/build/build_all.log
+CMDLOG=$XDT_BUILD/build_all.cmd
+RESLOG=$XDT_BUILD/build_all.log
 
 rm -rf $XDT_BUILD/tmp/
-rm -f $LOG
+rm -f $CMDLOG $RESLOG
+
+function run_prepare_meta() {
+	echo "--------------------" >>$CMDLOG
+	echo prepare_meta "$@" >>$CMDLOG
+	prepare_meta "$@"
+}
 
 function runbitbake() {
+	echo bitbake "$@" >>$CMDLOG
 	bitbake "$@" 
 	rc=$?
 	eval $(bitbake -e | grep ^MACHINE_ARCH)
-	echo ${MACHINE_ARCH:-unknown} $BUILD_FLAVOUR $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") >>$LOG
+	echo ${MACHINE_ARCH:-unknown} $BUILD_FLAVOUR $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") >>$RESLOG
 	return $rc
 }
 
@@ -37,7 +45,7 @@ for machine in $BUILD_MACHINES; do
 			;;
 	esac
 
-	prepare_meta $opts 
+	run_prepare_meta $opts 
 	echo 'INHERIT += "rm_work"' >>$XDT_BUILD/conf/local.conf
 	. $XDT_BUILD/agl-init-build-env
 	runbitbake agl-demo-platform-crosssdk
@@ -47,4 +55,4 @@ for machine in $BUILD_MACHINES; do
 done
 
 echo "=========== BUILD SUMMARY ============"
-cat $LOG
+cat $RESLOG
