@@ -11,7 +11,8 @@ origin/morty=iotbzh     meta-openembedded        origin=git://git.openembedded.o
 
 origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
-origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+#origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/origin/sandbox/ronan/sandbox_rcargen3_v2.16.0=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/morty=iotbzh	    meta-renesas-rcar-gen3	 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 origin/morty=iotbzh     meta-intel               origin=git://git.yoctoproject.org/meta-intel
 69c5675=iotbzh    meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
