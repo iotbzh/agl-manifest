@@ -24,11 +24,15 @@ function run_prepare_meta() {
 }
 
 function runbitbake() {
+	local ts0=$(date +%s)
 	echo bitbake "$@" >>$CMDLOG
 	bitbake "$@" 
-	rc=$?
+	local rc=$?
+	local ts1=$(date +%s)
+	local dt=$(( $ts1 - $ts0 ))
+	local dtstr=$(date +%H:%M:%S -u --date="@$dt")
 	eval $(bitbake -e | grep ^MACHINE_ARCH)
-	echo ${MACHINE_ARCH:-unknown} $BUILD_FLAVOUR $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") >>$RESLOG
+	echo ${MACHINE_ARCH:-unknown} $BUILD_FLAVOUR $dtstr $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") >>$RESLOG
 	return $rc
 }
 
