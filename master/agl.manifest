@@ -10,11 +10,11 @@ origin/1.2.0=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
 origin/morty=iotbzh     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
-69c5675=iotbzh    meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
-origin/v2.12.0=iotbzh	meta-rcar				 origin=https://github.com/CogentEmbedded/meta-rcar
+69c5675=iotbzh          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/morty=iotbzh	    meta-renesas-rcar-gen3	 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 
-a506df4=iotbzh	        meta-rust				 origin=https://github.com/meta-rust/meta-rust
-f44f15b=iotbzh			meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+a506df4=iotbzh         	meta-rust				 origin=https://github.com/meta-rust/meta-rust
+origin/morty=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
 origin/morty=iotbzh     poky                     origin=git://git.yoctoproject.org/poky
