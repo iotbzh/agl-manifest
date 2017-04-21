@@ -50,7 +50,13 @@ for machine in $BUILD_MACHINES; do
 	esac
 
 	run_prepare_meta $opts 
-	echo 'INHERIT += "rm_work"' >>$XDT_BUILD/conf/local.conf
+
+	cat <<'EOF' >>$XDT_BUILD/conf/local.conf
+#---- added by build_all_boards script 
+INHERIT += "rm_work"
+LICENSE_DIRECTORY = "${DEPLOY_DIR}/licenses/${MACHINE}"
+EOF
+
 	. $XDT_BUILD/agl-init-build-env
 	runbitbake agl-demo-platform-crosssdk
 			
