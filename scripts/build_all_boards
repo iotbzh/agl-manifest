@@ -54,7 +54,6 @@ for machine in $BUILD_MACHINES; do
 	cat <<'EOF' >>$XDT_BUILD/conf/local.conf
 #---- added by build_all_boards script 
 INHERIT += "rm_work"
-LICENSE_DIRECTORY = "${DEPLOY_DIR}/licenses/${MACHINE}"
 EOF
 
 	. $XDT_BUILD/agl-init-build-env
