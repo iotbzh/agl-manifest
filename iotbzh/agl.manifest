@@ -6,17 +6,18 @@ origin/master=iotbzh    meta-agl-devel           origin=https://gerrit.automotiv
 origin/morty=iotbzh     meta-intel               origin=git://git.yoctoproject.org/meta-intel
 20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 
-origin/1.2.0=iotbzh		meta-oic				 origin=git://git.yoctoproject.org/meta-oic
+origin/1.2.0=iotbzh     meta-oic                 origin=git://git.yoctoproject.org/meta-oic
 origin/morty=iotbzh     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 69c5675=iotbzh          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-origin/morty=iotbzh	    meta-renesas-rcar-gen3	 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
+origin/morty=iotbzh     meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 
-a506df4=iotbzh         	meta-rust				 origin=https://github.com/meta-rust/meta-rust
-origin/morty=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+a506df4=iotbzh          meta-rust                origin=https://github.com/meta-rust/meta-rust
+origin/morty=iotbzh     meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
 origin/morty=iotbzh     poky                     origin=git://git.yoctoproject.org/poky
+4f1a20b=iotbzh          meta-updater             origin=https://github.com/advancedtelematic/meta-updater
 
 origin/master=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
