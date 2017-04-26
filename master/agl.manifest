@@ -18,4 +18,3 @@ a506df4=iotbzh          meta-rust                origin=https://github.com/meta-
 origin/morty=iotbzh     meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
 origin/morty=iotbzh     poky                     origin=git://git.yoctoproject.org/poky
-4f1a20b=iotbzh          meta-updater             origin=https://github.com/advancedtelematic/meta-updater
