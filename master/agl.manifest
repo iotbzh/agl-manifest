@@ -12,7 +12,7 @@ origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-
 
 69c5675=iotbzh          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-origin/morty=iotbzh     meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
+origin/master=iotbzh    meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 
 a506df4=iotbzh          meta-rust                origin=https://github.com/meta-rust/meta-rust
 origin/morty=iotbzh     meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
