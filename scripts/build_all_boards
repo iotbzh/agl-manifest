@@ -2,6 +2,7 @@
 
 BUILD_FLAVOUR=iotbzh
 BUILD_MACHINES="porter m3ulcb qemux86-64 raspberrypi3 intel-corei7-64"
+BUILD_OPTIONS=""
 
 . /etc/xdtrc
 
@@ -36,7 +37,7 @@ function runbitbake() {
 	return $rc
 }
 
-baseopts="-f $BUILD_FLAVOUR -o $XDT_DIR -l $HOME/mirror/ -e wipeconfig"
+baseopts="-f $BUILD_FLAVOUR -o $XDT_DIR -l $HOME/mirror/ -e wipeconfig $BUILD_OPTIONS"
 extraopts=""
 
 for machine in $BUILD_MACHINES; do
