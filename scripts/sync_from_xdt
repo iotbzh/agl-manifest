@@ -10,11 +10,19 @@ $XDT_META/poky/scripts/sstate-cache-management.sh \
 	--cache-dir=$XDT_SSTATECACHE \
 	--remove-duplicated --yes --verbose
 
+# merge all stamps dirs in a single one
+mkdir -p $XDT_BUILD/tmp_stamps
+for sdir in $XDT_BUILD/*/tmp/stamps; do
+	rsync -Pa $sdir/ $XDT_BUILD/tmp_stamps/
+done
+
 $SRCDIR/meta/poky/scripts/sstate-cache-management.sh \
 	--cache-dir=$XDT_SSTATECACHE \
-	--stamps-dir=$XDT_BUILD/tmp/stamps \
+	--stamps-dir=$XDT_BUILD/tmp_stamps \
 	--yes \
 	--verbose
+
+rm -rf $XDT_BUILD/tmp_stamps
 
 for dir in $XDT_META $XDT_DOWNLOADCACHE $XDT_SSTATECACHE; do
 	rsync -Pav --delete $dir/ $MIRRORDIR/$(basename $dir)/
