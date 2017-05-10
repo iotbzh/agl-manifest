@@ -36,7 +36,7 @@ function runbitbake() {
 	return $rc
 }
 
-baseopts="-f $BUILD_FLAVOUR -o $XDT_DIR -l $HOME/mirror/ -e wipeconfig -e cleartemp $BUILD_OPTIONS"
+baseopts="-f $BUILD_FLAVOUR -o $XDT_DIR -l $HOME/mirror/ -e wipeconfig -e cleartemp -e rm_work $BUILD_OPTIONS"
 extraopts=""
 
 for machine in $BUILD_MACHINES; do
@@ -50,11 +50,6 @@ for machine in $BUILD_MACHINES; do
 	esac
 
 	run_prepare_meta $opts 
-
-	cat <<'EOF' >>$XDT_BUILD/conf/local.conf
-#---- added by build_all_boards script 
-INHERIT += "rm_work"
-EOF
 
 	. $XDT_BUILD/agl-init-build-env
 	runbitbake agl-demo-platform-crosssdk
