@@ -15,7 +15,6 @@ done
 CMDLOG=$XDT_BUILD/build_all.cmd
 RESLOG=$XDT_BUILD/build_all.log
 
-rm -rf $XDT_BUILD/tmp/
 rm -f $CMDLOG $RESLOG
 
 function run_prepare_meta() {
@@ -37,7 +36,7 @@ function runbitbake() {
 	return $rc
 }
 
-baseopts="-f $BUILD_FLAVOUR -o $XDT_DIR -l $HOME/mirror/ -e wipeconfig $BUILD_OPTIONS"
+baseopts="-f $BUILD_FLAVOUR -o $XDT_DIR -l $HOME/mirror/ -e wipeconfig -e cleartemp $BUILD_OPTIONS"
 extraopts=""
 
 for machine in $BUILD_MACHINES; do
