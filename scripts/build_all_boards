@@ -12,6 +12,8 @@ for x in /etc/$CONF $XDT_DIR/$CONF $HOME/$CONF; do
 	[[ -f $x ]] && { echo "Loading config file $x"; . $x; }
 done
 
+mkdir -p $XDT_BUILD
+
 CMDLOG=$XDT_BUILD/build_all.cmd
 RESLOG=$XDT_BUILD/build_all.log
 
@@ -51,7 +53,7 @@ for machine in $BUILD_MACHINES; do
 
 	run_prepare_meta $opts 
 
-	. $XDT_BUILD/agl-init-build-env
+	. $XDT_BUILD/$machine/agl-init-build-env
 	runbitbake agl-demo-platform-crosssdk
 			
 	# add option "keepcache" after first build
