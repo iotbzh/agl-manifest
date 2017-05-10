@@ -13,7 +13,8 @@ $XDT_META/poky/scripts/sstate-cache-management.sh \
 # merge all stamps dirs in a single one
 mkdir -p $XDT_BUILD/tmp_stamps
 for sdir in $XDT_BUILD/*/tmp/stamps; do
-	rsync -Pa $sdir/ $XDT_BUILD/tmp_stamps/
+	echo "Merging stamps from $sdir..."
+	rsync -a $sdir/ $XDT_BUILD/tmp_stamps/
 done
 
 $SRCDIR/meta/poky/scripts/sstate-cache-management.sh \
@@ -25,7 +26,8 @@ $SRCDIR/meta/poky/scripts/sstate-cache-management.sh \
 rm -rf $XDT_BUILD/tmp_stamps
 
 for dir in $XDT_META $XDT_DOWNLOADCACHE $XDT_SSTATECACHE; do
-	rsync -Pav --delete $dir/ $MIRRORDIR/$(basename $dir)/
+	echo "Syncing $dir to $MIRRORDIR/$(basename $dir)"
+	rsync -a --delete $dir/ $MIRRORDIR/$(basename $dir)/
 done
 
 # always remove agl-manifest from mirror to force refresh on manifest files
