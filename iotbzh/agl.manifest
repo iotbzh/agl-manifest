@@ -1,4 +1,6 @@
-origin/master=iotbzh    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+# build for BSP 2.19
+
+refs/changes/73/9373/1=iotbzh    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=iotbzh    meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
 origin/master=iotbzh    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/master=iotbzh    meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
@@ -12,7 +14,7 @@ origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-
 
 28d4404=iotbzh          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-origin/master=iotbzh    meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
+origin/morty_bsp_2.19=iotbzh    meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 
 a506df4=iotbzh          meta-rust                origin=https://github.com/meta-rust/meta-rust
 origin/morty=iotbzh     meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
