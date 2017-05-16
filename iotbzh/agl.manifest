@@ -8,7 +8,7 @@ origin/morty=iotbzh     meta-intel               origin=git://git.yoctoproject.o
 
 origin/1.2.0=iotbzh     meta-oic                 origin=git://git.yoctoproject.org/meta-oic
 origin/morty=iotbzh     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-origin/morty=iotbzh     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+5f837b4=iotbzh     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 28d4404=iotbzh          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
