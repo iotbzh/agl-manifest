@@ -1,0 +1,6 @@
+Igalia's meta-browser: https://github.com/Igalia/meta-browser
+Instructions: https://github.com/Igalia/meta-browser/wiki
+
+Depot_tools (contains gn to generate Ninja files): https://chromium.googlesource.com/chromium/tools/depot_tools.git
+
+

@@ -1,0 +1,25 @@
+origin/master=devel    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/master=devel    meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/master=devel    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/master=devel    meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+
+origin/morty=devel     meta-intel               origin=git://git.yoctoproject.org/meta-intel
+20bbb97=devel          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+
+origin/1.2.0=devel     meta-oic                 origin=git://git.yoctoproject.org/meta-oic
+origin/morty=devel     meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+5f837b4=devel     meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+
+28d4404=devel          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
+origin/master=devel    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/morty_bsp_2.19=devel    meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
+
+a506df4=devel          meta-rust                origin=https://github.com/meta-rust/meta-rust
+origin/morty=devel     meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+
+origin/morty=devel     poky                     origin=git://git.yoctoproject.org/poky
+
+origin/master=devel    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
+
+origin/ozone/wayland/20161130=devel meta-browser origin=https://github.com/Igalia/meta-browser
+
