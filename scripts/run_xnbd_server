@@ -1,0 +1,36 @@
+#!/bin/bash 
+
+. /etc/xdtrc
+
+function usage() {
+	echo "$(basename $0) <machine>" >&2
+	echo "Machine is one of the following:" >&2
+	ls -d $XDT_BUILD/*/tmp/deploy/images/*  | xargs -n 1 basename >&2
+	exit 1
+}
+
+MACHINE=$1
+[[ -z "$MACHINE" ]] && { echo "Invalid machine" >&2; usage; }
+
+IMAGE=${2:-$(ls ${XDT_BUILD}/${MACHINE}/tmp/deploy/images/${MACHINE}/agl-*.ext4 | head -1)}
+
+echo "Using MACHINE=$MACHINE IMAGE=$IMAGE"
+
+[[ ! -f $IMAGE ]] && { echo "Invalid image $IMAGE" >&2; usage; }
+
+REALIMG=$(realpath $IMAGE)
+[[ ! -f ${REALIMG}.bak ]] && cp -v ${REALIMG} ${REALIMG}.bak
+
+TFTPDIR=$(dirname $REALIMG)
+
+cat <<EOF | sudo tee /etc/default/tftpd-hpa &>/dev/null 
+# /etc/default/tftpd-hpa
+
+TFTP_USERNAME="tftp"
+TFTP_DIRECTORY="$TFTPDIR"
+TFTP_ADDRESS="0.0.0.0:69"
+TFTP_OPTIONS="--secure"
+EOF
+
+sudo systemctl restart tftpd-hpa
+sudo xnbd-server --target --lport 10809 $IMAGE

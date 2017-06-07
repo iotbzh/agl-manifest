@@ -21,5 +21,7 @@ origin/morty=devel     poky                     origin=git://git.yoctoproject.or
 
 origin/master=devel    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
 
-origin/ozone/wayland/20161130=devel meta-browser origin=https://github.com/Igalia/meta-browser
+origin/ozone/wayland/20170606=devel meta-browser origin=https://github.com/Igalia/meta-browser
+origin/master=devel    depot_tools				origin=https://chromium.googlesource.com/chromium/tools/depot_tools.git
+
 

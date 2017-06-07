@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /etc/xdtrc
+
+board=${1:-m3ulcb}
+
+DEPLOYDIR=$XDT_BUILD/$board/tmp/deploy/images/$board
+
+[[ ! -d $DEPLOYDIR ]] && { echo "No deploy dir for board $board ($DEPLOYDIR)";  exit 1; }
+
+mkdir -p $XDT_DIR/deploy/$board
+rsync -av --delete $DEPLOYDIR/ $XDT_DIR/deploy/$board/
+
