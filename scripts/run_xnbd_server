@@ -21,7 +21,7 @@ echo "Using MACHINE=$MACHINE IMAGE=$IMAGE"
 REALIMG=$(realpath $IMAGE)
 [[ ! -f ${REALIMG}.bak ]] && cp -v ${REALIMG} ${REALIMG}.bak
 
-TFTPDIR=$(dirname $REALIMG)
+TFTPDIR=$(dirname $(dirname $REALIMG))
 
 cat <<EOF | sudo tee /etc/default/tftpd-hpa &>/dev/null 
 # /etc/default/tftpd-hpa
