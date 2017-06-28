@@ -2,4 +2,4 @@
 
 # from https://github.com/Igalia/meta-browser/wiki
 CHROMIUM_GN_PATH="/xdt/meta/depot_tools"
-PACKAGECONFIG_pn-chromium+="disable-api-keys-info-bar"
+PACKAGECONFIG_pn-chromium+="use-egl wayland disable-api-keys-info-bar"
