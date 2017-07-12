@@ -69,7 +69,7 @@ Options:
    -t|--target <name>
       target platform
       default: porter
-      valid options: porter, m3ulcb, h3ulcb, intel-corei7-64, qemux86, qemux86-64, wandboard ...
+      valid options: porter, m3ulcb, h3ulcb, salvator, intel-corei7-64, qemux86, qemux86-64, wandboard ...
    -u|--upgrade
       Check for and perform an update to the script without prompting user, then exit.
    -h|--help
@@ -394,7 +394,7 @@ mkdir -p $DSTDIR/sstate-cache
 
 pushd $DSTDIR/meta >/dev/null #{
 	case "$TARGET" in
-		porter|m3ulcb|h3ulcb)
+		porter|m3ulcb|h3ulcb|salvator)
 			if [[ -d "$PROPRIETARY_RENESAS_DIR" ]]; then
 				log "Using proprietary Renesas drivers for target $TARGET"
 				# cleanup spurious temp dir if any (may contain partially extracted files which lead to errors in rcar-genX setup scripts)
