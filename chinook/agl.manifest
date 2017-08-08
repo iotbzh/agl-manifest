@@ -1,20 +1,20 @@
 # Chinook manifest
 # AGL
-chinook_3.0.2=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-chinook_3.0.2=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-chinook_3.0.2=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-chinook_3.0.2=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+chinook_3.0.4=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+chinook_3.0.4=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+chinook_3.0.4=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+chinook_3.0.4=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 # Distri
 55c8a76=iotbzh   meta-openembedded       origin=git://git.openembedded.org/meta-openembedded
-ae9b341=iotbzh   poky                    origin=git://git.yoctoproject.org/poky
+50fdd78=iotbzh   poky                    origin=git://git.yoctoproject.org/poky
 
 # Graphic
 3601fd2=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-chinook_3.0.2=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-419bc8d=iotbzh	meta-rcar		 origin=https://github.com/CogentEmbedded/meta-rcar
+chinook_3.0.4=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+2f49a0e=iotbzh	meta-rcar		 origin=https://github.com/CogentEmbedded/meta-rcar
 1f8dd1b=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
 a5f9b07=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
@@ -23,5 +23,5 @@ a5f9b07=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta
 d066363=iotbzh		meta-rust		 origin=https://github.com/meta-rust/meta-rust
 
 # Security
-834272c=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+0fa0aff=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
