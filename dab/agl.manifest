@@ -1,9 +1,9 @@
 # DAB manifest
 # AGL
-refs/tags/dab/3.99.2=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-refs/tags/dab/3.99.2=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-refs/tags/dab/3.99.2=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-refs/tags/dab/3.99.2=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+refs/tags/dab/4.0.0=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+refs/tags/dab/4.0.0=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+refs/tags/dab/4.0.0=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+refs/tags/dab/4.0.0=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 # Distri
 fe5c833=iotbzh   meta-openembedded       origin=git://git.openembedded.org/meta-openembedded
@@ -13,7 +13,7 @@ fd7f2d6=iotbzh   poky                    origin=git://git.yoctoproject.org/poky
 5f837b4=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-refs/tags/dab/3.99.2=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+refs/tags/dab/4.0.0=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 4fa88fc=iotbzh	meta-renesas-rcar-gen3		 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 6add415=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
 28d4404=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
