@@ -19,6 +19,16 @@ RESLOG=$XDT_BUILD/build_all.log
 
 rm -f $CMDLOG $RESLOG
 
+function log_result() {
+	local machine=$1
+	local flavour=$2
+	local dtstr=$3
+	local rc=$4
+	local comment=$5
+
+	echo $machine $flavour $dtstr $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") $comment  >>$RESLOG
+}
+
 function run_prepare_meta() {
 	echo "--------------------" >>$CMDLOG
 	echo prepare_meta "$@" >>$CMDLOG
@@ -34,7 +44,7 @@ function runbitbake() {
 	local dt=$(( $ts1 - $ts0 ))
 	local dtstr=$(date +%H:%M:%S -u --date="@$dt")
 	eval $(bitbake -e | grep ^MACHINE_ARCH)
-	echo ${MACHINE_ARCH:-unknown} $BUILD_FLAVOUR $dtstr $([[ $rc == 0 ]] && echo "OK" || echo "FAIL($rc)") >>$RESLOG
+	log_result $machine $BUILD_FLAVOUR $dtstr $rc 
 	return $rc
 }
 
@@ -51,7 +61,10 @@ for machine in $BUILD_MACHINES; do
 			;;
 	esac
 
-	run_prepare_meta $opts 
+	run_prepare_meta $opts || { 
+		log_result $machine $BUILD_FLAVOUR "-" 1 "[prepare_meta failure]";
+		continue;
+	}
 
 	. $XDT_BUILD/$machine/agl-init-build-env
 	runbitbake agl-demo-platform-crosssdk
