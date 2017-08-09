@@ -20,8 +20,6 @@ dab_4.0.0=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux
 
 028a5c2=iotbzh		meta-oic		 origin=git://git.yoctoproject.org/meta-oic
 
-a506df4=iotbzh		meta-rust		 origin=https://github.com/meta-rust/meta-rust
-
 # Security
 0fa0aff=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git

@@ -21,8 +21,6 @@ origin/morty=chromium	meta-intel				origin=git://git.yoctoproject.org/meta-intel
 
 origin/1.2.0=chromium	meta-oic				origin=git://git.yoctoproject.org/meta-oic
 
-a506df4=chromium		meta-rust				origin=https://github.com/meta-rust/meta-rust
-
 # Security
 origin/morty=chromium	meta-security-isafw		origin=https://github.com/01org/meta-security-isafw
 20bbb97=chromium		meta-intel-iot-security	origin=https://github.com/01org/meta-intel-iot-security.git

@@ -14,7 +14,6 @@ origin/morty=iotbzh     meta-openembedded        origin=git://git.openembedded.o
 origin/master=iotbzh    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/morty_bsp_2.19=iotbzh    meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 
-a506df4=iotbzh          meta-rust                origin=https://github.com/meta-rust/meta-rust
 origin/morty=iotbzh     meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
 origin/morty=iotbzh     poky                     origin=git://git.yoctoproject.org/poky
