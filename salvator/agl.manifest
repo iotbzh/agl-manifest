@@ -24,7 +24,5 @@ origin/1.2.0=iotbzh		meta-oic		 origin=git://git.yoctoproject.org/meta-oic
 0fa0aff=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 
----------------------------------------
-
 origin/sandbox/sdesneux/salvator=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
 
