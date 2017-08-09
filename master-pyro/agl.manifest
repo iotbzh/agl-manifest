@@ -13,7 +13,7 @@ origin/pyro=iotbzh						meta-qt5			origin=https://github.com/meta-qt5/meta-qt5.g
 origin/pyro=iotbzh						meta-raspberrypi	origin=git://git.yoctoproject.org/meta-raspberrypi
 origin/pyro_bsp_2.19=iotbzh				meta-renesas-rcar-gen3	origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 
-origin/pyro=iotbzh						meta-security-isafw	origin=https://github.com/01org/meta-security-isafw
+origin/morty=iotbzh						meta-security-isafw	origin=https://github.com/01org/meta-security-isafw
 
 origin/pyro=iotbzh						poky				origin=git://git.yoctoproject.org/poky
 
