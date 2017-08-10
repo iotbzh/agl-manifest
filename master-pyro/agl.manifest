@@ -11,7 +11,7 @@ origin/pyro=iotbzh						meta-openembedded	origin=git://git.openembedded.org/meta
 origin/pyro=iotbzh						meta-qt5			origin=https://github.com/meta-qt5/meta-qt5.git
 
 origin/pyro=iotbzh						meta-raspberrypi	origin=git://git.yoctoproject.org/meta-raspberrypi
-origin/pyro_bsp_2.19=iotbzh				meta-renesas-rcar-gen3	origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
+origin/sdx/pyro_bsp_2.19=iotbzh			meta-renesas-rcar-gen3	origin=http://git.ovh.iot/sdx/meta-renesas-rcar-gen3.git
 
 origin/morty=iotbzh						meta-security-isafw	origin=https://github.com/01org/meta-security-isafw
 
