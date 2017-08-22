@@ -31,7 +31,7 @@ origin/morty=chromium	meta-security-isafw		origin=https://github.com/01org/meta-
 origin/master=chromium	meta-iot-agl			origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
 
 # Chromium
-origin/ozone/wayland/20170606=chromium meta-browser origin=https://github.com/Igalia/meta-browser
+origin/ozone/wayland/20170808=chromium meta-browser origin=https://github.com/Igalia/meta-browser
 origin/master=chromium	depot_tools				origin=https://chromium.googlesource.com/chromium/tools/depot_tools.git
 
 
