@@ -1,4 +1,4 @@
-7495bc2=iotbzh    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/master=iotbzh    meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=iotbzh    meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
 origin/master=iotbzh    meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/master=iotbzh    meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
