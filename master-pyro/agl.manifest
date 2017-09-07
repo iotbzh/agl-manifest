@@ -1,6 +1,6 @@
 # https://gerrit.automotivelinux.org/gerrit/#/c/10457/
-origin/sandbox/sdesneux/pyro_m3=iotbzh	meta-agl			origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/sandbox/sdesneux/pyro_m3=iotbzh	meta-agl-demo		origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/sandbox/ronan/pyro_m3=iotbzh	meta-agl			origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/sandbox/ronan/pyro_m3=iotbzh	meta-agl-demo		origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 origin/master=iotbzh					meta-agl-extra		origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
 origin/master=iotbzh					meta-agl-devel		origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
@@ -13,7 +13,7 @@ origin/pyro=iotbzh						meta-openembedded	origin=git://git.openembedded.org/meta
 origin/pyro=iotbzh						meta-qt5			origin=https://github.com/meta-qt5/meta-qt5.git
 
 origin/pyro=iotbzh						meta-raspberrypi	origin=git://git.yoctoproject.org/meta-raspberrypi
-origin/sandbox/sdesneux/pyro_m3=iotbzh	meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
+origin/sandbox/ronan/pyro_m3=iotbzh	meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 
 origin/morty=iotbzh						meta-security-isafw	origin=https://github.com/01org/meta-security-isafw
 
