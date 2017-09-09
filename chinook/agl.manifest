@@ -1,27 +1,21 @@
-# Chinook manifest
 # AGL
-chinook_3.0.4=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-chinook_3.0.4=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-chinook_3.0.4=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-chinook_3.0.4=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-
+origin/chinook=chinook  meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/chinook=chinook  meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/chinook=chinook  meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/chinook=chinook  meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 # Distri
-55c8a76=iotbzh   meta-openembedded       origin=git://git.openembedded.org/meta-openembedded
-50fdd78=iotbzh   poky                    origin=git://git.yoctoproject.org/poky
-
+origin/krogoth=chinook  meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+origin/krogoth=chinook  poky                     origin=git://git.yoctoproject.org/poky
 # Graphic
-3601fd2=iotbzh          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
-
+origin/morty=chinook    meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 # BSP
-chinook_3.0.4=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-2f49a0e=iotbzh	meta-rcar		 origin=https://github.com/CogentEmbedded/meta-rcar
-1f8dd1b=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
-a5f9b07=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
-
-0bdd959=iotbzh		meta-oic		 origin=git://git.yoctoproject.org/meta-oic
-
-d066363=iotbzh		meta-rust		 origin=https://github.com/meta-rust/meta-rust
-
+origin/chinook=chinook  meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/v2.12.0=chinook  meta-rcar                origin=https://github.com/CogentEmbedded/meta-rcar
+origin/krogoth=chinook  meta-intel               origin=git://git.yoctoproject.org/meta-intel
+origin/krogoth=chinook  meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 # Security
-0fa0aff=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
-20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+834272c=chinook         meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+20bbb97=chinook         meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+# Extra
+0bdd959=chinook         meta-oic                 origin=git://git.yoctoproject.org/meta-oic
+d066363=chinook         meta-rust                origin=https://github.com/meta-rust/meta-rust

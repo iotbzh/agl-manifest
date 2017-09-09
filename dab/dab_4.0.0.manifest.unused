@@ -1,4 +1,3 @@
-# DAB manifest
 # AGL
 dab_4.0.0=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 dab_4.0.0=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra

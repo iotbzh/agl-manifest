@@ -1,4 +1,3 @@
-# DAB manifest
 # AGL
 origin/dab=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/dab=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
@@ -18,8 +17,9 @@ origin/morty_bsp_2.19=iotbzh	meta-renesas-rcar-gen3		 origin=https://gerrit.auto
 origin/morty=iotbzh	meta-intel               origin=git://git.yoctoproject.org/meta-intel
 28d4404=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
+# Extra
 origin/1.2.0=iotbzh		meta-oic		 origin=git://git.yoctoproject.org/meta-oic
 
 # Security
-0fa0aff=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+origin/morty=iotbzh		meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git

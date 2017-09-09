@@ -1,5 +1,3 @@
-# ----- DAB -----
-
 # AGL
 origin/dab=chromium		meta-agl				origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/dab=chromium		meta-agl-extra			origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
@@ -19,6 +17,7 @@ origin/morty_bsp_2.19=chromium	meta-renesas-rcar-gen3	origin=https://gerrit.auto
 origin/morty=chromium	meta-intel				origin=git://git.yoctoproject.org/meta-intel
 28d4404=chromium		meta-raspberrypi		origin=git://git.yoctoproject.org/meta-raspberrypi
 
+# Extra
 origin/1.2.0=chromium	meta-oic				origin=git://git.yoctoproject.org/meta-oic
 
 # Security
