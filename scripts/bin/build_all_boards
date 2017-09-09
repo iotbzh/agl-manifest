@@ -2,7 +2,8 @@
 
 BUILD_FLAVOUR=iotbzh
 BUILD_MACHINES="porter m3ulcb qemux86-64 raspberrypi3 intel-corei7-64"
-BUILD_OPTIONS=""
+BUILD_TARGET=agl-demo-platform-crosssdk
+BUILD_OPTIONS=
 
 . /etc/xdtrc
 
@@ -67,7 +68,9 @@ for machine in $BUILD_MACHINES; do
 	}
 
 	. $XDT_BUILD/$machine/agl-init-build-env
-	runbitbake agl-demo-platform-crosssdk
+	for target in $BUILD_TARGET; do
+		runbitbake $BUILD_TARGET
+	done
 			
 	# add option "keepcache" after first build
 	extraopts="-e keepcache"

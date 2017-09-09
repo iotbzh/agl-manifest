@@ -1,12 +1,22 @@
 #!/bin/bash
 
+. /etc/xdtrc
+
 cd $(dirname $0)
 
-mkdir -p ~/bin
+# copy scripts/binaries
+DEST=~/bin
+mkdir -p $DEST
+install --mode=755 -t $DEST bin/*
 
-for x in *; do 
-	[[ "$x" == "$(basename $0)" ]] && continue
-	cp -v $x ~/bin/
-	chmod +x ~/bin/$x
-done
+# copy conf without overwriting
+DEST=$XDT_DIR
+mkdir -p $DEST
+
+pushd etc
+	for x in *; do
+		[[ ! -f $DEST/$x ]] && cp -v $x $DEST/$x
+	done
+popd
+
 
