@@ -3,5 +3,6 @@
 BBLAYERS += " \
     @METADIR@/meta-iot-agl/meta-app-framework \
     @METADIR@/meta-iot-agl/meta-agl-devkit \
+    @METADIR@/meta-iot-agl/meta-agl-demo \
     "
 

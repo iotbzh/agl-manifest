@@ -25,5 +25,5 @@ dab_4.0.1=iotbzh   meta-renesas-rcar-gen3         origin=https://gerrit.automoti
 20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 
 # IoT.bzh extensions
-origin/master=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
+origin/sandbox/sdesneux/dab-iotbzh=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
 
