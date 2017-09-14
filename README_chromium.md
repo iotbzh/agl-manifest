@@ -16,17 +16,17 @@ Source the generated Yocto environment file and launch the chromium build:
 bitbake chromium
 ```
 
-# Installation
+# Runtime setup
 
-Go to your build directory and copy Chromium rpm on target board using network:
+Boot the board and execute following commands for the target console:
 
 ```bash
-cd $AGL_TOP/build/tmp/deploy/rpm/$MACHINE
-sudo scp chromium-20170606*rpm root@YOUR.TARGET.BOARD.IP:/tmp
+root@m3ulcb:~# sed -i "s/ivi-shell/desktop-shell/g" /etc/xdg/weston/weston.ini
+root@m3ulcb:~# systemctl restart weston
 ```
 
-From a root session on the target board install the package with:
+# Start chrome
 
 ```bash
-rpm -ivh /tmp/chromium-20170606*.rpm
+ /usr/bin/google-chrome --mus --no-sandbox --start-maximized http://docs.iot.bzh
 ```
