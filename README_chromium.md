@@ -22,6 +22,9 @@ Boot the board and execute following commands for the target console:
 
 ```bash
 root@m3ulcb:~# sed -i "s/ivi-shell/desktop-shell/g" /etc/xdg/weston/weston.ini
+
+root@m3ulcb:~# for svr in HomeScreenAppFrameworkBinderAGL.service HomeScreen WindowManager.service; do systemctl --user stop $svr; systemctl --user disable $svr; done
+
 root@m3ulcb:~# systemctl restart weston
 ```
 
