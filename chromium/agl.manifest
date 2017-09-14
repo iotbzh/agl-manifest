@@ -1,33 +1,31 @@
 # AGL
-origin/dab=chromium		meta-agl				origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/dab=chromium		meta-agl-extra			origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/dab=chromium		meta-agl-devel			origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-origin/dab=chromium		meta-agl-demo			origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+dab_4.0.1=iotbzh   meta-agl                origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+dab_4.0.1=iotbzh   meta-agl-extra          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+dab_4.0.1=iotbzh   meta-agl-devel          origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+dab_4.0.1=iotbzh   meta-agl-demo           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 # Distri
-origin/morty=chromium	meta-openembedded		origin=git://git.openembedded.org/meta-openembedded
-origin/morty=chromium	poky					origin=git://git.yoctoproject.org/poky
+fe5c833=iotbzh     meta-openembedded       origin=git://git.openembedded.org/meta-openembedded
+fd7f2d6=iotbzh     poky                    origin=git://git.yoctoproject.org/poky
 
 # Graphic
-5f837b4=chromium		meta-qt5				origin=https://github.com/meta-qt5/meta-qt5.git
+5f837b4=iotbzh     meta-qt5                origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/dab=chromium		meta-renesas			origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-origin/morty_bsp_2.19=chromium	meta-renesas-rcar-gen3	origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-origin/morty=chromium	meta-intel				origin=git://git.yoctoproject.org/meta-intel
-28d4404=chromium		meta-raspberrypi		origin=git://git.yoctoproject.org/meta-raspberrypi
+dab_4.0.1=iotbzh   meta-renesas            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+dab_4.0.1=iotbzh   meta-renesas-rcar-gen3         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+6add415=iotbzh       meta-intel               origin=git://git.yoctoproject.org/meta-intel
+28d4404=iotbzh   meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Extra
-origin/1.2.0=chromium	meta-oic				origin=git://git.yoctoproject.org/meta-oic
+028a5c2=iotbzh        meta-oic         origin=git://git.yoctoproject.org/meta-oic
 
 # Security
-origin/morty=chromium	meta-security-isafw		origin=https://github.com/01org/meta-security-isafw
-20bbb97=chromium		meta-intel-iot-security	origin=https://github.com/01org/meta-intel-iot-security.git
+0fa0aff=iotbzh        meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+20bbb97=iotbzh          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 
-# -----------------
-
-# Iot.bzh specifics
-origin/master=chromium	meta-iot-agl			origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
+# IoT.bzh extensions
+origin/sandbox/sdesneux/dab-iotbzh=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
 
 # Chromium
 origin/ozone/wayland/20170827=chromium meta-browser origin=https://github.com/Igalia/meta-browser
