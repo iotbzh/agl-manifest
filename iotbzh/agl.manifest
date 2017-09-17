@@ -13,7 +13,7 @@ origin/pyro=iotbzh          meta-qt5                 origin=https://github.com/m
 
 # BSP
 origin/master=iotbzh        meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-origin/pyro_bsp_2.19=iotbzh meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
+origin/pyro_bsp_2.23=iotbzh meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 origin/pyro=iotbzh          meta-intel               origin=git://git.yoctoproject.org/meta-intel
 origin/pyro=iotbzh          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
@@ -22,7 +22,7 @@ origin/pyro=iotbzh          meta-raspberrypi         origin=git://git.yoctoproje
 origin/morty=iotbzh         meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
 # Extra
-origin/1.2.0=iotbzh         meta-oic                 origin=git://git.yoctoproject.org/meta-oic
+origin/1.2.1=iotbzh         meta-oic                 origin=git://git.yoctoproject.org/meta-oic
 
 # IoT.bzh
 origin/master=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl

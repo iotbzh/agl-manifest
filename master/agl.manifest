@@ -13,7 +13,7 @@ origin/pyro=master          meta-qt5                 origin=https://github.com/m
 
 # BSP
 origin/master=master        meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-origin/pyro_bsp_2.19=master meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
+origin/pyro_bsp_2.23=master meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3 
 origin/pyro=master          meta-intel               origin=git://git.yoctoproject.org/meta-intel
 origin/pyro=master          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
@@ -22,5 +22,5 @@ origin/pyro=master          meta-raspberrypi         origin=git://git.yoctoproje
 origin/morty=master         meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
 # Extra
-origin/1.2.0=master         meta-oic                 origin=git://git.yoctoproject.org/meta-oic
+origin/1.2.1=master         meta-oic                 origin=git://git.yoctoproject.org/meta-oic
 
