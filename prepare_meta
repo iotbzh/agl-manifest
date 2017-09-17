@@ -16,7 +16,7 @@
 
 # global variable containing the git repository where all manifests are stored
 
-VERSION=1.0.2
+VERSION=1.0.3
 
 MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git
 
@@ -298,12 +298,14 @@ pushd $DSTDIR/meta >/dev/null #{
 
 	clone_or_pull $MANIFEST_URL $rev
 
-	SRCDIR=$DSTDIR/meta/$(basename $MANIFEST_URL .git)/$flavour
-	[[ ! -d $SRCDIR ]] && { error "Unable to find flavour '$flavour'"; exit 1; }
-	info "=== SRCDIR: $SRCDIR"
+	MANIFEST_DIR=$DSTDIR/meta/$(basename $MANIFEST_URL .git)
+
+	FLAVOUR_DIR=$MANIFEST_DIR/$flavour
+	[[ ! -d $FLAVOUR_DIR ]] && { error "Unable to find flavour '$flavour'"; exit 1; }
+	info "=== FLAVOUR_DIR: $FLAVOUR_DIR"
 
 	# use latest manifest file
-	for x in $SRCDIR/*.manifest; do
+	for x in $FLAVOUR_DIR/*.manifest; do
 		[[ -n "$MANIFEST_FILE" ]] && error "Multiple manifest files found. Skipping $MANIFEST_FILE."
 		MANIFEST_FILE=$x
 	done
@@ -316,16 +318,18 @@ popd >/dev/null #}
 
 function checkout_gits() {
 	local DESTDIR=$(cd ${1:-.} && pwd -P)
+	local srcfile=$2
+	local srcname=$(basename $(dirname $srcfile))/$(basename $srcfile)
 	LANG=
 
-	sed 's/#.*$//g' | # suppress comments
-		awk '/[^[:space:]]+/ { print "DIR  "$2; for(i=3;i<=NF;i++) { print "REPO "$i}; print "HASH "$1 }' |
+	sed 's/#.*$//g' < $srcfile | # suppress comments
+		awk '/[^[:space:]]+/ { if ($1 == "@include") { for(i=2;i<=NF;i++) { print "INCLUDE " $i}; } else {print "DIR  "$2; for(i=3;i<=NF;i++) { print "REPO "$i}; print "HASH "$1 } }' |
 		while read tag value; do
 			case $tag in
 				DIR)
 					[[ -d "$DESTDIR/$value" ]] || mkdir "$DESTDIR/$value"
 					[[ -d "$DESTDIR/$value/.git" ]] || git init "$DESTDIR/$value"
-					info "=== fetch/checkout $value"
+					info "=== $srcname: fetch/checkout $value"
 					cd "$DESTDIR/$value"
 					;;
 				REPO)
@@ -348,13 +352,20 @@ function checkout_gits() {
 					git checkout -f "$sha" -B "$branch"
 					git clean -fd
 					;;
+				INCLUDE)
+					[[ -f "$MANIFEST_DIR/$value" ]] && { info "=== $srcname: include manifest $value"; } || {
+						error "Unable to find manifest to include: $value"
+						return 1
+					}
+					checkout_gits $DESTDIR $MANIFEST_DIR/$value
+					;;
 			esac
 		done
 }
 
 pushd $DSTDIR/meta >/dev/null #{
 
-	checkout_gits . <$MANIFEST_FILE
+	checkout_gits . $MANIFEST_FILE
 
 popd >/dev/null #}
 
@@ -362,7 +373,7 @@ popd >/dev/null #}
 
 info "=== apply patches"
 pushd $DSTDIR/meta >/dev/null #{
-	for file in $SRCDIR/patches/*/*.patch; do
+	for file in $FLAVOUR_DIR/patches/*/*.patch; do
 		# file may be the pattern itself if no matches
 		if [[ -f $file ]]; then
 			meta=$(basename $(dirname $file))
@@ -544,9 +555,9 @@ EOF
 		[[ "$option_proprietary" == 1 ]] && PROPFILES="${tgtfile}_proprietary.conf.inc ${TARGET}_${tgtfile}_proprietary.conf.inc"
 
 		for file in ${tgtfile}.conf.inc ${TARGET}_${tgtfile}.conf.inc $PROPFILES; do
-			if [[ -f $SRCDIR/$file ]]; then
+			if [[ -f $FLAVOUR_DIR/$file ]]; then
 				info "=== conf: $file -> ${tgtfile}.conf"
-				sed "s|@METADIR@|$DSTDIR/meta|g" <$SRCDIR/$file >conf/$file
+				sed "s|@METADIR@|$DSTDIR/meta|g" <$FLAVOUR_DIR/$file >conf/$file
 			else
 				info "=== conf: $file is empty"
 				echo -n "" >conf/$file
