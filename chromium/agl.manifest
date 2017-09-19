@@ -5,6 +5,5 @@ origin/sandbox/sdesneux/dab-iotbzh=dab-iotbzh    meta-iot-agl      origin=https:
 
 # Chromium
 origin/ozone/wayland/20170827=chromium_20170827  meta-browser      origin=https://github.com/Igalia/meta-browser
-origin/master=master                             depot_tools       origin=https://chromium.googlesource.com/chromium/tools/depot_tools.git
 
 
