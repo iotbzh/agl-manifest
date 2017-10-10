@@ -1,19 +1,19 @@
 # AGL
-dab_4.0.1=dab  meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-dab_4.0.1=dab  meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-dab_4.0.1=dab  meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-dab_4.0.1=dab  meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+dab_4.0.2=dab  meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+dab_4.0.2=dab  meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+dab_4.0.2=dab  meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+dab_4.0.2=dab  meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 
 # Distri
 fe5c833=dab    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-fd7f2d6=dab    poky                     origin=git://git.yoctoproject.org/poky
+6040297=dab    poky                     origin=git://git.yoctoproject.org/poky
 
 # Graphic
 5f837b4=dab    meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-dab_4.0.1=dab  meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-dab_4.0.1=dab  meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+dab_4.0.2=dab  meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+dab_4.0.2=dab  meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 6add415=dab    meta-intel               origin=git://git.yoctoproject.org/meta-intel
 28d4404=dab    meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
