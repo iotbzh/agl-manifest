@@ -265,6 +265,7 @@ function clone_or_pull() {
 		pushd $dir >/dev/null
 			for x in $(git remote); do
 				git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/*
+				git fetch -t $x
 			done
 			[[ -z "$rev" ]] && rev=$(git rev-parse origin/HEAD)
 			git reset --hard
@@ -348,6 +349,7 @@ function checkout_gits() {
 					branch="${value#*=}"
 					for x in $(git remote); do
 						git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/* +refs/tags/*:refs/remote/tags/*
+						git fetch -t $x
 					done
 					git checkout -f "$sha" -B "$branch"
 					git clean -fd
