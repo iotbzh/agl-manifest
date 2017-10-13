@@ -13,6 +13,8 @@ for x in /etc/$CONF $XDT_DIR/$CONF $HOME/$CONF; do
 	[[ -f $x ]] && { echo "Loading config file $x"; . $x; }
 done
 
+[[ $# -gt 0 ]] && { echo "Overriding machines from command line: BUILD_MACHINE=$@"; BUILD_MACHINES="$@"; }
+
 mkdir -p $XDT_BUILD
 
 CMDLOG=$XDT_BUILD/build_all.cmd
