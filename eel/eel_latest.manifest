@@ -1,0 +1,26 @@
+# AGL
+eel_4.99.1=eel  meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+eel_4.99.1=eel  meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+eel_4.99.1=eel  meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+eel_4.99.1=eel  meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+
+# Distri
+5e82995=eel    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+b1f14ec=eel    poky                     origin=git://git.yoctoproject.org/poky
+
+# Graphic
+c6aa602=eel    meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+
+# BSP
+eel_4.99.1=eel meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+eel_4.99.1=eel meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+63de2ab=eel    meta-intel               origin=git://git.yoctoproject.org/meta-intel
+ed3b254=eel    meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
+
+# Extra
+70d5bec=eel    meta-oic                 origin=git://git.yoctoproject.org/meta-oic
+
+# Security
+0fa0aff=eel    meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+20bbb97=eel    meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+
