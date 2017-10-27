@@ -2,7 +2,7 @@
 origin/master=master        meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=master        meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
 origin/sandbox/knimitz/hmi-framework=iotbzh        meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/sandbox/knimitz/hmi-framework=iotbzh        meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/sandbox/claneys/hmi-framework=iotbzh        meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
 b2ce523=master          meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
