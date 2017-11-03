@@ -56,7 +56,7 @@ extraopts=""
 
 for machine in $BUILD_MACHINES; do
 	case $machine in
-		porter|m3ulcb|h3ulcb|salvator)
+		porter|m3ulcb|h3ulcb|salvator|kingfisher)
 			opts="$baseopts -t $machine -p $HOME/mirror/proprietary-renesas-r-car/ $extraopts"
 			;;
 		*)
