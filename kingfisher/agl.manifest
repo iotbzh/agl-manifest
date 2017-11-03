@@ -1,0 +1,5 @@
+@include master/agl.manifest
+
+origin/sandbox/ronan/draft_Kingfisher=kingfisher        meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/sandbox/ronan/draft_Kingfisher=kingfisher        meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+
