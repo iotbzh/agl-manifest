@@ -19,8 +19,8 @@ TLDR; quick instructions for impatients:
 * Grab the raw image (\*.raw.xz) and the associated bmap file (\*.raw.bmap)
 * Run:
 
-    ```
-    $ sudo bmaptool copy *.raw.xz $DEVICE
+    ```bash
+    sudo bmaptool copy *.raw.xz $DEVICE
     ```
 
 * Eject SDCard, insert in M3 board and turn it on.
@@ -33,7 +33,7 @@ Bmap-tools is a generic tool for creating the block map (bmap) for a sparse file
 Bmap-tools sources are available on [github/01org/bmap-tools].
 [Full documentation](https://source.tizen.org/documentation/reference/bmaptool) is also available (a bit old, but still relevant).
 
-*Note: Even if Bmap-tools is not strictly required for operation, it's highly recommended. You can still skip this section if you do not wish to install bmap-tools or don't find any package for it*
+> **Note**: Even if Bmap-tools is not strictly required for operation, it's highly recommended. You can still skip this section if you do not wish to install bmap-tools or don't find any package for it*
 
 ### RPM-based distribution
 
@@ -41,16 +41,16 @@ Bmap-tools is available as a noarch package here: [bmap-tools-3.3-1.17.1.noarch.
 
 For example, on Opensuse 42.X:
 
-```
-$ zypper in http://iot.bzh/download/public/tools/bmap-tools/bmap-tools-3.3-1.17.1.noarch.rpm
+```bash
+sudo zypper in http://iot.bzh/download/public/tools/bmap-tools/bmap-tools-3.3-1.17.1.noarch.rpm
 ```
 
 ### Debian-based distribution
 
 bmap-tool is available in Debian distribution (not tested).
 
-```
-$ apt-get install bmap-tools
+```bash
+sudo apt-get install bmap-tools
 ```
 
 ## Download AGL image and bmap file
@@ -65,10 +65,9 @@ Download the image and the associated bmap file:
 1. Insert a SDcard (minimum 2GB)
 
 2. Find the removable device for your card:
-
     The following commands which lists all removable disks can help to find the information:
 
-    ```
+    ```bash
     $ lsblk -dli -o NAME,TYPE,HOTPLUG | grep "disk.*1$"
     sdk  disk       1
     ```
@@ -77,7 +76,7 @@ Download the image and the associated bmap file:
 
     Alternatively, a look at the kernel log will help:
 
-    ```
+    ```bash
     $ dmesg | tail -50
     ...
     [710812.225836] sd 18:0:0:0: Attached scsi generic sg12 type 0
@@ -93,21 +92,21 @@ Download the image and the associated bmap file:
 
     For the rest of these instructions, we assume that the variable $DEVICE contains the name of the device to write to (/dev/sd* or /dev/mmcblk*). Export the variable:
 
-    ```
-    $ export DEVICE=/dev/[replace-by-your-device-name]
+    ```bash
+    export DEVICE=/dev/[replace-by-your-device-name]
     ```
 
 3. If the card is mounted automatically, unmount it through desktop helper or directly wih the command line:
 
-    ```
-    $ sudo umount ${DEVICE}*
+    ```bash
+    sudo umount ${DEVICE}*
     ```
 
 4. Write onto SDcard
 
     Using bmap-tools:
 
-    ```
+    ```bash
     $ sudo bmaptool copy *.raw.xz $DEVICE
     bmaptool: info: discovered bmap file 'XXXXXXXXX.raw.bmap'
     bmaptool: info: block map format version 2.0
@@ -120,17 +119,17 @@ Download the image and the associated bmap file:
 
     Using standard dd command (more dangerous):
 
-    ```
-    $ xz -cd *.raw.xz | sudo dd of=$DEVICE bs=4M; sync
+    ```bash
+    xz -cd *.raw.xz | sudo dd of=$DEVICE bs=4M; sync
     ```
 
 ## Configure M3 board for boot on SDcard if needed
 
-1. Connect serial console on M3 board and start a terminal emulator on the USB serial port. 
-    Here, we use 'screen' on device /dev/ttyUSB0 but you could use any terminal emulator able to open the serial port at 115200 bauds (minicom , ...) 
+1. Connect serial console on M3 board and start a terminal emulator on the USB serial port.
+    Here, we use 'screen' on device /dev/ttyUSB0 but you could use any terminal emulator able to open the serial port at 115200 bauds (minicom , ...)
 
-    ```
-    $ screen /dev/ttyUSB0 115200
+    ```bash
+    screen /dev/ttyUSB0 115200
     ```
 
 2. Power up the board
@@ -141,7 +140,7 @@ Download the image and the associated bmap file:
 
     **WARNING: don't make a big copy/paste or some garbage characters may be sent to the  console. Instead, copy one or two lines at a time.**
 
-    ```
+    ```uboot
     setenv board m3ulcb
 
     setenv set_bootkfile 'setenv bootkfile Image'
@@ -165,7 +164,7 @@ Download the image and the associated bmap file:
     setenv bootkload_sd 'ext4load mmc ${bootmmc} ${bootkaddr} boot/${bootkfile}'
 
     setenv bootdload_sd 'ext4load mmc ${bootmmc} ${bootdaddr} boot/${bootdfile}'
-    
+
     setenv bootload_sd 'run set_bootkfile; run bootkload_sd; run set_bootdfile; run bootdload_sd'
 
     setenv bootcmd 'setenv bootargs ${bootargs_console} ${bootargs_video} ${bootargs_root} ${bootargs_extra}; run bootload_sd; booti ${bootkaddr} - ${bootdaddr}'
@@ -173,7 +172,7 @@ Download the image and the associated bmap file:
 
     Then save environment
 
-    ```
+    ```uboot
     saveenv
     ```
 
@@ -187,6 +186,4 @@ At uboot prompt, type:
 
     Alternatively, simply start the board.
 
-**NOTE: Due to initial operations, first boot can be long (3 to 4 minutes waiting for a timeout on a systemd service). Homescreen may also have problems to start. These issues are known. On next boots, the system should run as expected.**
-
-
+> **NOTE: Due to initial operations, first boot can be long (3 to 4 minutes waiting for a timeout on a systemd service).

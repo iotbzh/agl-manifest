@@ -21,6 +21,3 @@ publish: $(DOCS)
 
 $(DOCS): %.html: %.md
 	md2html $< $@
-
-
-

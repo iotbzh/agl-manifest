@@ -8,64 +8,76 @@ title: Install or upgrade Chromium on AGL/M3 through RPMs
 Log into the board through ssh or console, then install RPMs with smart:
 
 ```bash
-# smart install \
-	http://iot.bzh/download/public/2017/Chromium/latest/aarch64/nss-3.26-r0.aarch64.rpm \
-	http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170916.r500876.gitb34a859-dev0.aarch64.rpm
+dnf install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170928.r499098.git8eb8619a-dev0.aarch64.rpm
 ```
 
 Typical output:
-```log
-Fetching packages...                                                                                                                                   
--> http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170916.r500876.gitb34a859-dev0.aarch64.rpm                                   
--> http://iot.bzh/download/public/2017/Chromium/latest/aarch64/nss-3.26-r0.aarch64.rpm                                                                 
-nss-3.26-r0.aarch64.rpm           ###################################### [ 50%]
-chromium-20170916.r500876.gitb34a859-dev0.aarch64.rpm  ################# [100%]
 
-Loading cache...
-Updating cache...                 ###################################### [100%]
+```bash
+Dependencies resolved.
+===================================================================================================
+ Package         Arch           Version                                  Repository           Size
+===================================================================================================
+Installing:
+ chromium        aarch64        20170928.r499098.git8eb8619a-dev0        @commandline         60 M
 
-Computing transaction...
+Transaction Summary
+===================================================================================================
+Install  1 Package
 
-Installing packages (2):
-  chromium-20170916.r500876.gitb34a859-dev0@aarch64         nss-3.26-r0@aarch64                                                        
+Total size: 60 M
+Installed size: 235 M
+Is this ok [y/N]: y
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Installing  : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
+  Verifying   : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
 
-94.3MB of package files are needed. 251.8MB will be used.
+Installed:
+  chromium.aarch64 20170928.r499098.git8eb8619a-dev0
 
-Confirm changes? (Y/n): 
-
-                                                                                                                                                       
-Committing transaction...
-Preparing...                      ###################################### [  0%]
-   1:Installing nss               ###################################### [ 50%]
-   2:Installing chromium          ###################################### [100%]
+Complete!
 ```
 
 ## Removal
 
-Run: 
+Run:
 
 ```bash
-# smart remove nss-3.26
+dnf remove chromium
 ```
 
 Typical output:
-```
-Loading cache...
-Updating cache...                 ###################################### [100%]
 
-Computing transaction...
+```bash
+Dependencies resolved.
+===================================================================================================
+ Package             Arch           Version                                  Repository       Size
+===================================================================================================
+Removing:
+ chromium            aarch64        20170928.r499098.git8eb8619a-dev0        @oe-repo        235 M
 
-Removing packages (2):
-  chromium-20170916.r500876.gitb34a859-dev0@aarch64         nss-3.26-r0@aarch64                                                        
+Transaction Summary
+===================================================================================================
+Remove  2 Packages
 
-251.8MB will be freed.
+Installed size: 235 M
+Is this ok [y/N]: y
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Erasing     : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
+  Verifying   : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
 
-Confirm changes? (Y/n): 
+Removed:
+  chromium.aarch64 20170928.r499098.git8eb8619a-dev0
 
-Committing transaction...                                                                                                                              
-Preparing...                      ###################################### [  0%]
-   1:Removing nss                 ###################################### [ 50%]
-   2:Removing chromium            ###################################### [100%]
+Complete!
 ```
 
 ## Upgrade
@@ -73,11 +85,8 @@ Preparing...                      ###################################### [  0%]
 Remove, then reinstall:
 
 ```bash
-# smart remove nss-3.26
+dnf remove chromium
 ...
-# smart install \
-	http://iot.bzh/download/public/2017/Chromium/latest/aarch64/nss-3.26-r0.aarch64.rpm
-	http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170916.r500876.gitb34a859-dev0.aarch64.rpm
+dnf install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170928.r499098.git8eb8619a-dev0.aarch64.rpm
 ...
 ```
-

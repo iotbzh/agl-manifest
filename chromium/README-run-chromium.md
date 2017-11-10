@@ -1,6 +1,6 @@
 ---
 Author: Stephane Desneux <sdx@iot.bzh>
-title: Run Chromium on AGL/M3 
+title: Run Chromium on AGL/M3
 ---
 
 * flash SDcard with raw image (using the 'dd' commande from the conole, for example: dd if=xxxx.raw of=/dev/sdX bs=4M)
@@ -24,7 +24,8 @@ root@m3ulcb:~# systemctl restart weston
 
 # Start chrome
 
-```bash
-/usr/bin/google-chrome --mus --no-sandbox --start-maximized http://docs.iot.bzh
-```
+From the target console enter the following command to open chromium application:
 
+```bash
+/usr/bin/google-chrome --mus --no-sandbox http://docs.iot.bzh
+```

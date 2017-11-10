@@ -33,7 +33,7 @@
 <ul>
 <li>Grab the raw image (*.raw.xz) and the associated bmap file (*.raw.bmap)</li>
 <li><p>Run:</p>
-<pre><code>$ sudo bmaptool copy *.raw.xz $DEVICE</code></pre></li>
+<pre><code class="sourceCode bash">sudo bmaptool copy *.raw.xz $DEVICE</code></pre></li>
 <li>Eject SDCard, insert in M3 board and turn it on.</li>
 <li><p>Enjoy!</p></li>
 </ul>
@@ -44,10 +44,10 @@
 <h3 id="rpm-based-distribution">RPM-based distribution</h3>
 <p>Bmap-tools is available as a noarch package here: <a href="http://iot.bzh/download/public/tools/bmap-tools/bmap-tools-3.3-1.17.1.noarch.rpm">bmap-tools-3.3-1.17.1.noarch.rpm</a></p>
 <p>For example, on Opensuse 42.X:</p>
-<pre><code>$ zypper in http://iot.bzh/download/public/tools/bmap-tools/bmap-tools-3.3-1.17.1.noarch.rpm</code></pre>
+<pre><code class="sourceCode bash">zypper in http://iot.bzh/download/public/tools/bmap-tools/bmap-tools-3.3-1.17.1.noarch.rpm</code></pre>
 <h3 id="debian-based-distribution">Debian-based distribution</h3>
 <p>bmap-tool is available in Debian distribution (not tested).</p>
-<pre><code>$ apt-get install bmap-tools</code></pre>
+<pre><code class="sourceCode bash">apt-get install bmap-tools</code></pre>
 <h2 id="download-agl-image-and-bmap-file">Download AGL image and bmap file</h2>
 <p>Download the image and the associated bmap file:</p>
 <ul>
@@ -59,11 +59,11 @@
 <li><p>Insert a SDcard (minimum 2GB)</p></li>
 <li><p>Find the removable device for your card:</p>
 <p>The following commands which lists all removable disks can help to find the information:</p>
-<pre><code>$ lsblk -dli -o NAME,TYPE,HOTPLUG | grep &quot;disk.*1$&quot;
+<pre><code class="sourceCode bash">$ lsblk -dli -o NAME,TYPE,HOTPLUG | grep &quot;disk.*1$&quot;
 sdk  disk       1</code></pre>
 <p>Here, the device we'll use is /dev/sdk.</p>
 <p>Alternatively, a look at the kernel log will help:</p>
-<pre><code>$ dmesg | tail -50
+<pre><code class="sourceCode bash">$ dmesg | tail -50
 ...
 [710812.225836] sd 18:0:0:0: Attached scsi generic sg12 type 0
 [710812.441406] sd 18:0:0:0: [sdk] 31268864 512-byte logical blocks: (16.0 GB/14.9 GiB)
@@ -75,12 +75,12 @@ sdk  disk       1</code></pre>
 [710812.450905] sd 18:0:0:0: [sdk] Attached SCSI removable disk
 ...</code></pre>
 <p>For the rest of these instructions, we assume that the variable $DEVICE contains the name of the device to write to (/dev/sd* or /dev/mmcblk*). Export the variable:</p>
-<pre><code>$ export DEVICE=/dev/[replace-by-your-device-name]</code></pre></li>
+<pre><code class="sourceCode bash">export DEVICE=/dev/[replace-by-your-device-name]</code></pre></li>
 <li><p>If the card is mounted automatically, unmount it through desktop helper or directly wih the command line:</p>
-<pre><code>$ sudo umount ${DEVICE}*</code></pre></li>
+<pre><code class="sourceCode bash">sudo umount ${DEVICE}*</code></pre></li>
 <li><p>Write onto SDcard</p>
 <p>Using bmap-tools:</p>
-<pre><code>$ sudo bmaptool copy *.raw.xz $DEVICE
+<pre><code class="sourceCode bash">sudo bmaptool copy *.raw.xz $DEVICE
 bmaptool: info: discovered bmap file 'XXXXXXXXX.raw.bmap'
 bmaptool: info: block map format version 2.0
 bmaptool: info: 524288 blocks of size 4096 (2.0 GiB), mapped 364283 blocks (1.4 GiB or 69.5%)
@@ -89,12 +89,12 @@ bmaptool: info: 100% copied
 bmaptool: info: synchronizing '/dev/sdk'
 bmaptool: info: copying time: 4m 26.9s, copying speed 5.3 MiB/sec</code></pre>
 <p>Using standard dd command (more dangerous):</p>
-<pre><code>$ xz -cd *.raw.xz | sudo dd of=$DEVICE bs=4M; sync</code></pre></li>
+<pre><code class="sourceCode bash">xz -cd *.raw.xz | sudo dd of=$DEVICE bs=4M; sync</code></pre></li>
 </ol>
 <h2 id="configure-m3-board-for-boot-on-sdcard-if-needed">Configure M3 board for boot on SDcard if needed</h2>
 <ol type="1">
 <li><p>Connect serial console on M3 board and start a terminal emulator on the USB serial port. Here, we use 'screen' on device /dev/ttyUSB0 but you could use any terminal emulator able to open the serial port at 115200 bauds (minicom , ...)</p>
-<pre><code>$ screen /dev/ttyUSB0 115200</code></pre></li>
+<pre><code class="sourceCode bash">screen /dev/ttyUSB0 115200</code></pre></li>
 <li><p>Power up the board</p></li>
 <li><p>Break at uboot prompt (press any key)</p></li>
 <li><p>Set the following uboot variables:</p>
@@ -136,7 +136,7 @@ run bootcmd
 ```
 
 Alternatively, simply start the board.</code></pre>
-<p><strong>NOTE: Due to initial operations, first boot can be long (3 to 4 minutes waiting for a timeout on a systemd service). Homescreen may also have problems to start. These issues are known. On next boots, the system should run as expected.</strong></p>
+<p><strong>NOTE: Due to initial operations, first boot can be long (3 to 4 minutes waiting for a timeout on a systemd service).</strong></p>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">
 	<span style="float:left;">How to flash AGL raw images on SDCard</span>

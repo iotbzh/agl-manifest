@@ -5,5 +5,3 @@ origin/master=master    meta-iot-agl      origin=https://gerrit.automotivelinux.
 
 # Chromium
 origin/ozone/wayland/20170928=chromium_20170928  meta-browser      origin=https://github.com/Igalia/meta-browser
-
-

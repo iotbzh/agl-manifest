@@ -20,9 +20,9 @@ bitbake chromium
 RPMs are then located in /xdt/build/m3ulcb/tmp/deploy/rpms
 
 It's also possible to create an AGL image with Chromium preinstalled:
+
 ```bash
 bitbake agl-demo-platform
 ```
 
 The result is located in /xdt/build/m3ulcb/tmp/deploy/images/m3ulcb
-
