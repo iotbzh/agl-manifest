@@ -58,70 +58,69 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </h1>
 </header>
 <h2 id="installation">Installation</h2>
-<p>Log into the board through ssh or console, then install RPMs with dnf:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># dnf install \</span>
-  http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170928.r499098.git8eb8619a-dev0.aarch64.rpm</code></pre></div>
+<p>Log into the board through ssh or console, then install RPMs with smart:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170928.r499098.git8eb8619a-dev0.aarch64.rpm</code></pre></div>
 <p>Typical output:</p>
-<pre class="log"><code>Dependencies resolved.
-  ===================================================================================================
-   Package         Arch           Version                                  Repository           Size
-  ===================================================================================================
-  Installing:
-   chromium        aarch64        20170928.r499098.git8eb8619a-dev0        @commandline         60 M
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">Dependencies</span> resolved.
+===================================================================================================
+ <span class="ex">Package</span>         Arch           Version                                  Repository           Size
+===================================================================================================
+<span class="ex">Installing</span>:
+ <span class="ex">chromium</span>        aarch64        20170928.r499098.git8eb8619a-dev0        @commandline         60 M
 
-  Transaction Summary
-  ===================================================================================================
-  Install  1 Package
+<span class="ex">Transaction</span> Summary
+===================================================================================================
+<span class="ex">Install</span>  1 Package
 
-  Total size: 60 M
-  Installed size: 235 M
-  Is this ok [y/N]: y
-  Running transaction check
-  Transaction check succeeded.
-  Running transaction test
-  Transaction test succeeded.
-  Running transaction
-    Installing  : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
-    Verifying   : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
+<span class="ex">Total</span> size: 60 M
+<span class="ex">Installed</span> size: 235 M
+<span class="ex">Is</span> this ok [y/N]: y
+<span class="ex">Running</span> transaction check
+<span class="ex">Transaction</span> check succeeded.
+<span class="ex">Running</span> transaction test
+<span class="ex">Transaction</span> test succeeded.
+<span class="ex">Running</span> transaction
+  <span class="ex">Installing</span>  : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
+  <span class="ex">Verifying</span>   : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
 
-  Installed:
-    chromium.aarch64 20170928.r499098.git8eb8619a-dev0
+<span class="ex">Installed</span>:
+  <span class="ex">chromium.aarch64</span> 20170928.r499098.git8eb8619a-dev0
 
-  Complete!</code></pre>
+<span class="ex">Complete</span>!</code></pre></div>
 <h2 id="removal">Removal</h2>
 <p>Run:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># dnf remove nss-3.26</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove chromium</code></pre></div>
 <p>Typical output:</p>
-<pre><code>Dependencies resolved.
-  ===================================================================================================
-   Package             Arch           Version                                  Repository       Size
-  ===================================================================================================
-  Removing:
-   chromium            aarch64        20170928.r499098.git8eb8619a-dev0        @oe-repo        235 M
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">Dependencies</span> resolved.
+===================================================================================================
+ <span class="ex">Package</span>             Arch           Version                                  Repository       Size
+===================================================================================================
+<span class="ex">Removing</span>:
+ <span class="ex">chromium</span>            aarch64        20170928.r499098.git8eb8619a-dev0        @oe-repo        235 M
 
-  Transaction Summary
-  ===================================================================================================
-  Remove  2 Packages
+<span class="ex">Transaction</span> Summary
+===================================================================================================
+<span class="ex">Remove</span>  2 Packages
 
-  Installed size: 235 M
-  Is this ok [y/N]: y
-  Running transaction check
-  Transaction check succeeded.
-  Running transaction test
-  Transaction test succeeded.
-  Running transaction
-    Erasing     : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
-    Verifying   : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
+<span class="ex">Installed</span> size: 235 M
+<span class="ex">Is</span> this ok [y/N]: y
+<span class="ex">Running</span> transaction check
+<span class="ex">Transaction</span> check succeeded.
+<span class="ex">Running</span> transaction test
+<span class="ex">Transaction</span> test succeeded.
+<span class="ex">Running</span> transaction
+  <span class="ex">Erasing</span>     : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
+  <span class="ex">Verifying</span>   : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
 
-  Removed:
-    chromium.aarch64 20170928.r499098.git8eb8619a-dev0
+<span class="ex">Removed</span>:
+  <span class="ex">chromium.aarch64</span> 20170928.r499098.git8eb8619a-dev0
 
-  Complete!</code></pre>
+<span class="ex">Complete</span>!</code></pre></div>
 <h2 id="upgrade">Upgrade</h2>
 <p>Remove, then reinstall:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># dnf remove chromium</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove chromium
 <span class="ex">...</span>
-<span class="co">dnf install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170928.r499098.git8eb8619a-dev0.aarch64.rpm</span>
+<span class="ex">dnf</span> install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170928.r499098.git8eb8619a-dev0.aarch64.rpm
 <span class="ex">...</span></code></pre></div>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">
