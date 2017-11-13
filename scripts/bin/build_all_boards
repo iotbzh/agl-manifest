@@ -4,6 +4,7 @@ BUILD_FLAVOUR=iotbzh
 BUILD_MACHINES="porter m3ulcb qemux86-64 raspberrypi3 intel-corei7-64"
 BUILD_TARGET=agl-demo-platform-crosssdk
 BUILD_OPTIONS=
+BUILD_FEATURES=
 
 . /etc/xdtrc
 
@@ -64,7 +65,7 @@ for machine in $BUILD_MACHINES; do
 			;;
 	esac
 
-	run_prepare_meta $opts || { 
+	run_prepare_meta $opts $BUILD_FEATURES || { 
 		log_result $machine $BUILD_FLAVOUR "-" 1 "[prepare_meta failure]";
 		continue;
 	}
