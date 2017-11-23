@@ -59,68 +59,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </header>
 <h2 id="installation">Installation</h2>
 <p>Log into the board through ssh or console, then install RPMs with smart:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170928.r499098.git8eb8619a-dev0.aarch64.rpm</code></pre></div>
-<p>Typical output:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">Dependencies</span> resolved.
-===================================================================================================
- <span class="ex">Package</span>         Arch           Version                                  Repository           Size
-===================================================================================================
-<span class="ex">Installing</span>:
- <span class="ex">chromium</span>        aarch64        20170928.r499098.git8eb8619a-dev0        @commandline         60 M
-
-<span class="ex">Transaction</span> Summary
-===================================================================================================
-<span class="ex">Install</span>  1 Package
-
-<span class="ex">Total</span> size: 60 M
-<span class="ex">Installed</span> size: 235 M
-<span class="ex">Is</span> this ok [y/N]: y
-<span class="ex">Running</span> transaction check
-<span class="ex">Transaction</span> check succeeded.
-<span class="ex">Running</span> transaction test
-<span class="ex">Transaction</span> test succeeded.
-<span class="ex">Running</span> transaction
-  <span class="ex">Installing</span>  : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
-  <span class="ex">Verifying</span>   : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
-
-<span class="ex">Installed</span>:
-  <span class="ex">chromium.aarch64</span> 20170928.r499098.git8eb8619a-dev0
-
-<span class="ex">Complete</span>!</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-ozone-igalia-<span class="op">&lt;</span>VERSION<span class="op">&gt;</span>.aarch64.rpm http://iot.bzh/download/public/2017/Chromium/latest/aarch64/hicolor-icon-theme-<span class="op">&lt;</span>VERSION<span class="op">&gt;</span>.aarch64.rpm</code></pre></div>
 <h2 id="removal">Removal</h2>
 <p>Run:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove chromium</code></pre></div>
-<p>Typical output:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">Dependencies</span> resolved.
-===================================================================================================
- <span class="ex">Package</span>             Arch           Version                                  Repository       Size
-===================================================================================================
-<span class="ex">Removing</span>:
- <span class="ex">chromium</span>            aarch64        20170928.r499098.git8eb8619a-dev0        @oe-repo        235 M
-
-<span class="ex">Transaction</span> Summary
-===================================================================================================
-<span class="ex">Remove</span>  2 Packages
-
-<span class="ex">Installed</span> size: 235 M
-<span class="ex">Is</span> this ok [y/N]: y
-<span class="ex">Running</span> transaction check
-<span class="ex">Transaction</span> check succeeded.
-<span class="ex">Running</span> transaction test
-<span class="ex">Transaction</span> test succeeded.
-<span class="ex">Running</span> transaction
-  <span class="ex">Erasing</span>     : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
-  <span class="ex">Verifying</span>   : chromium-20170928.r499098.git8eb8619a-dev0.aarch64                             1/1
-
-<span class="ex">Removed</span>:
-  <span class="ex">chromium.aarch64</span> 20170928.r499098.git8eb8619a-dev0
-
-<span class="ex">Complete</span>!</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove chromium-ozone-igalia hicolor-icon-theme</code></pre></div>
 <h2 id="upgrade">Upgrade</h2>
 <p>Remove, then reinstall:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove chromium
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove ...
 <span class="ex">...</span>
-<span class="ex">dnf</span> install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-20170928.r499098.git8eb8619a-dev0.aarch64.rpm
+<span class="ex">dnf</span> install ...
 <span class="ex">...</span></code></pre></div>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">

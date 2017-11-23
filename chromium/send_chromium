@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+. /etc/xdtrc
+
+SERVER=apache@vm-www
+SERVER_DIR=/download/public/2017/Chromium/latest/
+
+MACHINE=m3ulcb
+PACKAGES="aarch64/chromium-ozone-igalia noarch/hicolor-icon-theme"
+
+RPMDIR=$XDT_BUILD/$MACHINE/tmp/deploy/rpm
+IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
+
+# create remote
+ssh $SERVER mkdir -p $SERVER_DIR
+
+# push rpms
+pushd $RPMDIR
+	for pkg in $PACKAGES; do
+		ARCH=$(dirname $pkg)
+		ssh $SERVER mkdir -p $SERVER_DIR/$ARCH
+		rsync -Pav --exclude "*-dbg-*" --exclude "*-dev-*" $pkg-*.rpm $SERVER:$SERVER_DIR/$ARCH/
+	done
+popd
+
+# push image
+pushd $IMGDIR
+
+	if [[ ! -f *.raw.xz ]]; then
+		mksdcard $(readlink agl-demo-platform-*-$MACHINE.tar.xz | tail -1) . 3
+	fi
+	rsync -Pav *.raw.* $SERVER:$SERVER_DIR/
+popd
+
+
+
+

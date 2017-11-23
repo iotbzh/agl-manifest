@@ -27,5 +27,7 @@ root@m3ulcb:~# systemctl restart weston
 From the target console enter the following command to open chromium application:
 
 ```bash
-/usr/bin/google-chrome --mus --no-sandbox http://docs.iot.bzh
+/usr/bin/google-chrome --mus --touch-events=enabled --no-sandbox http://docs.iot.bzh
 ```
+
+
