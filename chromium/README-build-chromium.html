@@ -61,7 +61,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">prepare_meta</span> -f chromium -o /xdt -l /home/devel/mirror -t qemux86-64 -e rm_work -e wipeconfig -e cleartemp</code></pre></div>
 <p>Source the generated Yocto environment file and launch the chromium build:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">.</span> <span class="ex">/xdt/build/qemux86-64/agl-init-build-env</span>
-<span class="ex">bitbake</span> chromium</code></pre></div>
+<span class="ex">bitbake</span> chromium-ozone-igalia</code></pre></div>
 <p>RPMs are then located in /xdt/build/m3ulcb/tmp/deploy/rpms</p>
 <p>It's also possible to create an AGL image with Chromium preinstalled:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">bitbake</span> agl-demo-platform</code></pre></div>
