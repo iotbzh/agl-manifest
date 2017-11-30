@@ -1,7 +1,7 @@
 @include eel/eel_latest.manifest
 
 # IoT.bzh extensions
-origin/master=master    meta-iot-agl      origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
+origin/eel=eel    meta-iot-agl      origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
 
 # Chromium
 origin/ozone/wayland/20170928=chromium_20170928  meta-browser      origin=https://github.com/Igalia/meta-browser
