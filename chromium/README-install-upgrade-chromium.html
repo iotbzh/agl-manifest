@@ -59,16 +59,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </header>
 <h2 id="installation">Installation</h2>
 <p>Log into the board through ssh or console, then install RPMs with smart:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-ozone-igalia-<span class="op">&lt;</span>VERSION<span class="op">&gt;</span>.aarch64.rpm http://iot.bzh/download/public/2017/Chromium/latest/noarch/hicolor-icon-theme-<span class="op">&lt;</span>VERSION<span class="op">&gt;</span>.aarch64.rpm</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">dnf</span> install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-ozone-wayland-<span class="kw">&lt;</span>VERSION<span class="kw">&gt;</span>.aarch64.rpm http://iot.bzh/download/public/2017/Chromium/latest/noarch/hicolor-icon-theme-<span class="kw">&lt;</span>VERSION<span class="kw">&gt;</span>.aarch64.rpm</code></pre></div>
 <h2 id="removal">Removal</h2>
 <p>Run:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove chromium-ozone-igalia hicolor-icon-theme</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">dnf</span> remove chromium-ozone-wayland hicolor-icon-theme</code></pre></div>
 <h2 id="upgrade">Upgrade</h2>
 <p>Remove, then reinstall:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove ...
-<span class="ex">...</span>
-<span class="ex">dnf</span> install ...
-<span class="ex">...</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">dnf</span> remove ...
+<span class="kw">...</span>
+<span class="kw">dnf</span> install ...
+<span class="kw">...</span></code></pre></div>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">
 	<span style="float:left;">Install or upgrade Chromium on AGL/M3 through RPMs</span>

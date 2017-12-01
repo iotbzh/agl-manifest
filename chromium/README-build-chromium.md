@@ -14,7 +14,7 @@ Source the generated Yocto environment file and launch the chromium build:
 
 ```bash
 . /xdt/build/qemux86-64/agl-init-build-env
-bitbake chromium-ozone-igalia
+bitbake chromium-ozone-wayland
 ```
 
 RPMs are then located in /xdt/build/m3ulcb/tmp/deploy/rpms

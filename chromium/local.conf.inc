@@ -1,9 +1,9 @@
 # this file is loaded from local.conf at build time
 
 # from https://github.com/Igalia/meta-browser/wiki
-PACKAGECONFIG_pn-chromium-ozone-igalia+="use-gold webrtc"
+PACKAGECONFIG_pn-chromium-ozone-wayland+="use-gold webrtc"
 
-IMAGE_INSTALL_append = " hicolor-icon-theme chromium-ozone-igalia"
+IMAGE_INSTALL_append = " hicolor-icon-theme chromium-ozone-wayland"
 
 # see SPEC-1037
 IMAGE_FSTYPES_remove = "cpio.gz"

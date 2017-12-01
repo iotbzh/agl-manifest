@@ -8,7 +8,7 @@ SERVER=apache@vm-www
 SERVER_DIR=/download/public/2017/Chromium/latest/
 
 MACHINE=m3ulcb
-PACKAGES="aarch64/chromium-ozone-igalia noarch/hicolor-icon-theme"
+PACKAGES="aarch64/chromium-ozone-wayland noarch/hicolor-icon-theme"
 
 RPMDIR=$XDT_BUILD/$MACHINE/tmp/deploy/rpm
 IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
