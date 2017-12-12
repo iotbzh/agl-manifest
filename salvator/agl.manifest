@@ -1,4 +1,0 @@
-@include dab/dab_latest.manifest
-
-origin/sandbox/sdesneux/salvator=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
-

@@ -1,0 +1,4 @@
+@include eel/eel_latest.manifest
+
+origin/eel=eel    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
+
