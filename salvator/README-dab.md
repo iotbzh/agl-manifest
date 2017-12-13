@@ -44,7 +44,7 @@ Finally, to prepare for salvator, just run:
 
 Using prepare_meta is not the official way of building AGL because the procedure doesn't use the (bloated!) repo tool. Instead, this procedure is maintained by IoT.bzh to achieve better stability and reproductiblity while still allowing newer (unofficial) developments.to be 'inserted'. The manifests are expressed as simple text files (see the [manifest file for master flavour](https://github.com/iotbzh/agl-manifest/blob/master/master/agl.manifest) as an example.
 
-For the Salvator board, the flavour 'salvator' has been created in agl-manifest. It will pull the usual AGL layers (master branch) + some additional ones (meta-iot-agl) which will expose the new machine 'salvator'.
+For the Salvator board, the flavour 'salvator' has been created in agl-manifest. It will pull the usual AGL layers (master branch) + some additional ones (meta-iot-bzh) which will expose the new machine 'salvator'.
 
 ## Step 3: run the build
 

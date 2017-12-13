@@ -1,4 +1,4 @@
 @include master/agl.manifest
 
 # IoT.bzh
-origin/master=iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
+origin/master=master    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh

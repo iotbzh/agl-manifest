@@ -58,13 +58,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </h1>
 </header>
 <p>Inside an <a href="https://download.automotivelinux.org/AGL/snapshots/sdk/docker/docker_agl_worker-generic-3.99.1.tar.xz">AGL docker container</a> use the facility tool <code>prepare_meta</code> to set up your Yocto layers:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">prepare_meta</span> -f chromium -o /xdt -l /home/devel/mirror -t qemux86-64 -e rm_work -e wipeconfig -e cleartemp</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">prepare_meta</span> -f chromium -o /xdt -l /home/devel/mirror -t qemux86-64 -e rm_work -e wipeconfig -e cleartemp</code></pre></div>
 <p>Source the generated Yocto environment file and launch the chromium build:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">.</span> <span class="kw">/xdt/build/qemux86-64/agl-init-build-env</span>
-<span class="kw">bitbake</span> chromium-ozone-wayland</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">.</span> <span class="ex">/xdt/build/qemux86-64/agl-init-build-env</span>
+<span class="ex">bitbake</span> chromium-ozone-wayland</code></pre></div>
 <p>RPMs are then located in /xdt/build/m3ulcb/tmp/deploy/rpms</p>
 <p>It's also possible to create an AGL image with Chromium preinstalled:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">bitbake</span> agl-demo-platform</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">bitbake</span> agl-demo-platform</code></pre></div>
 <p>The result is located in /xdt/build/m3ulcb/tmp/deploy/images/m3ulcb</p>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">

@@ -1,5 +1,5 @@
 @include dab/dab_latest.manifest 
 
 # IoT.bzh extensions
-origin/sandbox/sdesneux/dab-iotbzh=dab-iotbzh    meta-iot-agl             origin=https://gerrit.automotivelinux.org/gerrit/staging/meta-iot-agl
+origin/dab=dab-iotbzh    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
 
