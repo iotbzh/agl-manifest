@@ -1,7 +1,8 @@
 # this file is loaded from local.conf at build time
 
 # from https://github.com/Igalia/meta-browser/wiki
-PACKAGECONFIG_pn-chromium-ozone-wayland+="use-gold webrtc"
+#PACKAGECONFIG_pn-chromium-ozone-wayland+="use-gold webrtc" # use-gold now in recipe
+PACKAGECONFIG_pn-chromium-ozone-wayland+="proprietary-codecs use-egl wayland"
 
 IMAGE_INSTALL_append = " hicolor-icon-theme chromium-ozone-wayland"
 
