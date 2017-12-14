@@ -1,0 +1,58 @@
+#!/bin/bash
+
+set -e
+
+function error() {
+	echo "ERROR: $@" >&2
+	exit 1
+}
+
+. /etc/xdtrc
+
+SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
+
+SERVER=apache@vm-www
+SERVER_DIR=/download/public/2017/Kingfisher
+
+MACHINE=m3ulcb
+
+IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
+SDKDIR=$XDT_BUILD/$MACHINE/tmp/deploy/sdk/
+
+VERSION=$(date -u +%Y%m%d_%H%M)
+
+# locate image
+[[ ! -d $IMGDIR ]] && error "No images dir in $IMGDIR"
+pushd $IMGDIR
+lnkname=$(find . -type l -name "*.wic.xz")
+[[ ! -e $lnkname ]] && error "No image link found in $IMGDIR"
+imgfile=$(readlink $lnkname)
+[[ ! -f $imgfile ]] && error "No image found in $IMGDIR"
+
+bmaplnkname=$(find . -type l -name "*.wic.bmap")
+[[ -e $bmaplnkname ]] && bmapfile=$(readlink $bmaplnkname)
+popd
+
+# locate SDK
+[[ ! -d $SDKDIR ]] && error "No SDK dir in $SDKDIR"
+
+### push everything
+
+# create remote
+ssh $SERVER mkdir -p $SERVER_DIR/$VERSION/{sdk,images}
+
+# send files
+RSYNCPATH=$SERVER:$SERVERDIR/$VERSION
+rsync -Pav $IMGDIR/$imgfile $RSYNCPATH/images/
+[[ -e $IMGDIR/$bmapfile ]] && rsync -Pav $IMGDIR/$bmapfile $RSYNCPATH/images/
+rsync -Pav $SDKDIR/ $RSYNCPATH/sdk/
+rsync -Pav $SCRIPTDIR/*.html $RSYNCPATH/
+
+# create links
+ssh $SERVER ln -s $imgfile $SERVER_DIR/$VERSION/images/$lnkname
+[[ -n "$bmaplnkname" ]] && ssh $SERVER ln -s $bmapfile $bmaplnkname
+
+ssh $SERVER ln -sf $SERVER_DIR/$VERSION $SERVER_DIR/latest
+
+
+
