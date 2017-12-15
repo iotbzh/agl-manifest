@@ -1,0 +1,4 @@
+@include eel/eel_latest.manifest
+
+# IoT.bzh
+origin/eel=eel    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
