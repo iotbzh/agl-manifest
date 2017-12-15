@@ -54,11 +54,14 @@ rsync -Pav $SDKDIR/ $RSYNCPATH/sdk/
 rsync -Pav $SCRIPTDIR/*.html $RSYNCPATH/
 
 # create links
-ssh $SERVER ln -sfv $imgfile $SERVER_DIR/$VERSION/images/$lnkname
-[[ -n "$bmaplnkname" ]] && ssh $SERVER ln -sfv $bmapfile $bmaplnkname
-ssh $SERVER ln -sfv $sdkfile $SERVER_DIR/$VERSION/sdk/agl-sdk-latest.sh
+CMD="ln -sfv $imgfile $SERVER_DIR/$VERSION/images/$lnkname"
+[[ -n "$bmaplnkname" ]] && CMD="$CMD; ln -sfv $bmapfile $bmaplnkname"
+CMD="$CMD; ln -sfv $sdkfile $SERVER_DIR/$VERSION/sdk/agl-sdk-latest.sh"
+CMD="$CMD; ln -snfv $SERVER_DIR/$VERSION $SERVER_DIR/latest"
+CMD="$CMD; rm -f $SERVER_DIR/latest_is_*"
+CMD="$CMD; ln -snfv $SERVER_DIR/$VERSION $SERVER_DIR/latest_is_$VERSION"
 
-ssh $SERVER ln -snfv $SERVER_DIR/$VERSION $SERVER_DIR/latest
+ssh $SERVER "$CMD"
 
 echo "Image successfully pushed to: http://iot.bzh$SERVER_DIR/$VERSION"
 

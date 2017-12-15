@@ -1,11 +1,12 @@
 ---
-Author: Stephane Desneux <sdx@iot.bzh>
+author: Stephane Desneux <sdx@iot.bzh>
 title: AGL EE with Kingfisher support - Image & SDK builds
 ---
 
 This document explains how to build latest [AGL] (EE) with support for Renesas [Kingfisher board].
 
 It covers in details how to:
+
 * install the generic AGL Worker container
 * (optional) rebuild an AGL image inside the container
 * install the SDK in the container and build applications with it
@@ -16,6 +17,7 @@ It covers in details how to:
 ## Requirements
 
 Requirements:
+
 * recent Linux Host (openSUSE 42.3, Debian 9, Fedora 26, ...)
 * recent docker (>1.10) installed. General instructions for Linux are available on the [Docker Site](https://docs.docker.com/engine/installation/linux/).
 
@@ -158,6 +160,7 @@ Download the 2 zip files located [at this location](https://www.renesas.com/en-u
 ### The tool 'prepare_meta'
 
 The tool 'prepare_meta' is used to prepare the build environment. It will:
+
 * clone Yocto layers required for building (as 'repo init' does)
 * synchronize any download/sstate-cache mirror if available (to gain some build time)
 * run the 'aglsetup.sh' script (normally run manually to adjust AGL features)
@@ -176,7 +179,8 @@ mkdir -p /home/devel/mirror
 
 Run the following command line:
 ```
-prepare_meta -f kingfisher -o /xdt -l /home/devel/mirror/ -e wipeconfig -e cleartemp -e rm_work -t m3ulcb -p /home/devel/renesas/ agl-devel agl-netboot agl-appfw-smack agl-demo agl-localdev agl-audio-4a-framework agl-hmi-framework
+prepare_meta -f kingfisher -o /xdt -l /home/devel/mirror/ -e wipeconfig -e cleartemp -e rm_work -t m3ulcb -p /home/devel/renesas/ \
+agl-devel agl-netboot agl-appfw-smack agl-demo agl-localdev agl-audio-4a-framework agl-hmi-framework
 ```
 
 After that, all required Yocto layers should be stored in /xdt/meta:
