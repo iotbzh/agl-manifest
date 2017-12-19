@@ -9,18 +9,18 @@ b2ce523=master          meta-openembedded        origin=git://git.openembedded.o
 ebb625a=master          poky                     origin=git://git.yoctoproject.org/poky
 
 # Graphic
-origin/pyro=master          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+c6aa602=master          meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/master=master        meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
-origin/master=master        meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-origin/pyro=master          meta-intel               origin=git://git.yoctoproject.org/meta-intel
-origin/pyro=master          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
+origin/master=master    meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/master=master    meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+4cd63f5=master          meta-intel               origin=git://git.yoctoproject.org/meta-intel
+40447de=master          meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Security
-20bbb97=master              meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
-origin/morty=master         meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+20bbb97=master          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+0fa0aff=master          meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
 # Extra
-origin/1.2.1=master         meta-oic                 origin=git://git.yoctoproject.org/meta-oic
+70d5bec=master          meta-oic                 origin=git://git.yoctoproject.org/meta-oic
 

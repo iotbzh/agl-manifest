@@ -17,10 +17,10 @@ origin/eel=eel meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.or
 4cd63f5=eel    meta-intel               origin=git://git.yoctoproject.org/meta-intel
 40447de=eel    meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
+# Security
+20bbb97=master          meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+0fa0aff=master          meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+
 # Extra
 70d5bec=eel    meta-oic                 origin=git://git.yoctoproject.org/meta-oic
-
-# Security
-0fa0aff=eel    meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
-20bbb97=eel    meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
 
