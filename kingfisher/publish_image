@@ -44,7 +44,7 @@ popd
 ### push everything
 
 # create remote
-ssh $SERVER mkdir -p $SERVER_DIR/$VERSION/{sdk,images}
+ssh $SERVER mkdir -p $SERVER_DIR/$VERSION/{sdk,images,firmware}
 
 # send files
 RSYNCPATH=$SERVER:$SERVER_DIR/$VERSION
@@ -52,6 +52,14 @@ rsync -Pav $IMGDIR/$imgfile $RSYNCPATH/images/
 [[ -e $IMGDIR/$bmapfile ]] && rsync -Pav $IMGDIR/$bmapfile $RSYNCPATH/images/
 rsync -Pav $SDKDIR/ $RSYNCPATH/sdk/
 rsync -Pav $SCRIPTDIR/*.html $RSYNCPATH/
+rsync -Pav $IMGDIR/*.srec $RSYNCPATH/firmware/
+
+cat <<EOF | ssh $SERVER "cat >$SERVER_DIR/$VERSION/firmware/README"
+The files here can be used to flash the M3ULCB board firmware.
+
+Full procedure is detailed here: https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware
+EOF
+
 
 # create links
 CMD="ln -sfv $imgfile $SERVER_DIR/$VERSION/images/$lnkname"
