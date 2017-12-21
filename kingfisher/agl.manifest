@@ -1,6 +1,4 @@
 @include eel/eel_latest.manifest
 
-origin/sandbox/ohporter/kf-eel=kingfisher        meta-agl   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/pyro=kingfisher        meta-rcar  origin=https://github.com/konsulko/meta-rcar
 
 
