@@ -91,14 +91,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h4 id="tldr-quick-instructions">TLDR; quick instructions</h4>
 <ul>
 <li><p>Using wget or any other tool, download the raw image (named *.wic.xz) and the associated bmap file (*.bmap) from <a href="images">this folder</a></p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">wget</span> http://...../*.wic.xz
-<span class="fu">wget</span> http://...../*.wic.bmap</code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">wget</span> http://...../*.wic.xz
+<span class="kw">wget</span> http://...../*.wic.bmap</code></pre></div></li>
 <li><p>Find your device and set DEVICE variable:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">lsblk</span> -dli -o NAME,TYPE,HOTPLUG <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;disk\s+1$&quot;</span>
-<span class="ex">sdk</span>  disk       1    # <span class="op">&lt;</span>= use /dev/sdk
-$ <span class="va">DEVICE=</span>/dev/sdX</code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">lsblk</span> -dli -o NAME,TYPE,HOTPLUG <span class="kw">|</span> <span class="kw">grep</span> <span class="st">&quot;disk\s+1$&quot;</span>
+<span class="kw">sdk</span>  disk       1    <span class="co"># &lt;= use /dev/sdk</span>
+$ <span class="ot">DEVICE=</span>/dev/sdX</code></pre></div></li>
 <li><p>Run <em>bmaptool</em>:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> bmaptool copy *.wic.xz <span class="va">$DEVICE</span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> bmaptool copy *.wic.xz <span class="ot">$DEVICE</span></code></pre></div></li>
 <li>Eject SDCard, insert in M3 board and turn it on.</li>
 <li><p>Enjoy!</p></li>
 </ul>
@@ -109,10 +109,10 @@ $ <span class="va">DEVICE=</span>/dev/sdX</code></pre></div></li>
 <h3 id="rpm-based-distribution">RPM-based distribution</h3>
 <p>Bmap-tools is available as a noarch package here: <a href="http://iot.bzh/download/public/tools/bmap-tools/bmap-tools-3.3-1.17.1.noarch.rpm">bmap-tools-3.3-1.17.1.noarch.rpm</a></p>
 <p>For example, on Opensuse 42.X:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> zypper in http://iot.bzh/download/public/tools/bmap-tools/bmap-tools-3.3-1.17.1.noarch.rpm</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> zypper in http://iot.bzh/download/public/tools/bmap-tools/bmap-tools-3.3-1.17.1.noarch.rpm</code></pre></div>
 <h3 id="debian-based-distribution-inc.-ubuntu">Debian-based distribution (inc. Ubuntu)</h3>
 <p>bmap-tool is available in Debian distribution (not tested).</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get install bmap-tools</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install bmap-tools</code></pre></div>
 <h2 id="download-agl-image-and-bmap-file">Download AGL image and bmap file</h2>
 <p>Download the image and the associated bmap file:</p>
 <ul>
@@ -124,42 +124,42 @@ $ <span class="va">DEVICE=</span>/dev/sdX</code></pre></div></li>
 <li><p>Insert a SDcard (minimum 2GB)</p></li>
 <li><p>Find the removable device for your card:</p>
 <p>The following commands which lists all removable disks can help to find the information:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">lsblk</span> -dli -o NAME,TYPE,HOTPLUG <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;disk\s+1$&quot;</span>
-<span class="ex">sdk</span>  disk       1</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">lsblk</span> -dli -o NAME,TYPE,HOTPLUG <span class="kw">|</span> <span class="kw">grep</span> <span class="st">&quot;disk\s+1$&quot;</span>
+<span class="kw">sdk</span>  disk       1</code></pre></div>
 <p>Here, the device we'll use is /dev/sdk.</p>
 <p>Alternatively, a look at the kernel log will help:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">dmesg</span> <span class="kw">|</span> <span class="fu">tail</span> -50
-<span class="ex">...</span>
-[<span class="ex">710812.225836</span>] sd 18:0:0:0: Attached scsi generic sg12 type 0
-[<span class="ex">710812.441406</span>] sd 18:0:0:0: [sdk] 31268864 512-byte logical blocks: (16.0 GB/14.9 GiB)
-[<span class="ex">710812.442016</span>] sd 18:0:0:0: [sdk] Write Protect is off
-[<span class="ex">710812.442019</span>] sd 18:0:0:0: [sdk] Mode Sense: 03 00 00 00
-[<span class="ex">710812.442642</span>] sd 18:0:0:0: [sdk] No Caching mode page found
-[<span class="ex">710812.442644</span>] sd 18:0:0:0: [sdk] Assuming drive cache: write through
-[<span class="ex">710812.446794</span>]  sdk: sdk1
-[<span class="ex">710812.450905</span>] sd 18:0:0:0: [sdk] Attached SCSI removable disk
-<span class="ex">...</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">dmesg</span> <span class="kw">|</span> <span class="kw">tail</span> -50
+<span class="kw">...</span>
+[<span class="kw">710812.225836</span>] sd 18:0:0:0: Attached scsi generic sg12 type 0
+[<span class="kw">710812.441406</span>] sd 18:0:0:0: [sdk] 31268864 512-byte logical blocks: (16.0 GB/14.9 GiB)
+[<span class="kw">710812.442016</span>] sd 18:0:0:0: [sdk] Write Protect is off
+[<span class="kw">710812.442019</span>] sd 18:0:0:0: [sdk] Mode Sense: 03 00 00 00
+[<span class="kw">710812.442642</span>] sd 18:0:0:0: [sdk] No Caching mode page found
+[<span class="kw">710812.442644</span>] sd 18:0:0:0: [sdk] Assuming drive cache: write through
+[<span class="kw">710812.446794</span>]  sdk: sdk1
+[<span class="kw">710812.450905</span>] sd 18:0:0:0: [sdk] Attached SCSI removable disk
+<span class="kw">...</span></code></pre></div>
 <p>For the rest of these instructions, we assume that the variable $DEVICE contains the name of the device to write to (/dev/sd? or /dev/mmcblk?). Export the variable:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="va">DEVICE=</span>/dev/<span class="va">[replace-by-your-device-name]</span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">export</span> <span class="ot">DEVICE=</span>/dev/<span class="ot">[replace-by-your-device-name]</span></code></pre></div></li>
 <li><p>If the card is mounted automatically, unmount it through desktop helper or directly wih the command line:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> umount <span class="va">${DEVICE}</span>*</code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> umount <span class="ot">${DEVICE}</span>*</code></pre></div></li>
 <li><p>Write onto SDcard</p>
 <p>Using bmap-tools:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">sudo</span> bmaptool copy *.wic.xz <span class="va">$DEVICE</span>
-<span class="ex">bmaptool</span>: info: discovered bmap file <span class="st">'XXXXXXXXX.wic.bmap'</span>
-<span class="ex">bmaptool</span>: info: block map format version 2.0
-<span class="ex">bmaptool</span>: info: 524288 blocks of size 4096 (2.0 GiB), <span class="ex">mapped</span> 364283 blocks (1.4 GiB or 69.5%)
-<span class="ex">bmaptool</span>: info: copying image <span class="st">'XXXXXXXX.wic.xz'</span> to block device <span class="st">'/dev/sdk'</span> using bmap file <span class="st">'XXXXXXXX.wic.bmap'</span>
-<span class="ex">bmaptool</span>: info: 100% copied
-<span class="ex">bmaptool</span>: info: synchronizing <span class="st">'/dev/sdk'</span>
-<span class="ex">bmaptool</span>: info: copying time: 4m 26.9s, copying speed 5.3 MiB/sec</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">sudo</span> bmaptool copy *.wic.xz <span class="ot">$DEVICE</span>
+<span class="kw">bmaptool</span>: info: discovered bmap file <span class="st">'XXXXXXXXX.wic.bmap'</span>
+<span class="kw">bmaptool</span>: info: block map format version 2.0
+<span class="kw">bmaptool</span>: info: 524288 blocks of size 4096 (2.0 GiB), <span class="kw">mapped</span> 364283 blocks (1.4 GiB or 69.5%)
+<span class="kw">bmaptool</span>: info: copying image <span class="st">'XXXXXXXX.wic.xz'</span> to block device <span class="st">'/dev/sdk'</span> using bmap file <span class="st">'XXXXXXXX.wic.bmap'</span>
+<span class="kw">bmaptool</span>: info: 100% copied
+<span class="kw">bmaptool</span>: info: synchronizing <span class="st">'/dev/sdk'</span>
+<span class="kw">bmaptool</span>: info: copying time: 4m 26.9s, copying speed 5.3 MiB/sec</code></pre></div>
 <p>Using standard dd command (more dangerous):</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">xz</span> -cd *.wic.xz <span class="kw">|</span> <span class="fu">sudo</span> dd of=<span class="va">$DEVICE</span> bs=4M<span class="kw">;</span> <span class="fu">sync</span></code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">xz</span> -cd *.wic.xz <span class="kw">|</span> <span class="kw">sudo</span> dd of=<span class="ot">$DEVICE</span> bs=4M<span class="kw">;</span> <span class="kw">sync</span></code></pre></div></li>
 </ol>
 <h2 id="configure-m3-board-for-boot-on-sdcard-if-needed">Configure M3 board for boot on SDcard if needed</h2>
 <ol type="1">
 <li><p>Connect serial console on M3 board and start a terminal emulator on the USB serial port. Here, we use 'screen' on device /dev/ttyUSB0 but you could use any terminal emulator able to open the serial port at 115200 bauds (minicom , picocom ...)</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">screen</span> /dev/ttyUSB0 115200</code></pre></div></li>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">screen</span> /dev/ttyUSB0 115200</code></pre></div></li>
 <li><p>Power up the board</p></li>
 <li><p>Break at uboot prompt (press any key)</p></li>
 <li><p>Set the following uboot variables:</p>
@@ -170,7 +170,7 @@ setenv socnum r8a7796
 setenv bootmmc '0:1'
 setenv set_bootkfile 'setenv bootkfile Image'
 setenv bootkaddr 0x48080000
-setenv set_bootdfile 'setenv bootdfile devicetree-Image-${socnum}-${board}-kf.dtb'
+setenv set_bootdfile 'setenv bootdfile devicetree-Image-${socnum}-${board}.dtb'
 setenv bootdaddr 0x48000000
 setenv bootargs_console 'console=ttySC0,115200 ignore_loglevel'
 setenv bootargs_video 'vmalloc=384M video=HDMI-A-1:1920x1080-32@60'
@@ -192,9 +192,14 @@ run bootcmd
 <p><strong>NOTE</strong>: Due to initial operations, first AGL boot can take longer (a few mintutes) than next ones.</p>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">
-	<span style="float:left;">Booting AGL images from SDCard - Rev.20171215_0215</span>
+	<span style="float:left;">Booting AGL images from SDCard - Rev.20171221_1244</span>
 	<span style="float:right">
-<span class="author">Stephane Desneux <a href="mailto:sdx@iot.bzh">sdx@iot.bzh</a> - </span>
+<span class="author">Stephane Desneux <script type="text/javascript">
+<!--
+h='&#x69;&#x6f;&#116;&#46;&#98;&#122;&#104;';a='&#64;';n='&#x73;&#100;&#120;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
+// -->
+</script><noscript>sdx at iot dot bzh</noscript> - </span>
 	IoT.bzh 2017</span>
 </div>
 </body>
