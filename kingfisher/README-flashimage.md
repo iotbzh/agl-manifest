@@ -156,7 +156,7 @@ Download the image and the associated bmap file:
     setenv bootmmc '0:1'
     setenv set_bootkfile 'setenv bootkfile Image'
     setenv bootkaddr 0x48080000
-    setenv set_bootdfile 'setenv bootdfile devicetree-Image-${socnum}-${board}-kf.dtb'
+    setenv set_bootdfile 'setenv bootdfile devicetree-Image-${socnum}-${board}.dtb'
     setenv bootdaddr 0x48000000
     setenv bootargs_console 'console=ttySC0,115200 ignore_loglevel'
     setenv bootargs_video 'vmalloc=384M video=HDMI-A-1:1920x1080-32@60'
