@@ -32,7 +32,7 @@ Requirements:
     sudo bmaptool copy *.wic.xz $DEVICE
     ```
 * Eject SDCard, insert in M3 board and turn it on.
-* Enjoy!
+* Enjoy! (if your firmware and uboot config are correct - see below)
 
 ## Install bmap-tools (recommended)
 
@@ -132,7 +132,67 @@ Download the image and the associated bmap file:
     xz -cd *.wic.xz | sudo dd of=$DEVICE bs=4M; sync
     ```
 
-## Configure M3 board for boot on SDcard if needed
+## Upgrade M3 to latest Firmware
+
+Due to recent additions in AGL/Eel.rc5 to support the Kingfisher board, it's necessary to upgrade the M3 to a recent firmware.
+
+The procedure to upgrade the M3 board is documented [on the M3SK page on eLinux.org](https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware).
+
+IoT.bzh has tested successfully the following procedure using ''minicom'':
+
+1. Download each files from the [firmware directory](firmware) and put them in a directory of your choice
+2. Open a terminal
+3. 'cd' to the directory chosen in 1.
+3. run 'minicom -b 115200 -D /dev/ttyUSB0' (adjust the serial port device if needed, add permissions on device if needed)
+4. **BE REALLY CAREFULL ON THIS STEP**: Follow instructions from [eLinux.org for M3SK](https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware)
+5. Reboot the board
+
+After a successful flashing, the following versions (or later) should be available on the console boot log:
+
+```
+[ 0.000193] NOTICE: BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.1.0.16
+[ 0.005757] NOTICE: BL2: PRR is R-Car M3 Ver1.0
+[ 0.010339] NOTICE: BL2: Board is Starter Kit Rev1.0
+[ 0.015366] NOTICE: BL2: Boot device is HyperFlash(80MHz)
+[ 0.020792] NOTICE: BL2: LCM state is CM
+[ 0.024833] NOTICE: BL2: AVS setting succeeded. DVFS_SetVID=0x53
+[ 0.030814] NOTICE: BL2: DDR3200(rev.0.27)NOTICE: [COLD_BOOT]NOTICE: ..0
+[ 0.054032] NOTICE: BL2: DRAM Split is 2ch
+[ 0.057917] NOTICE: BL2: QoS is default setting(rev.0.19)
+[ 0.063415] NOTICE: BL2: Lossy Decomp areas
+[ 0.067594] NOTICE: Entry 0: DCMPAREACRAx:0x80000540 DCMPAREACRBx:0x570
+[ 0.074679] NOTICE: Entry 1: DCMPAREACRAx:0x40000000 DCMPAREACRBx:0x0
+[ 0.081591] NOTICE: Entry 2: DCMPAREACRAx:0x20000000 DCMPAREACRBx:0x0
+[ 0.088506] NOTICE: BL2: v1.3(release):b330e0e
+[ 0.092995] NOTICE: BL2: Built : 08:53:12, Dec 22 2017
+[ 0.098183] NOTICE: BL2: Normal boot
+[ 0.101824] NOTICE: BL2: dst=0xe631f208 src=0x8180000 len=512(0x200)
+[ 0.108373] NOTICE: BL2: dst=0x43f00000 src=0x8180400 len=6144(0x1800)
+[ 0.114832] NOTICE: BL2: dst=0x44000000 src=0x81c0000 len=65536(0x10000)
+[ 0.122057] NOTICE: BL2: dst=0x44100000 src=0x8200000 len=524288(0x80000)
+[ 0.132536] NOTICE: BL2: dst=0x50000000 src=0x8640000 len=1048576(0x100000)
+
+U-Boot 2015.04 (Dec 22 2017 - 09:53:06)
+
+CPU: Renesas Electronics R8A7796 rev 1.0 
+Board: M3ULCB 
+I2C: ready 
+DRAM: 1.9 GiB 
+
+Flash: 64 MiB 
+
+MMC: sh-sdhi: 0, sh-sdhi: 1 
+In: serial 
+Out: serial 
+Err: serial 
+...
+```
+
+Next step is to configure uboot properly.
+
+## Configure M3 board for boot on SDcard
+
+If not already done, you'll have to configure Uboot parameters.
 
 1. Connect serial console on M3 board and start a terminal emulator on the USB serial port.
     Here, we use 'screen' on device /dev/ttyUSB0 but you could use any terminal emulator able to open the serial port at 115200 bauds (minicom , picocom ...)
@@ -150,22 +210,7 @@ Download the image and the associated bmap file:
     **WARNING: don't make a big copy/paste or some garbage characters may be sent to the console (issue with usb/serial port buffering?). Instead, copy one or two lines at a time.**
 
     ```uboot
-    env default -a
-    setenv board m3ulcb
-    setenv socnum r8a7796
-    setenv bootmmc '0:1'
-    setenv set_bootkfile 'setenv bootkfile Image'
-    setenv bootkaddr 0x48080000
-    setenv set_bootdfile 'setenv bootdfile devicetree-Image-${socnum}-${board}.dtb'
-    setenv bootdaddr 0x48000000
-    setenv bootargs_console 'console=ttySC0,115200 ignore_loglevel'
-    setenv bootargs_video 'vmalloc=384M video=HDMI-A-1:1920x1080-32@60'
-    setenv bootargs_extra 'rw rootfstype=ext4 rootwait rootdelay=2'
-    setenv bootkload_sd 'ext4load mmc ${bootmmc} ${bootkaddr} boot/${bootkfile}'
-    setenv bootdload_sd 'ext4load mmc ${bootmmc} ${bootdaddr} boot/${bootdfile}'
-    setenv bootargs_root_sd 'root=/dev/mmcblk0p1'
-    setenv bootload_sd 'run set_bootkfile; run bootkload_sd; run set_bootdfile; run bootdload_sd'
-    setenv bootcmd 'setenv bootargs ${bootargs_console} ${bootargs_video} ${bootargs_root_sd} ${bootargs_extra}; run bootload_sd; booti ${bootkaddr} - ${bootdaddr}'
+#include(README-uboot-config.mdinc)
     ```
 
     Then save environment in NV flash:

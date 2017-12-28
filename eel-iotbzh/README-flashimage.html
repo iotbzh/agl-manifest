@@ -76,7 +76,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li><a href="#download-agl-image-and-bmap-file">Download AGL image and bmap file</a></li>
 <li><a href="#write-a-sdcard">Write a SDcard</a></li>
-<li><a href="#configure-m3-board-for-boot-on-sdcard-if-needed">Configure M3 board for boot on SDcard if needed</a></li>
+<li><a href="#upgrade-m3-to-latest-firmware">Upgrade M3 to latest Firmware</a></li>
+<li><a href="#configure-m3-board-for-boot-on-sdcard">Configure M3 board for boot on SDcard</a></li>
 <li><a href="#boot-the-board">Boot the board</a></li>
 </ul>
 </nav>
@@ -100,7 +101,7 @@ $ <span class="va">DEVICE=</span>/dev/sdX</code></pre></div></li>
 <li><p>Run <em>bmaptool</em>:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> bmaptool copy *.wic.xz <span class="va">$DEVICE</span></code></pre></div></li>
 <li>Eject SDCard, insert in M3 board and turn it on.</li>
-<li><p>Enjoy!</p></li>
+<li><p>Enjoy! (if your firmware and uboot config are correct - see below)</p></li>
 </ul>
 <h2 id="install-bmap-tools-recommended">Install bmap-tools (recommended)</h2>
 <p>Bmap-tools is a generic tool for creating the block map (bmap) from a sparse file and copy a raw image using the block map. The idea is that large files, like raw system image files, can be copied or flashed a lot faster and more reliably with bmaptool than with traditional tools, like &quot;dd&quot; or &quot;cp&quot;.</p>
@@ -156,7 +157,58 @@ $ <span class="va">DEVICE=</span>/dev/sdX</code></pre></div></li>
 <p>Using standard dd command (more dangerous):</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">xz</span> -cd *.wic.xz <span class="kw">|</span> <span class="fu">sudo</span> dd of=<span class="va">$DEVICE</span> bs=4M<span class="kw">;</span> <span class="fu">sync</span></code></pre></div></li>
 </ol>
-<h2 id="configure-m3-board-for-boot-on-sdcard-if-needed">Configure M3 board for boot on SDcard if needed</h2>
+<h2 id="upgrade-m3-to-latest-firmware">Upgrade M3 to latest Firmware</h2>
+<p>Due to recent additions in AGL/Eel.rc5 to support the Kingfisher board, it's necessary to upgrade the M3 to a recent firmware.</p>
+<p>The procedure to upgrade the M3 board is documented <a href="https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware">on the M3SK page on eLinux.org</a>.</p>
+<p>IoT.bzh has tested successfully the following procedure using ''minicom'':</p>
+<ol type="1">
+<li>Download each files from the <a href="firmware">firmware directory</a> and put them in a directory of your choice</li>
+<li>Open a terminal</li>
+<li>'cd' to the directory chosen in 1.</li>
+<li>run 'minicom -b 115200 -D /dev/ttyUSB0' (adjust the serial port device if needed, add permissions on device if needed)</li>
+<li><strong>BE REALLY CAREFULL ON THIS STEP</strong>: Follow instructions from <a href="https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware">eLinux.org for M3SK</a></li>
+<li>Reboot the board</li>
+</ol>
+<p>After a successful flashing, the following versions (or later) should be available on the console boot log:</p>
+<pre><code>[ 0.000193] NOTICE: BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.1.0.16
+[ 0.005757] NOTICE: BL2: PRR is R-Car M3 Ver1.0
+[ 0.010339] NOTICE: BL2: Board is Starter Kit Rev1.0
+[ 0.015366] NOTICE: BL2: Boot device is HyperFlash(80MHz)
+[ 0.020792] NOTICE: BL2: LCM state is CM
+[ 0.024833] NOTICE: BL2: AVS setting succeeded. DVFS_SetVID=0x53
+[ 0.030814] NOTICE: BL2: DDR3200(rev.0.27)NOTICE: [COLD_BOOT]NOTICE: ..0
+[ 0.054032] NOTICE: BL2: DRAM Split is 2ch
+[ 0.057917] NOTICE: BL2: QoS is default setting(rev.0.19)
+[ 0.063415] NOTICE: BL2: Lossy Decomp areas
+[ 0.067594] NOTICE: Entry 0: DCMPAREACRAx:0x80000540 DCMPAREACRBx:0x570
+[ 0.074679] NOTICE: Entry 1: DCMPAREACRAx:0x40000000 DCMPAREACRBx:0x0
+[ 0.081591] NOTICE: Entry 2: DCMPAREACRAx:0x20000000 DCMPAREACRBx:0x0
+[ 0.088506] NOTICE: BL2: v1.3(release):b330e0e
+[ 0.092995] NOTICE: BL2: Built : 08:53:12, Dec 22 2017
+[ 0.098183] NOTICE: BL2: Normal boot
+[ 0.101824] NOTICE: BL2: dst=0xe631f208 src=0x8180000 len=512(0x200)
+[ 0.108373] NOTICE: BL2: dst=0x43f00000 src=0x8180400 len=6144(0x1800)
+[ 0.114832] NOTICE: BL2: dst=0x44000000 src=0x81c0000 len=65536(0x10000)
+[ 0.122057] NOTICE: BL2: dst=0x44100000 src=0x8200000 len=524288(0x80000)
+[ 0.132536] NOTICE: BL2: dst=0x50000000 src=0x8640000 len=1048576(0x100000)
+
+U-Boot 2015.04 (Dec 22 2017 - 09:53:06)
+
+CPU: Renesas Electronics R8A7796 rev 1.0 
+Board: M3ULCB 
+I2C: ready 
+DRAM: 1.9 GiB 
+
+Flash: 64 MiB 
+
+MMC: sh-sdhi: 0, sh-sdhi: 1 
+In: serial 
+Out: serial 
+Err: serial 
+...</code></pre>
+<p>Next step is to configure uboot properly.</p>
+<h2 id="configure-m3-board-for-boot-on-sdcard">Configure M3 board for boot on SDcard</h2>
+<p>If not already done, you'll have to configure Uboot parameters.</p>
 <ol type="1">
 <li><p>Connect serial console on M3 board and start a terminal emulator on the USB serial port. Here, we use 'screen' on device /dev/ttyUSB0 but you could use any terminal emulator able to open the serial port at 115200 bauds (minicom , picocom ...)</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">screen</span> /dev/ttyUSB0 115200</code></pre></div></li>
@@ -179,7 +231,8 @@ setenv bootkload_sd 'ext4load mmc ${bootmmc} ${bootkaddr} boot/${bootkfile}'
 setenv bootdload_sd 'ext4load mmc ${bootmmc} ${bootdaddr} boot/${bootdfile}'
 setenv bootargs_root_sd 'root=/dev/mmcblk0p1'
 setenv bootload_sd 'run set_bootkfile; run bootkload_sd; run set_bootdfile; run bootdload_sd'
-setenv bootcmd 'setenv bootargs ${bootargs_console} ${bootargs_video} ${bootargs_root_sd} ${bootargs_extra}; run bootload_sd; booti ${bootkaddr} - ${bootdaddr}'</code></pre>
+setenv bootcmd 'setenv bootargs ${bootargs_console} ${bootargs_video} ${bootargs_root_sd} ${bootargs_extra}; run bootload_sd; booti ${bootkaddr} - ${bootdaddr}'
+</code></pre>
 <p>Then save environment in NV flash:</p>
 <pre class="uboot"><code>saveenv</code></pre></li>
 </ol>
@@ -192,7 +245,7 @@ run bootcmd
 <p><strong>NOTE</strong>: Due to initial operations, first AGL boot can take longer (a few mintutes) than next ones.</p>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">
-	<span style="float:left;">Booting AGL images from SDCard - Rev.20171227_1044</span>
+	<span style="float:left;">Booting AGL images from SDCard - Rev.20171228_1934</span>
 	<span style="float:right">
 <span class="author">Stephane Desneux <a href="mailto:sdx@iot.bzh">sdx@iot.bzh</a> - </span>
 	IoT.bzh 2017</span>

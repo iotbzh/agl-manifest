@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
 SOURCES=$(wildcard *.md)
+DOCDEPS=$(wildcard *.mdinc)
 DOCS=$(patsubst %.md,%.html,$(SOURCES))
 
 SERVER=apache@vm-www:/download/public/2017/Eel+/latest/
@@ -14,7 +15,7 @@ clean:
 	rm -f $(DOCS)
 
 .PHONY: docs
-docs: $(DOCS)
+docs: $(DOCS) $(DOCDEPS)
 
 publish: $(DOCS)
 	scp $(DOCS) $(SERVER)
