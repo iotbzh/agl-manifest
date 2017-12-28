@@ -49,6 +49,7 @@ ssh $SERVER mkdir -p $SERVER_DIR/$VERSION/{sdk,images,firmware}
 # send files
 RSYNCPATH=$SERVER:$SERVER_DIR/$VERSION
 rsync -Pav $IMGDIR/$imgfile $RSYNCPATH/images/
+rsync -Pav $(find $IMGDIR -type f -name "*.srec") $RSYNCPATH/firmware/
 [[ -e $IMGDIR/$bmapfile ]] && rsync -Pav $IMGDIR/$bmapfile $RSYNCPATH/images/
 rsync -Pav $SDKDIR/ $RSYNCPATH/sdk/
 rsync -Pav $SCRIPTDIR/*.html $RSYNCPATH/
