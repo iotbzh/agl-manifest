@@ -53,7 +53,6 @@ rsync -Pav $(find $IMGDIR -type f -name "*.srec") $RSYNCPATH/firmware/
 [[ -e $IMGDIR/$bmapfile ]] && rsync -Pav $IMGDIR/$bmapfile $RSYNCPATH/images/
 rsync -Pav $SDKDIR/ $RSYNCPATH/sdk/
 rsync -Pav $SCRIPTDIR/*.html $RSYNCPATH/
-rsync -Pav $IMGDIR/*.srec $RSYNCPATH/firmware/
 
 cat <<EOF | ssh $SERVER "cat >$SERVER_DIR/$VERSION/firmware/README"
 The files here can be used to flash the M3ULCB board firmware.
@@ -64,7 +63,7 @@ EOF
 
 # create links
 CMD="ln -sfv $imgfile $SERVER_DIR/$VERSION/images/$lnkname"
-[[ -n "$bmaplnkname" ]] && CMD="$CMD; ln -sfv $bmapfile $bmaplnkname"
+[[ -n "$bmaplnkname" ]] && CMD="$CMD; ln -sfv $bmapfile $SERVER_DIR/$VERSION/images/$bmaplnkname"
 CMD="$CMD; ln -sfv $sdkfile $SERVER_DIR/$VERSION/sdk/agl-sdk-latest.sh"
 CMD="$CMD; ln -snfv $SERVER_DIR/$VERSION $SERVER_DIR/latest"
 CMD="$CMD; rm -f $SERVER_DIR/latest_is_*"
