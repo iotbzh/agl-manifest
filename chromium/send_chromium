@@ -5,7 +5,7 @@ set -e
 . /etc/xdtrc
 
 SERVER=apache@vm-www
-SERVER_DIR=/download/public/2017/Chromium/latest/
+SERVER_DIR=/download/public/2018/Chromium/latest/
 
 MACHINE=m3ulcb
 PACKAGES="aarch64/chromium-ozone-wayland noarch/hicolor-icon-theme"

@@ -12,7 +12,7 @@ function error() {
 SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
 
 SERVER=apache@vm-www
-SERVER_DIR=/download/public/2017/Kingfisher
+SERVER_DIR=/download/public/2018/Kingfisher
 
 MACHINE=m3ulcb
 
