@@ -1,6 +1,4 @@
 @include eel/eel_latest.manifest
 
-origin/sandbox/harunobu.kurokawa/ces2018-integ-test=kuro  meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/sandbox/harunobu.kurokawa/ces2018-integ-test=kuro  meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-
+5c2c2a5310cbf48d4d1e3a5afad7ab430f6c28b0=ronan  meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
