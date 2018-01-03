@@ -4,7 +4,7 @@ SOURCES=$(wildcard *.md)
 DOCDEPS=$(wildcard *.mdinc)
 DOCS=$(patsubst %.md,%.html,$(SOURCES))
 
-SERVER=apache@vm-www:/download/public/2017/Eel+/latest/
+SERVER=apache@vm-www:/download/public/2018/Eel+/latest/
 
 all:
 	@echo "Targets":

@@ -228,7 +228,7 @@ drwxr-xr-x   2 devel devel  4096 Dec 14 14:51 sdk</code></pre>
 <p>If you're satisfied with the build, you can save some directories to speed up next builds:</p>
 <pre><code>rsync -a --delete /xds/downloads/ ~/mirror/downloads/
 rsync -a --delete /xds/sstate-cache/ ~/mirror/sstate-cache/</code></pre>
-<p>Next time, when prepare_meta will be run, it will copy the two reference folders located in $HOME/mirror into the build directory /xdt prepare_meta</p>
+<p>Next time, when prepare_meta will be run, it will copy the two reference folders located in $HOME/mirror into the build directory /xdt/build/...</p>
 <h3 id="create-a-sd-card-image">Create a SD card image</h3>
 <p>In recent version of AGL, the WIC imager is used to create raw images. So you should find these files:</p>
 <pre><code>cd /xdt/build/m3ulcb/tmp/deploy/images/
@@ -265,10 +265,10 @@ total 621268
 <span class="fu">cmake</span><span class="kw">;</span> <span class="fu">make</span><span class="kw">;</span> <span class="fu">make</span> package<span class="kw">;</span></code></pre></div>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">
-	<span style="float:left;">AGL EE with Kingfisher support - Image &amp; SDK builds - Rev.20171228_1935</span>
+	<span style="float:left;">AGL EE with Kingfisher support - Image &amp; SDK builds - Rev.20180103_2254</span>
 	<span style="float:right">
 <span class="author">Stephane Desneux <a href="mailto:sdx@iot.bzh">sdx@iot.bzh</a> - </span>
-	IoT.bzh 2017</span>
+	IoT.bzh 2018</span>
 </div>
 </body>
 </html>

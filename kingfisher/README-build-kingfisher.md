@@ -239,8 +239,7 @@ rsync -a --delete /xds/downloads/ ~/mirror/downloads/
 rsync -a --delete /xds/sstate-cache/ ~/mirror/sstate-cache/
 ```
 
-Next time, when prepare_meta will be run, it will copy the two reference folders located in $HOME/mirror into the build directory /xdt
-prepare_meta
+Next time, when prepare_meta will be run, it will copy the two reference folders located in $HOME/mirror into the build directory /xdt/build/...
 
 ### Create a SD card image
 
