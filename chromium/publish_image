@@ -82,6 +82,8 @@ CMD="$CMD; ln -sfv $sdkfile $SERVER_DIR/$VERSION/sdk/agl-sdk-latest.sh"
 CMD="$CMD; ln -snfv $SERVER_DIR/$VERSION $SERVER_DIR/latest"
 CMD="$CMD; rm -f $SERVER_DIR/latest_is_*"
 CMD="$CMD; ln -snfv $SERVER_DIR/$VERSION $SERVER_DIR/latest_is_$VERSION"
+CMD="$CMD; echo $VERSION >$SERVER_DIR/latest.txt"
+CMD="$CMD; pushd $SERVER_DIR/$VERSION/images; md5sum * >files.md5; popd"
 
 ssh $SERVER "$CMD"
 
