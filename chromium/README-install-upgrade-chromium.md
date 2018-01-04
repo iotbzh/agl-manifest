@@ -8,7 +8,11 @@ title: Install or upgrade Chromium on AGL/M3 through RPMs
 Log into the board through ssh or console, then install RPMs with smart:
 
 ```bash
-dnf install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-ozone-wayland-<VERSION>.aarch64.rpm http://iot.bzh/download/public/2017/Chromium/latest/noarch/hicolor-icon-theme-<VERSION>.aarch64.rpm
+for x in \
+	http://iot.bzh/download/public/2018/Chromium/latest/packages/aarch64/chromium-ozone-wayland-65.0.3298.0.r524623.igalia.1-r0.aarch64.rpm \
+	http://iot.bzh/download/public/2018/Chromium/latest/packages/aarch64/chromium-ozone-wayland-chromedriver-65.0.3298.0.r524623.igalia.1-r0.aarch64.rpm \
+	http://iot.bzh/download/public/2018/Chromium/latest/packages/noarch/hicolor-icon-theme-0.15-r0.noarch.rpm \
+	; do wget $x; done; dnf install *.rpm
 ```
 
 

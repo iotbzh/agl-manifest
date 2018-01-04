@@ -75,7 +75,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </nav>
 <h2 id="installation">Installation</h2>
 <p>Log into the board through ssh or console, then install RPMs with smart:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> install http://iot.bzh/download/public/2017/Chromium/latest/aarch64/chromium-ozone-wayland-<span class="op">&lt;</span>VERSION<span class="op">&gt;</span>.aarch64.rpm http://iot.bzh/download/public/2017/Chromium/latest/noarch/hicolor-icon-theme-<span class="op">&lt;</span>VERSION<span class="op">&gt;</span>.aarch64.rpm</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">for</span> <span class="ex">x</span> in \
+    http://iot.bzh/download/public/2018/Chromium/latest/packages/aarch64/chromium-ozone-wayland-65.0.3298.0.r524623.igalia.1-r0.aarch64.rpm \
+    http://iot.bzh/download/public/2018/Chromium/latest/packages/aarch64/chromium-ozone-wayland-chromedriver-65.0.3298.0.r524623.igalia.1-r0.aarch64.rpm \
+    http://iot.bzh/download/public/2018/Chromium/latest/packages/noarch/hicolor-icon-theme-0.15-r0.noarch.rpm \
+    <span class="kw">;</span> <span class="kw">do</span> <span class="fu">wget</span> <span class="va">$x</span><span class="kw">;</span> <span class="kw">done</span>; <span class="ex">dnf</span> install *.rpm</code></pre></div>
 <h2 id="removal">Removal</h2>
 <p>Run:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">dnf</span> remove chromium-ozone-wayland hicolor-icon-theme</code></pre></div>
@@ -87,7 +91,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="ex">...</span></code></pre></div>
 <!-- Links below are generated automatically by /home/sdx/bin/md2html -->
 <div class="footer">
-	<span style="float:left;">Install or upgrade Chromium on AGL/M3 through RPMs - Rev.20180104_1224</span>
+	<span style="float:left;">Install or upgrade Chromium on AGL/M3 through RPMs - Rev.20180104_1236</span>
 	<span style="float:right">
 	IoT.bzh 2018</span>
 </div>
