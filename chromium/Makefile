@@ -1,9 +1,10 @@
 #!/usr/bin/make -f
 
 SOURCES=$(wildcard *.md)
+DOCDEPS=$(wildcard *.mdinc)
 DOCS=$(patsubst %.md,%.html,$(SOURCES))
 
-SERVER=apache@vm-www:/download/public/2017/Chromium/latest/
+SERVER=apache@vm-www:/download/public/2018/Chromium/latest/
 
 all:
 	@echo "Targets":
@@ -14,10 +15,10 @@ clean:
 	rm -f $(DOCS)
 
 .PHONY: docs
-docs: $(DOCS)
+docs: $(DOCS) $(DOCDEPS)
 
 publish: $(DOCS)
 	scp $(DOCS) $(SERVER)
 
 $(DOCS): %.html: %.md
-	md2html $< $@
+	md2html $< $@ --toc --variable=revision:$(shell date -u +%Y%m%d_%H%M)
