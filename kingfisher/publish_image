@@ -12,9 +12,12 @@ function error() {
 SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
 
 SERVER=apache@vm-www
-SERVER_DIR=/download/public/2018/Kingfisher
+MACHINE=${1:-m3ulcb}
 
-MACHINE=m3ulcb
+SERVER_DIR=/download/public/2018/Kingfisher/$MACHINE
+
+echo "Using machine $MACHINE"
+echo "Destination will be $SERVER_DIR"
 
 IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
 SDKDIR=$XDT_BUILD/$MACHINE/tmp/deploy/sdk/
@@ -55,7 +58,7 @@ rsync -Pav $SDKDIR/ $RSYNCPATH/sdk/
 rsync -Pav $SCRIPTDIR/*.html $RSYNCPATH/
 
 cat <<EOF | ssh $SERVER "cat >$SERVER_DIR/$VERSION/firmware/README"
-The files here can be used to flash the M3ULCB board firmware.
+The files here can be used to flash the $MACHINE board firmware.
 
 Full procedure is detailed here: https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware
 EOF
