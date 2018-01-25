@@ -6,7 +6,7 @@ origin/eel=eel  meta-agl-demo            origin=https://gerrit.automotivelinux.o
 
 # Distri
 b2ce523=eel    meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-ebb625a=eel    poky                     origin=git://git.yoctoproject.org/poky
+022df46=eel    poky                     origin=git://git.yoctoproject.org/poky
 
 # Graphic
 c6aa602=eel    meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
