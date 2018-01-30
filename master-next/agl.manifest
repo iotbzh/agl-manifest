@@ -1,0 +1,23 @@
+# AGL
+origin/sandbox/ronan/rocko=master   meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/master=master				meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/sandbox/ronan/rocko=master   meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/master=master				meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+
+# Distro
+origin/rocko=master					meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+origin/rocko=master				    poky                     origin=git://git.yoctoproject.org/poky
+
+# Graphic
+origin/rocko=master					meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+
+# BSP
+origin/master=master				meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
+origin/sandbox/ronan/rocko=master   meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/rocko=master					meta-intel               origin=git://git.yoctoproject.org/meta-intel
+origin/rocko=master					meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
+
+# Security
+20bbb97=master			            meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+origin/master=master                meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
+
