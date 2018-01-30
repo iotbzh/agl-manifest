@@ -12,7 +12,6 @@ origin/rocko=master				    poky                     origin=git://git.yoctoprojec
 origin/rocko=master					meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/master=master				meta-renesas             origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas
 origin/sandbox/ronan/rocko=master   meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 origin/rocko=master					meta-intel               origin=git://git.yoctoproject.org/meta-intel
 origin/rocko=master					meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
