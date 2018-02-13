@@ -7,7 +7,7 @@ origin/master=master				meta-agl-devel           origin=https://gerrit.automotiv
 # Distro
 origin/rocko=master					meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
 origin/rocko=master				    poky                     origin=git://git.yoctoproject.org/poky
-c7f97f1=master						meta-gplv2               origin=git://git.yoctoproject.org/meta-gplv2
+origin/rocko=master					meta-gplv2               origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
 origin/rocko=master					meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
@@ -18,6 +18,6 @@ origin/rocko=master					meta-intel               origin=git://git.yoctoproject.o
 origin/rocko=master					meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Security
-20bbb97=master			            meta-intel-iot-security  origin=https://github.com/01org/meta-intel-iot-security.git
+origin/rocko=iotbzh					meta-security			 origin=git://git.yoctoproject.org/meta-security
 origin/master=master                meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
