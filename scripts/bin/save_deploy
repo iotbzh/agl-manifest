@@ -86,7 +86,7 @@ fi
 echo rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
 rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
 
-rm -fr ${XDT_DIR}/deploy/${board}_latest
-ln -sf "${SAVEDIR}" ${XDT_DIR}/deploy/${board}_latest
+rm -fr ${XDT_DIR}/deploy/${MACHINE}_latest
+ln -sf $(basename "${SAVEDIR}") ${XDT_DIR}/deploy/${MACHINE}_latest
 
 echo "SAVEDIR here: ${SAVEDIR}"
