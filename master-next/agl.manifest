@@ -18,6 +18,6 @@ origin/rocko=master					meta-intel               origin=git://git.yoctoproject.o
 origin/rocko=master					meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Security
-origin/rocko=iotbzh					meta-security			 origin=git://git.yoctoproject.org/meta-security
+origin/master=iotbzh				meta-security			 origin=git://git.yoctoproject.org/meta-security
 origin/master=master                meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
