@@ -1,0 +1,26 @@
+# AGL
+refs/tags/dab_4.0.2=dab  meta-agl                 agl=https://gerrit.automotivelinux.org/gerrit/ AGL/meta-agl
+refs/tags/dab_4.0.2=dab  meta-agl-extra           agl=https://gerrit.automotivelinux.org/gerrit/ AGL/meta-agl-extra
+refs/tags/dab_4.0.2=dab  meta-agl-devel           agl=https://gerrit.automotivelinux.org/gerrit/ AGL/meta-agl-devel
+refs/tags/dab_4.0.2=dab  meta-agl-demo            agl=https://gerrit.automotivelinux.org/gerrit/ AGL/meta-agl-demo
+
+# Distri
+fe5c83312de11e80b85680ef237f8acb04b4b26e=morty    meta-openembedded        openembedded=git://git.openembedded.org/ meta-openembedded
+60402978fe3648bf560b3386c6e9dd661cdf2083=morty    poky                     yocto=git://git.yoctoproject.org/ poky
+
+# Graphic
+5f837b47f5c3e462f24cd5abf58ff6ef1dd04932=morty    meta-qt5                 github=https://github.com/ meta-qt5/meta-qt5.git
+
+# BSP
+refs/tags/dab_4.0.2=dab  meta-renesas             agl=https://gerrit.automotivelinux.org/gerrit/ AGL/meta-renesas
+refs/tags/dab_4.0.2=dab  meta-renesas-rcar-gen3   agl=https://gerrit.automotivelinux.org/gerrit/ AGL/meta-renesas-rcar-gen3
+6add41510412ca196efb3e4f949d403a8b6f35d7=morty    meta-intel               yocto=git://git.yoctoproject.org/ meta-intel
+28d4404f89eb59d406b4976c0e3f5ca19137ba74=morty    meta-raspberrypi         yocto=git://git.yoctoproject.org/ meta-raspberrypi
+
+# Extra
+028a5c234fb9fe51b39db339f7d4250fba978198=master    meta-oic                 yocto=git://git.yoctoproject.org/ meta-oic
+
+# Security
+0fa0aff75ee21edd758a1baddc4522371a746f99=master    meta-security-isafw      github=https://github.com/ 01org/meta-security-isafw
+20bbb97f6d5400b126ae96ef446c3e60c7e16285=master    meta-intel-iot-security  github=https://github.com/ 01org/meta-intel-iot-security.git
+

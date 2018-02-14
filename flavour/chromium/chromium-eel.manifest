@@ -1,0 +1,7 @@
+@include eel/eel_latest.manifest
+
+# IoT.bzh extensions
+eel=eel    meta-iot-bzh      github=https://github.com/ iotbzh/meta-iot-bzh
+
+# Chromium
+ozone/wayland/65.0.3298.0.r524623=chromium_65.0.3298.0.r524623  meta-browser      github=https://github.com/ Igalia/meta-browser

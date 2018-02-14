@@ -1,0 +1,4 @@
+@include master/agl.manifest
+
+# IoT.bzh
+master=master    meta-iot-bzh      github=https://github.com/ iotbzh/meta-iot-bzh

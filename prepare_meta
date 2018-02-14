@@ -23,10 +23,9 @@ MANIFEST_URL=https://github.com/iotbzh/agl-manifest.git
 SCRIPT=$(basename $BASH_SOURCE)
 
 # this script canonical url
-SELF_URL=https://raw.githubusercontent.com/iotbzh/agl-manifest/master/$SCRIPT
+SELF_URL=https://raw.githubusercontent.com/iotbzh/agl-manifest/master/${SCRIPT}
 
 set -e
-
 
 function usage() {
 	cat <<EOF >&2
@@ -68,7 +67,7 @@ Options:
       available options: same as --enable
    -t|--target <name>
       target platform
-      default: porter
+      default: m3ulcb
       valid options: porter, m3ulcb, h3ulcb, salvator, m3ulcb-kingfisher, intel-corei7-64, qemux86, qemux86-64, wandboard ...
    -u|--upgrade
       Check for and perform an update to the script without prompting user, then exit.
@@ -128,7 +127,7 @@ DSTDIR=$(pwd -P)
 LOCALMIRROR=
 REMOTEMIRROR=
 PROPRIETARY_RENESAS_DIR=
-TARGET=porter
+TARGET=m3ulcb
 JUST_UPGRADE=
 
 #default options values
@@ -139,6 +138,14 @@ option_keepcache=0
 option_rm_work=0
 option_keepmanifest=0
 option_cleartemp=0
+
+DSTDIR=$(pwd)
+if [ -e ${DSTDIR}/.config.xdt ] ;then
+	source ${DSTDIR}/.config.xdt
+	ALREADY_INIT="YES"
+else:
+	DSTDIR=""
+fi
 
 while true; do
 	case "$1" in
@@ -159,6 +166,7 @@ done
 
 [[ "$HELP" == 1 ]] && usage
 
+################################ Sanity check ##########################
 # Ensure upgrades are enabled if -u|--update specified
 [[ "$JUST_UPGRADE" == 1 ]] && option_upgrade=1
 
@@ -168,25 +176,41 @@ done
 # check git presence
 which git 2>&1 >/dev/null || { error "Unable to find git command."; exit 1; }
 
-BUILDDIR=$DSTDIR/build/$TARGET
+################################ init project directory ################
 
+mkdir -p ${DSTDIR}/meta
+mkdir -p ${DSTDIR}/build
+
+################################ Sanity check ##########################
 info "=============== SUMMARY =================="
+
+echo '#Project parameter\n' > .config.xdt
+
 for v in \
-	FLAVOUR \
-	DSTDIR \
-	TARGET \
-	BUILDDIR \
-	MANIFEST_URL \
-	LOCALMIRROR \
-	REMOTEMIRROR \
-	PROPRIETARY_RENESAS_DIR \
-	SELF_URL \
+		FLAVOUR \
+		AGL_FEATURES \
+		DSTDIR \
+		LOCALMIRROR \
+		REMOTEMIRROR \
+		PROPRIETARY_RENESAS_DIR \
+		TARGET \
+		JUST_UPGRADE \
+		MANIFEST_URL \
+		SELF_URL \
+		option_ccache \
+		option_upgrade \
+		option_wipeconfig \
+		option_keepcache \
+		option_rm_work \
+		option_keepmanifest \
+		option_cleartemp \
 	; do
 	log "$v : ${!v}"
+	echo "$v=${!v}\n">> ${DSTDIR}/.config.xdt
 done
 info "=========================================="
 
-################################ upgrade script ################################
+################################ upgrade script ########################
 
 function upgrade() {
 	# get remote script
@@ -248,13 +272,28 @@ function upgrade() {
 
 [[ "$option_upgrade" == "1" ]] && upgrade
 
-################################ clone agl-manifest ############################
+################################ Use local cache mirror ################
+
+if [ -z ALREADY_INIT ] ; then
+	# init meta from mirror if any
+	for dir in ${LOCALMIRROR//:/ }; do
+		if [[ -d $dir/meta ]]; then
+			info "=== Copying $dir/meta to $DSTDIR/meta"
+			rsync -a $dir/meta/ ${DSTDIR}/meta/
+			break
+		fi
+	done
+fi
+
+################################ clone agl-manifest ####################
 
 function clone_or_pull() {
 	url=$1
 	rev=${2:-}
+	#Get the git repo name
 	dir=$(basename $url .git)
 
+	#If git directory doesn't exist clone it
 	if [[ ! -d $dir ]]; then
 		info "=== cloning $url / $rev into $PWD/$dir"
 		git clone $url
@@ -277,19 +316,9 @@ function clone_or_pull() {
 	fi
 }
 
-mkdir -p $DSTDIR/meta
-
-# init meta from mirror if any
-for dir in ${LOCALMIRROR//:/ }; do
-	if [[ -d $dir/meta ]]; then
-		info "=== Copying $dir/meta to $DSTDIR/meta"
-		rsync -a $dir/meta/ $DSTDIR/meta/
-		break
-	fi
-done
-
 pushd $DSTDIR/meta >/dev/null #{
 	if [[ "$FLAVOUR" =~ / ]]; then
+		#Extract the FLAVOUR value expression FLAVOUR=flavour/rev
 		flavour=${FLAVOUR%%/*}
 		rev=${FLAVOUR#*/}
 	else
@@ -334,6 +363,7 @@ function checkout_gits() {
 					cd "$DESTDIR/$value"
 					;;
 				REPO)
+					#Split string value REPO "value=url"
 					name="${value%%=*}"
 					url="${value#*=}"
 					log "Repository: $value"
@@ -344,6 +374,7 @@ function checkout_gits() {
 					fi
 					;;
 				HASH)
+					#Split string value value "sha=branch"
 					log "Using revision $value"
 					sha="${value%%=*}"
 					branch="${value#*=}"
@@ -395,6 +426,7 @@ popd >/dev/null #}
 
 info "=== setup build for $TARGET"
 
+BUILDDIR=$DSTDIR/build/$TARGET
 mkdir -p $BUILDDIR
 mkdir -p $DSTDIR/downloads
 mkdir -p $DSTDIR/sstate-cache
@@ -492,7 +524,6 @@ EOF
 	fi
 
 	# ----------------------------- sstate-cache ----------------------------
-
 	info "=== conf: sstate caches"
 
 	# local cache copied, as previously
@@ -510,8 +541,6 @@ EOF
 	fi
 
 	# ----------------------------------- ccache -----------------------------
-
-
 	if [[ "$option_ccache" == 1 ]]; then
 		info "=== conf: ccache"
 		for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/ccache; done); do

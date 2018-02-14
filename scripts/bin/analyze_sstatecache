@@ -1,10 +1,23 @@
 #!/bin/bash
 
+SCRIPT=$(basename $BASH_SOURCE)
+
 . /etc/xdtrc
 
-cd ${1:-$XDT_SSTATECACHE}
+SRCDIR=${1:-$XDT_DIR}
 
-for x in $(find . -type f  | cut -f8 -d':' | cut -f2- -d_ | sort | uniq ); do  
+
+function usage() {
+	cat <<EOF >&2
+Usage: ${SCRIPT} [options]
+
+EOF
+	exit 1
+}
+
+cd ${SRCDIR}/sstate-cache
+
+for x in $(find . -type f  | cut -f8 -d':' | cut -f2- -d_ | sort | uniq ); do
 	du -ks $(find . -name "*$x") | awk '{ i=i+$1; } END { printf("%d",i); }'
 	echo " $x"
 done | sort -n

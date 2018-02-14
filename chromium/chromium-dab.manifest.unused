@@ -1,7 +1,0 @@
-@include dab/dab_latest.manifest
-
-# IoT.bzh extensions
-origin/dab=dab-iotbzh    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
-
-# Chromium
-origin/ozone/wayland/20170928=chromium_20170928  meta-browser      origin=https://github.com/Igalia/meta-browser

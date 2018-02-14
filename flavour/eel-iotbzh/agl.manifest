@@ -1,0 +1,4 @@
+@include eel/eel_latest.manifest
+
+# IoT.bzh
+eel=eel    meta-iot-bzh      github=https://github.com/ iotbzh/meta-iot-bzh

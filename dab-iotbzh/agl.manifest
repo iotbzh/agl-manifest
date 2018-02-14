@@ -1,5 +1,0 @@
-@include dab/dab_latest.manifest 
-
-# IoT.bzh extensions
-origin/dab=dab-iotbzh    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
-

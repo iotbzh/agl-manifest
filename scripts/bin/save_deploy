@@ -2,12 +2,28 @@
 
 . /etc/xdtrc
 
-board=${1:-m3ulcb}
+function usage() {
+	cat <<EOF >&2
+Usage: ${SCRIPT} [options]
 
-DEPLOYDIR=$XDT_BUILD/$board/tmp/deploy/images/$board
+EOF
+	exit 1
+}
 
+[[ -d "$1" ]] && DEPLOYDIR="$1"
+
+board="${2:-m3ulcb}"
+
+[[ -z "${DEPLOYDIR}" ]] && DEPLOYDIR=${XDT_BUILD}/$board/tmp/deploy/images/$board/
 [[ ! -d $DEPLOYDIR ]] && { echo "No deploy dir for board $board ($DEPLOYDIR)";  exit 1; }
 
-mkdir -p $XDT_DIR/deploy/$board
-rsync -av --delete $DEPLOYDIR/ $XDT_DIR/deploy/$board/
+[[ -d "$3" ]] && SAVEDIR="$3" || SAVEDIR="${XDT_DIR}/deploy/${board}_$(date +"%Y-%m-%d-%H-%M")/"
 
+mkdir -p ${SAVEDIR}
+
+rsync -av --delete --exclude "*ostree*" --exclude "*otaimg" --exclude "*tar.xz" --exclude "*wic*" ${DEPLOYDIR} ${SAVEDIR}
+
+rm -fr ${XDT_DIR}/deploy/${board}_latest
+ln -sf "${SAVEDIR}" ${XDT_DIR}/deploy/${board}_latest
+
+echo "SAVEDIR here: ${SAVEDIR}"

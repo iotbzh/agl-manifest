@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 . /etc/xdtrc
 
@@ -19,13 +19,16 @@ echo "Using IMAGE=$IMAGE"
 REALIMG=$(realpath $IMAGE)
 [[ ! -f ${REALIMG}.bak ]] && cp -v ${REALIMG} ${REALIMG}.bak
 
+echo REALIMG $REALIMG
+
 TFTPDIR=$(dirname $(dirname $REALIMG))
 
-cat <<EOF | sudo tee /etc/default/tftpd-hpa &>/dev/null 
+
+cat <<EOF | sudo tee /etc/default/tftpd-hpa &>/dev/null
 # /etc/default/tftpd-hpa
 
 TFTP_USERNAME="tftp"
-TFTP_DIRECTORY="$TFTPDIR"
+TFTP_DIRECTORY="${TFTPDIR}"
 TFTP_ADDRESS="0.0.0.0:69"
 TFTP_OPTIONS="--secure"
 EOF

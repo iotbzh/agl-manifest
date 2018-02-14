@@ -1,7 +1,0 @@
-@include eel/eel_latest.manifest
-
-# IoT.bzh extensions
-origin/eel=eel    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
-
-# Chromium
-origin/ozone/wayland/65.0.3298.0.r524623=chromium_65.0.3298.0.r524623  meta-browser      origin=https://github.com/Igalia/meta-browser
