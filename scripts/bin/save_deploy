@@ -2,12 +2,91 @@
 
 . /etc/xdtrc
 
-board=${1:-m3ulcb}
+function usage() {
+	cat <<EOF >&2
+Options:
+   -d|--deploy-dir
+      deploy directory
+      default: "\${XDT_BUILD}/${MACHINE}/tmp/deploy/images/\${MACHINE}/"
+   -m|--machine
+      deploy machine
+      default: "m3ulcb"
+   -s|--savedir
+      save directory
+      default: "\${XDT_DIR}/deploy/\${MACHINE}_\$(date +\"%Y-%m-%d-%H-%M\")/"
+   -e|--excludeDeploy
+      exclude Deploy
+      default: "*ostree* *otaimg *tar.xzv *wic*"
+   -h|--help
+      get this help
 
-DEPLOYDIR=$XDT_BUILD/$board/tmp/deploy/images/$board
+Example:
+	$SCRIPT -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter agl-demo
+EOF
+	exit 1
+}
 
-[[ ! -d $DEPLOYDIR ]] && { echo "No deploy dir for board $board ($DEPLOYDIR)";  exit 1; }
+MACHINE="m3ulcb"
+EXCLUDE="*ostree* *otaimg *tar.xzv *wic*"
 
-mkdir -p $XDT_DIR/deploy/$board
-rsync -av --delete $DEPLOYDIR/ $XDT_DIR/deploy/$board/
+while (($#)); do
+	case "$1" in
+		-d|--deploy-dir)
+			DEPLOYDIR="$2";
+			echo DEPLOYDIR $DEPLOYDIR
+			shift 2;;
+		-m|--machine)
+			MACHINE="$2";
+			shift 2;;
+		-s|--savedir)
+			SAVEDIR="$2";
+			shift 2;;
+		-e|--excludeDeploy)
+			EXCLUDE="$2";
+			shift 2;;
+		-h|--help)
+			HELP=1;
+			shift;
+			break;;
+		--)
+			shift;
+			break;;
+		*)
+			echo "Internal error";
+			exit 1;;
+	esac
+done
 
+[[ "$HELP" == 1 ]] && usage
+
+if [[ -z "${DEPLOYDIR}" ]] ; then
+	DEPLOYDIR="${XDT_BUILD}/$board/tmp/deploy/images/${MACHINE}/"
+fi
+
+if [[ ! -d "${DEPLOYDIR}" ]] ; then
+	echo "No deploy directory for board $board ($DEPLOYDIR)"
+	exit 1;
+fi
+
+if [[ -z "${SAVEDIR}" ]] ; then
+	SAVEDIR="${XDT_DIR}/deploy/${MACHINE}_$(date +"%Y-%m-%d-%H-%M")/"
+fi
+
+mkdir -p ${SAVEDIR}
+
+if ! [[ -z "${EXCLUDE}" ]] ; then
+	RSYNCEXCLUDE=""
+	echo EXCLUDE "${EXCLUDE}"
+	for e in ${EXCLUDE}; do
+		RSYNCEXCLUDE="${RSYNCEXCLUDE} --exclude "$e" "
+	done
+fi
+
+
+echo rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
+rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
+
+rm -fr ${XDT_DIR}/deploy/${board}_latest
+ln -sf "${SAVEDIR}" ${XDT_DIR}/deploy/${board}_latest
+
+echo "SAVEDIR here: ${SAVEDIR}"
