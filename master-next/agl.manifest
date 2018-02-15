@@ -1,23 +1,23 @@
 # AGL
-origin/sandbox/ronan/rocko=master   meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/sandbox/ronan/rocko=rocko   meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=master				meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/sandbox/ronan/rocko=master   meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/sandbox/ronan/rocko=rocko   meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/master=master				meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
-origin/rocko=master					meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
-origin/rocko=master				    poky                     origin=git://git.yoctoproject.org/poky
-origin/rocko=master					meta-gplv2               origin=git://git.yoctoproject.org/meta-gplv2
+origin/rocko=rocko					meta-openembedded        origin=git://git.openembedded.org/meta-openembedded
+origin/rocko=rocko				    poky                     origin=git://git.yoctoproject.org/poky
+origin/rocko=rocko					meta-gplv2               origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
-origin/rocko=master					meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
+origin/rocko=rocko					meta-qt5                 origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/sandbox/ronan/rocko=master   meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-origin/rocko=master					meta-intel               origin=git://git.yoctoproject.org/meta-intel
-origin/rocko=master					meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
+origin/sandbox/ronan/rocko=rocko   meta-renesas-rcar-gen3   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/rocko=rocko					meta-intel               origin=git://git.yoctoproject.org/meta-intel
+origin/rocko=rocko					meta-raspberrypi         origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Security
-origin/master=iotbzh				meta-security			 origin=git://git.yoctoproject.org/meta-security
+origin/master=master				meta-security			 origin=git://git.yoctoproject.org/meta-security
 origin/master=master                meta-security-isafw      origin=https://github.com/01org/meta-security-isafw
 
