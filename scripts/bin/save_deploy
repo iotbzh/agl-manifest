@@ -60,13 +60,15 @@ done
 [[ "$HELP" == 1 ]] && usage
 
 if [[ -z "${DEPLOYDIR}" ]] ; then
-	DEPLOYDIR="${XDT_BUILD}/$board/tmp/deploy/images/${MACHINE}/"
+	DEPLOYDIR="${XDT_BUILD}/${MACHINE}/tmp/deploy/images/${MACHINE}/"
 fi
 
 if [[ ! -d "${DEPLOYDIR}" ]] ; then
-	echo "No deploy directory for board $board ($DEPLOYDIR)"
+	echo "No deploy directory for board ${MACHINE} ($DEPLOYDIR)"
 	exit 1;
 fi
+
+DEPLOYDIR=$(realpath ${DEPLOYDIR})
 
 if [[ -z "${SAVEDIR}" ]] ; then
 	SAVEDIR="${XDT_DIR}/deploy/${MACHINE}_$(date +"%Y-%m-%d-%H-%M")/"
@@ -87,6 +89,6 @@ echo rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
 rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
 
 rm -fr ${XDT_DIR}/deploy/${MACHINE}_latest
-ln -sf $(basename "${SAVEDIR}") ${XDT_DIR}/deploy/${MACHINE}_latest
+ln -sf "${SAVEDIR}" ${XDT_DIR}/deploy/${MACHINE}_latest
 
 echo "SAVEDIR here: ${SAVEDIR}"
