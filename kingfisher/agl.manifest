@@ -1,3 +1,10 @@
-@include eel/eel_latest.manifest
+@include master/agl.manifest
+
+origin/sandbox/ronan/rocko_kf=rocko_kf  meta-agl  origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+
+# new layer from Cogent Embedded
+origin/v3.4.0=v3.4.0                    meta-rcar origin=https://github.com/CogentEmbedded/meta-rcar.git
+
+
 
 
