@@ -84,11 +84,14 @@ if ! [[ -z "${EXCLUDE}" ]] ; then
 	done
 fi
 
+SAVEDIR=$(realpath ${SAVEDIR})
+BASESAVEDIR=$(basename "${SAVEDIR}")
+DIRSAVEDIR=$(dirname "${SAVEDIR}")
 
 echo rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
 rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
 
-rm -fr ${XDT_DIR}/deploy/${MACHINE}_latest
-ln -sf "${SAVEDIR}" ${XDT_DIR}/deploy/${MACHINE}_latest
+rm -fr ${DIRSAVEDIR}/${MACHINE}_latest
+ln -sf ${BASESAVEDIR} ${DIRSAVEDIR}/${MACHINE}_latest
 
 echo "SAVEDIR here: ${SAVEDIR}"
