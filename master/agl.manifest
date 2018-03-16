@@ -13,7 +13,7 @@ origin/rocko=rocko      meta-gplv2            origin=git://git.yoctoproject.org/
 origin/rocko=rocko      meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/master           meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/master=master    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 origin/rocko=rocko      meta-intel            origin=git://git.yoctoproject.org/meta-intel
 origin/rocko=rocko      meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 
