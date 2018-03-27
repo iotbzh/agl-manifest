@@ -1,7 +1,0 @@
-@include kingfisher/agl.manifest
-
-# IoT.bzh extensions
-origin/master=master    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
-
-# Chromium
-origin/ozone/wayland/66.0.3340.0.r534306=chromium_66.0.3340.0.r534306  meta-browser      origin=https://github.com/Igalia/meta-browser
