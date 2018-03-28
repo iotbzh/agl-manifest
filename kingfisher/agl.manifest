@@ -1,5 +1,6 @@
 @include master/agl.manifest
 
+origin/sandbox/ronan/rocko_kf=rocko_kf  meta-agl  origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 
 
 
