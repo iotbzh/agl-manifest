@@ -2,21 +2,26 @@
 
 . /etc/xdtrc
 
+MACHINE="m3ulcb"
+EXCLUDE="*ostree* *otaimg *tar.xzv *wic*"
+DEPLOYDIR="${XDT_BUILD}/${MACHINE}/tmp/deploy/images/${MACHINE}/"
+SAVEDIR="${XDT_DIR}/deploy/${MACHINE}/"
+
 function usage() {
 	cat <<EOF >&2
 Options:
    -d|--deploy-dir
       deploy directory
-      default: "\${XDT_BUILD}/${MACHINE}/tmp/deploy/images/\${MACHINE}/"
+      default: $DEPLOYDIR
    -m|--machine
       deploy machine
-      default: "m3ulcb"
+      default: $MACHINE
    -s|--savedir
       save directory
-      default: "\${XDT_DIR}/deploy/\${MACHINE}_\$(date +\"%Y-%m-%d-%H-%M\")/"
+      default: $SAVEDIR
    -e|--excludeDeploy
       exclude Deploy
-      default: "*ostree* *otaimg *tar.xzv *wic*"
+      default: $EXCLUDE
    -h|--help
       get this help
 
@@ -25,9 +30,6 @@ Example:
 EOF
 	exit 1
 }
-
-MACHINE="m3ulcb"
-EXCLUDE="*ostree* *otaimg *tar.xzv *wic*"
 
 while (($#)); do
 	case "$1" in
@@ -59,20 +61,12 @@ done
 
 [[ "$HELP" == 1 ]] && usage
 
-if [[ -z "${DEPLOYDIR}" ]] ; then
-	DEPLOYDIR="${XDT_BUILD}/${MACHINE}/tmp/deploy/images/${MACHINE}/"
-fi
-
 if [[ ! -d "${DEPLOYDIR}" ]] ; then
 	echo "No deploy directory for board ${MACHINE} ($DEPLOYDIR)"
 	exit 1;
 fi
 
 DEPLOYDIR=$(realpath ${DEPLOYDIR})
-
-if [[ -z "${SAVEDIR}" ]] ; then
-	SAVEDIR="${XDT_DIR}/deploy/${MACHINE}_$(date +"%Y-%m-%d-%H-%M")/"
-fi
 
 mkdir -p ${SAVEDIR}
 
@@ -88,8 +82,9 @@ SAVEDIR=$(realpath ${SAVEDIR})
 BASESAVEDIR=$(basename "${SAVEDIR}")
 DIRSAVEDIR=$(dirname "${SAVEDIR}")
 
-echo rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
-rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR} ${SAVEDIR}
+set -x
+rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR}/ ${SAVEDIR}/
+set +x
 
 rm -fr ${DIRSAVEDIR}/${MACHINE}_latest
 ln -sf ${BASESAVEDIR} ${DIRSAVEDIR}/${MACHINE}_latest
