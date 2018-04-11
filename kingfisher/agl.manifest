@@ -1,5 +1,6 @@
 @include master/agl.manifest
 
+d3dcbbd=master    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 
 
 
