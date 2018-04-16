@@ -1,24 +1,25 @@
 # AGL
-origin/master=master    meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/master=master    meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/master=master    meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/master=master    meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/master=master		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/master=master		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
-origin/rocko=rocko      meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-origin/rocko=rocko      poky                  origin=git://git.yoctoproject.org/poky
-origin/rocko=rocko      meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+a65c1ac=rocko				meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+yocto-2.4.1=rocko    poky                  origin=git://git.yoctoproject.org/poky
+c7f97f1=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
-origin/rocko=rocko      meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+db881bb=rocko				meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/master=master    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-origin/v3.6.0=master	meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
-origin/rocko=rocko      meta-intel            origin=git://git.yoctoproject.org/meta-intel
-origin/rocko=rocko      meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
+origin/master=master	    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/v3.6.0=master		meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
+5415ec2=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
+20358ec=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Security
-origin/master=master    meta-security         origin=git://git.yoctoproject.org/meta-security
-origin/master=master    meta-security-isafw   origin=https://github.com/01org/meta-security-isafw
+8f6969a=master				meta-security         origin=git://git.yoctoproject.org/meta-security
+489abdc=master				meta-security-isafw   origin=https://github.com/01org/meta-security-isafw
+
 
