@@ -1,5 +1,5 @@
 # AGL
-origin/master=master		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+97e5e76=master		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=master		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
 origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
