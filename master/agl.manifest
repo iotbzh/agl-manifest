@@ -1,7 +1,7 @@
 # AGL
-origin/master=master		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+b431653=master		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=master		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+41f991e=master		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
