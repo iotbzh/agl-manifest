@@ -1,0 +1,4 @@
+@include eel/eel_latest.manifest
+
+# WebOS - Web App Manager (WAM)
+origin/master=master    meta-agl-lge      origin=https://github.com/webosose/meta-agl-lge
