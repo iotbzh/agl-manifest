@@ -2,6 +2,3 @@
 
 # IoT.bzh
 origin/eel=eel    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
-
-# override for 4A WIP (ALS18)
-origin/sandbox/sdesneux/eel-als=eel-als  meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
