@@ -3,7 +3,7 @@
 . /etc/xdtrc
 
 MACHINE="m3ulcb"
-EXCLUDE="*ostree* *otaimg *tar.xzv *wic*"
+EXCLUDE="*ostree* *otaimg"
 
 function usage() {
 	cat <<EOF >&2
