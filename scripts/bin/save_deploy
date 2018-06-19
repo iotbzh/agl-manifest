@@ -4,8 +4,6 @@
 
 MACHINE="m3ulcb"
 EXCLUDE="*ostree* *otaimg *tar.xzv *wic*"
-DEPLOYDIR="${XDT_BUILD}/${MACHINE}/tmp/deploy/images/${MACHINE}/"
-SAVEDIR="${XDT_DIR}/deploy/${MACHINE}/"
 
 function usage() {
 	cat <<EOF >&2
@@ -60,6 +58,10 @@ while (($#)); do
 done
 
 [[ "$HELP" == 1 ]] && usage
+
+# define machine-dependent dirs
+DEPLOYDIR="${XDT_BUILD}/${MACHINE}/tmp/deploy/images/${MACHINE}/"
+SAVEDIR="${XDT_DIR}/deploy/${MACHINE}/"
 
 if [[ ! -d "${DEPLOYDIR}" ]] ; then
 	echo "No deploy directory for board ${MACHINE} ($DEPLOYDIR)"
