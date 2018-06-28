@@ -2,3 +2,5 @@
 
 # IoT.bzh
 origin/eel=eel    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
+
+origin/sandbox/sdesneux/4a-eel=4a-eel		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
