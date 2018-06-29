@@ -1,8 +1,8 @@
 # AGL
-origin/flounder_5.99.1=flounder		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/flounder_5.99.1=flounder		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/flounder_5.99.1=flounder		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/flounder_5.99.1=flounder		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/flounder/5.99.1=flounder		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/flounder/5.99.1=flounder		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/flounder/5.99.1=flounder		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/flounder/5.99.1=flounder		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
 a65c1ac=rocko				meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
@@ -13,7 +13,7 @@ c7f97f1=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gp
 db881bb=rocko				meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/flounder_5.99.1=flounder	meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/flounder/5.99.1=flounder	meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 origin/v3.7.0=v3.7.0  		meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 5415ec2=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
 acfb857=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
