@@ -3,5 +3,3 @@
 # IoT.bzh
 origin/master=master    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
 
-origin/sandbox/sdesneux/4a-master=4a-master    meta-agl-devel   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-
