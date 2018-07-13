@@ -88,7 +88,9 @@ set -x
 rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR}/ ${SAVEDIR}/
 set +x
 
-rm -fr ${DIRSAVEDIR}/${MACHINE}_latest
-ln -sf ${BASESAVEDIR} ${DIRSAVEDIR}/${MACHINE}_latest
+if [[ -L ${DIRSAVEDIR}/${MACHINE} ]]; then
+	rm -fr ${DIRSAVEDIR}/${MACHINE}
+	ln -sf ${BASESAVEDIR} ${DIRSAVEDIR}/${MACHINE}
+fi
 
 echo "SAVEDIR here: ${SAVEDIR}"
