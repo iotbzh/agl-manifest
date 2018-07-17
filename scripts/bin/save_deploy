@@ -89,7 +89,9 @@ rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR}/ ${SAVEDIR}/
 set +x
 
 if [[ -L ${DIRSAVEDIR}/${MACHINE} ]]; then
-	rm -fr ${DIRSAVEDIR}/${MACHINE}
+	rm ${DIRSAVEDIR}/${MACHINE}
+fi
+if [[ ! -e ${DIRSAVEDIR}/${MACHINE} ]]; then
 	ln -sf ${BASESAVEDIR} ${DIRSAVEDIR}/${MACHINE}
 fi
 
