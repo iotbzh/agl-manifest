@@ -1,0 +1,5 @@
+@include flounder/flounder_latest.manifest
+
+# IoT.bzh
+origin/flounder=flounder    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
+
