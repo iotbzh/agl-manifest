@@ -5,17 +5,17 @@ origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinu
 origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
-a65c1ac=rocko				meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-yocto-2.4.1=rocko    poky                  origin=git://git.yoctoproject.org/poky
-c7f97f1=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+3525310=rocko				meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+yocto-2.4.3=rocko			poky                  origin=git://git.yoctoproject.org/poky
+f875c60=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
-db881bb=rocko				meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+682ad61=rocko				meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
 origin/master=master	    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-origin/v3.7.0=master		meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
-5415ec2=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
+a055159=master				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
+718bb38=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
 9e08912=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Security
