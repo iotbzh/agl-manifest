@@ -14,7 +14,8 @@ SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
 SERVER=apache@vm-www
 SERVER_DIR=/download/public/2018/Flounder+
 
-MACHINE=m3ulcb
+MACHINE=${1:-m3ulcb}
+echo "Publishing image for MACHINE $MACHINE to $SERVER:$SERVER_DIR"
 
 IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
 SDKDIR=$XDT_BUILD/$MACHINE/tmp/deploy/sdk/
@@ -44,22 +45,26 @@ popd
 ### push everything
 
 # create remote
-ssh $SERVER mkdir -p $SERVER_DIR/$VERSION/{sdk,images,firmware}
+ssh $SERVER mkdir -p $SERVER_DIR/$VERSION/{sdk,images}
 
 # send files
 RSYNCPATH=$SERVER:$SERVER_DIR/$VERSION
 rsync -Pav $IMGDIR/$imgfile $RSYNCPATH/images/
-rsync -Pav $(find $IMGDIR -type f -name "*.srec") $RSYNCPATH/firmware/
 [[ -e $IMGDIR/$bmapfile ]] && rsync -Pav $IMGDIR/$bmapfile $RSYNCPATH/images/
 rsync -Pav $SDKDIR/ $RSYNCPATH/sdk/
 rsync -Pav $SCRIPTDIR/*.html $RSYNCPATH/
 
-cat <<EOF | ssh $SERVER "cat >$SERVER_DIR/$VERSION/firmware/README"
+# handle firmware if any (Renesas M3/H3/...)
+FWFILES=$(find $IMGDIR -type f -name "*.srec")
+if [[ -n "$FWFILES" ]]; then
+	ssh $SERVER mkdir -p $SERVER_DIR/$VERSION/firmware
+	rsync -Pav $FWFILES $RSYNCPATH/firmware/
+	cat <<EOF | ssh $SERVER "cat >$SERVER_DIR/$VERSION/firmware/README"
 The files here can be used to flash the M3ULCB board firmware.
 
 Full procedure is detailed here: https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware
 EOF
-
+fi
 
 # create links
 CMD="ln -sfv $imgfile $SERVER_DIR/$VERSION/images/$lnkname"
