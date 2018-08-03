@@ -12,9 +12,10 @@ function error() {
 SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
 
 SERVER=apache@vm-www
-SERVER_DIR=/download/public/2018/Flounder+
 
 MACHINE=${1:-m3ulcb}
+SERVER_DIR=/download/public/2018/Flounder+/$MACHINE
+
 echo "Publishing image for MACHINE $MACHINE to $SERVER:$SERVER_DIR"
 
 IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
