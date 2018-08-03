@@ -1,0 +1,12 @@
+## Boot the board
+
+At uboot prompt, type:
+
+    ```
+    run bootcmd
+    ```
+
+Alternatively, simply reset the board.
+
+**NOTE**: Due to initial operations, first AGL boot can take longer (a few mintutes) than next ones.
+
