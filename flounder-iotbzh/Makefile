@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 SOURCES=$(wildcard *.md)
-DOCDEPS=$(wildcard *.mdinc)
+DOCDEPS=$(wildcard doc/*.mdinc)
 DOCS=$(patsubst %.md,%.html,$(SOURCES))
 
 SERVER=apache@vm-www:/download/public/2018/Flounder+/latest/
@@ -22,3 +22,4 @@ publish: $(DOCS)
 
 $(DOCS): %.html: %.md
 	md2html $< $@ --toc --variable=revision:$(shell date -u +%Y%m%d_%H%M)
+
