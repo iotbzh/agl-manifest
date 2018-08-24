@@ -1,47 +1,71 @@
 #!/bin/bash
 
+################################################################################
+
+# The MIT License (MIT)
+#
+# Copyright (c) 2016 Stéphane Desneux <sdx@iot.bzh>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+################################################################################
+
 . /etc/xdtrc
 
+# default values
 MACHINE="m3ulcb"
-EXCLUDE="*ostree* *otaimg"
+EXCLUDE="*ostree* *otaimg *.tar.xz"
+SRCDIR=""
+DSTDIR="${XDT_DIR}/deploy"
+
+
+function error() {
+	echo "ERROR: $@" >&2
+	exit 1
+}
 
 function usage() {
 	cat <<EOF >&2
+Usage: $(basename $BASH_SOURCE) [options]
+
 Options:
-   -d|--deploy-dir
-      deploy directory
-      default: $DEPLOYDIR
    -m|--machine
       deploy machine
       default: $MACHINE
-   -s|--savedir
-      save directory
-      default: $SAVEDIR
-   -e|--excludeDeploy
-      exclude Deploy
+   -s|--source
+      source directory (deploy dir)
+      default: $SRCDIR
+   -d|--destination
+      destination directory
+      default: $DSTDIR 
+   -x|--exclude
+      exclude pattern from deployment
       default: $EXCLUDE
    -h|--help
       get this help
 
 Example:
-	$SCRIPT -f iotbzh/master -o /tmp/xdt -l /ssd/mirror -p /vol/xdt/proprietary-renesas-rcar/ -t porter agl-demo
+	$0 -m m3ulcb
 EOF
 	exit 1
 }
 
 while (($#)); do
 	case "$1" in
-		-d|--deploy-dir)
-			DEPLOYDIR="$2";
-			echo DEPLOYDIR $DEPLOYDIR
-			shift 2;;
 		-m|--machine)
 			MACHINE="$2";
 			shift 2;;
-		-s|--savedir)
-			SAVEDIR="$2";
+		-s|--source)
+			SRCDIR="$2";
 			shift 2;;
-		-e|--excludeDeploy)
+		-d|--destination)
+			DSTDIR="$2";
+			shift 2;;
+		-x|--exclude)
 			EXCLUDE="$2";
 			shift 2;;
 		-h|--help)
@@ -52,41 +76,63 @@ while (($#)); do
 			shift;
 			break;;
 		*)
-			echo "Internal error";
-			exit 1;;
+			usage
+			;;
 	esac
 done
 
+[[ -z "$SRCDIR" ]] && SRCDIR="${XDT_BUILD}/${MACHINE}/tmp/deploy/"
+
 [[ "$HELP" == 1 ]] && usage
 
-# define machine-dependent dirs
-DEPLOYDIR="${XDT_BUILD}/${MACHINE}/tmp/deploy/images/${MACHINE}/"
-SAVEDIR="${XDT_DIR}/deploy/${MACHINE}-$(date +%Y%m%d_%H%M)/"
+[[ ! -d "${SRCDIR}" ]] && error "No source directory for board ${MACHINE} ($SRCDIR)"
+SRCDIR=$(realpath ${SRCDIR})
 
-if [[ ! -d "${DEPLOYDIR}" ]] ; then
-	echo "No deploy directory for board ${MACHINE} ($DEPLOYDIR)"
-	exit 1;
-fi
+[[ ! -d "${DSTDIR}" ]] && error "Invalid destination directory $DSTDIR"
+DSTDIR=$(realpath ${DSTDIR})
 
-DEPLOYDIR=$(realpath ${DEPLOYDIR})
 
+IMGDIR="$SRCDIR/images/${MACHINE}/"
+[[ ! -d "$IMGDIR" ]] && error "No image dir found at $IMGDIR" 
+
+# locate image
+pushd $IMGDIR &>/dev/null
+	lnkname=$(find . -type l -name "*.wic.xz")
+	[[ -z "$lnkname" ]] && lnkname=$(find . -type l -name "*.wic.vmdk") # exception for qemu
+	[[ ! -e $lnkname ]] && error "No image link found in $IMGDIR" || echo "Found image link $lnkname"
+	imgfile=$(readlink $lnkname)
+	[[ ! -f $imgfile ]] && error "No image found in $IMGDIR" || echo "Found image file $imgfile"
+popd &>/dev/null
+
+# locate SDK (optional)
+SDKDIR="$SRCDIR/sdk/"
+[[ -d $SDKDIR ]] && {
+	pushd $SDKDIR &>/dev/null
+		sdkfile=$(find . -type f -name "poky-*.sh")
+		[[ ! -f $sdkfile ]] && error "Unable to find SDK file in $SDKDIR"
+	popd &>/dev/null
+}
+
+# determine version
+[[ "$imgfile" =~ -([0-9]+)\.rootfs\.wic\..+$ ]] && VERSION=${BASH_REMATCH[1]} || error "Unable to find image version"
+echo "Found version $VERSION"
+
+# create destination dir
+SAVEDIR="${DSTDIR}/${MACHINE}-${VERSION}/"
 mkdir -p ${SAVEDIR}
 
-if ! [[ -z "${EXCLUDE}" ]] ; then
-	RSYNCEXCLUDE=""
-	echo EXCLUDE "${EXCLUDE}"
-	for e in ${EXCLUDE}; do
-		RSYNCEXCLUDE="${RSYNCEXCLUDE} --exclude "$e" "
-	done
-fi
+RSYNCEXCLUDE=""
+echo "Exclusion pattern: ${EXCLUDE}"
+for e in ${EXCLUDE}; do
+	RSYNCEXCLUDE="${RSYNCEXCLUDE} --exclude "$e" "
+done
 
-SAVEDIR=$(realpath ${SAVEDIR})
 BASESAVEDIR=$(basename "${SAVEDIR}")
 DIRSAVEDIR=$(dirname "${SAVEDIR}")
 
-set -x
-rsync -av --delete ${RSYNCEXCLUDE} ${DEPLOYDIR}/ ${SAVEDIR}/
-set +x
+echo "Syncing $IMGDIR to $SAVEDIR..."
+rsync -a --delete ${RSYNCEXCLUDE} ${IMGDIR}/ ${SAVEDIR}/
+[[ -n "$sdkfile" ]] && { echo "Syncing SDK file $sdkfile to $SAVEDIR"; rsync -a ${SDKDIR}/$sdkfile ${SAVEDIR}/; }
 
 if [[ -L ${DIRSAVEDIR}/${MACHINE} ]]; then
 	rm ${DIRSAVEDIR}/${MACHINE}
@@ -95,4 +141,4 @@ if [[ ! -e ${DIRSAVEDIR}/${MACHINE} ]]; then
 	ln -sf ${BASESAVEDIR} ${DIRSAVEDIR}/${MACHINE}
 fi
 
-echo "SAVEDIR here: ${SAVEDIR}"
+echo "Image saved in $SAVEDIR"
