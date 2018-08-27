@@ -1,0 +1,18 @@
+#!/bin/bash
+
+. /etc/xdtrc
+
+BUILD_MACHINES="m3ulcb h3ulcb qemux86-64 raspberrypi3 intel-corei7-64"
+
+# source conf file used by build_all_boards
+CONF=build_all_boards.conf
+for x in /etc/$CONF $XDT_DIR/$CONF $HOME/$CONF; do
+	[[ -f $x ]] && { echo "Loading config file $x"; . $x; }
+done
+
+for machine in $BUILD_MACHINES; do
+	echo "----------- deploying image for $machine --------------"
+	save_deploy -m $machine "$@"
+	echo "-------------------------------------------------------"
+done
+
