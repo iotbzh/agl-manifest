@@ -22,4 +22,9 @@ a055159=master				meta-rcar	          origin=https://github.com/CogentEmbedded/m
 8f6969a=master				meta-security         origin=git://git.yoctoproject.org/meta-security
 489abdc=master				meta-security-isafw   origin=https://github.com/01org/meta-security-isafw
 
+# SOTA
+ff555e8=iotbzh				meta-updater          origin=https://github.com/advancedtelematic/meta-updater
+697632d=iotbzh				meta-updater-qemux86-64	origin=https://github.com/advancedtelematic/meta-updater-qemux86-64
+
+
 
