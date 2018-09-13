@@ -14,19 +14,14 @@
 
 ################################################################################
 
-. /etc/xdtrc
+# load libzh
+. $(dirname $BASH_SOURCE)/libzh.sh
 
 # default values
 MACHINE="m3ulcb"
 EXCLUDE="*ostree* *otaimg *.tar.xz"
 SRCDIR=""
 DSTDIR="${XDT_DIR}/deploy"
-
-
-function error() {
-	echo "ERROR: $@" >&2
-	exit 1
-}
 
 function usage() {
 	cat <<EOF >&2
@@ -85,23 +80,23 @@ done
 
 [[ "$HELP" == 1 ]] && usage
 
-[[ ! -d "${SRCDIR}" ]] && error "No source directory for board ${MACHINE} ($SRCDIR)"
+[[ ! -d "${SRCDIR}" ]] && fatal "No source directory for board ${MACHINE} ($SRCDIR)"
 SRCDIR=$(realpath ${SRCDIR})
 
-[[ ! -d "${DSTDIR}" ]] && error "Invalid destination directory $DSTDIR"
+[[ ! -d "${DSTDIR}" ]] && fatal "Invalid destination directory $DSTDIR"
 DSTDIR=$(realpath ${DSTDIR})
 
 
 IMGDIR="$SRCDIR/images/${MACHINE}/"
-[[ ! -d "$IMGDIR" ]] && error "No image dir found at $IMGDIR" 
+[[ ! -d "$IMGDIR" ]] && fatal "No image dir found at $IMGDIR" 
 
 # locate image
 pushd $IMGDIR &>/dev/null
 	lnkname=$(find . -type l -name "*.wic.xz")
 	[[ -z "$lnkname" ]] && lnkname=$(find . -type l -name "*.wic.vmdk") # exception for qemu
-	[[ ! -e $lnkname ]] && error "No image link found in $IMGDIR" || echo "Found image link $lnkname"
+	[[ ! -e $lnkname ]] && fatal "No image link found in $IMGDIR" || log "Found image link $lnkname"
 	imgfile=$(readlink $lnkname)
-	[[ ! -f $imgfile ]] && error "No image found in $IMGDIR" || echo "Found image file $imgfile"
+	[[ ! -f $imgfile ]] && fatal "No image found in $IMGDIR" || log "Found image file $imgfile"
 popd &>/dev/null
 
 # locate SDK (optional)
@@ -115,14 +110,14 @@ SDKDIR="$SRCDIR/sdk/"
 
 # determine version
 [[ "$imgfile" =~ -([0-9]+)\.rootfs\.wic\..+$ ]] && VERSION=${BASH_REMATCH[1]} || error "Unable to find image version"
-echo "Found version $VERSION"
+log "Found version $VERSION"
 
 # create destination dir
 SAVEDIR="${DSTDIR}/${MACHINE}-${VERSION}/"
 mkdir -p ${SAVEDIR}
 
 RSYNCEXCLUDE=""
-echo "Exclusion pattern: ${EXCLUDE}"
+log "Exclusion pattern: ${EXCLUDE}"
 for e in ${EXCLUDE}; do
 	RSYNCEXCLUDE="${RSYNCEXCLUDE} --exclude "$e" "
 done
@@ -130,9 +125,9 @@ done
 BASESAVEDIR=$(basename "${SAVEDIR}")
 DIRSAVEDIR=$(dirname "${SAVEDIR}")
 
-echo "Syncing $IMGDIR to $SAVEDIR..."
+info "Syncing $IMGDIR to $SAVEDIR..."
 rsync -a --delete ${RSYNCEXCLUDE} ${IMGDIR}/ ${SAVEDIR}/
-[[ -n "$sdkfile" ]] && { echo "Syncing SDK file $sdkfile to $SAVEDIR"; rsync -a ${SDKDIR}/$sdkfile ${SAVEDIR}/; }
+[[ -n "$sdkfile" ]] && { log "Syncing SDK file $sdkfile to $SAVEDIR"; rsync -a ${SDKDIR}/$sdkfile ${SAVEDIR}/; }
 
 if [[ -L ${DIRSAVEDIR}/${MACHINE} ]]; then
 	rm ${DIRSAVEDIR}/${MACHINE}
@@ -141,4 +136,4 @@ if [[ ! -e ${DIRSAVEDIR}/${MACHINE} ]]; then
 	ln -sf ${BASESAVEDIR} ${DIRSAVEDIR}/${MACHINE}
 fi
 
-echo "Image saved in $SAVEDIR"
+log "Image saved in $SAVEDIR"

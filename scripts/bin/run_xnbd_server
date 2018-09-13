@@ -1,6 +1,21 @@
-#!/bin/bash 
+#!/bin/bash
 
-. /etc/xdtrc
+################################################################################
+
+# The MIT License (MIT)
+#
+# Copyright (c) 2016 Stéphane Desneux <sdx@iot.bzh>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+################################################################################
+
+# load libzh
+. $(dirname $BASH_SOURCE)/libzh.sh
 
 function usage() {
 	echo "$(basename $0) <machine|ext4_filesystem>" >&2
@@ -12,9 +27,9 @@ function usage() {
 [[ -f "$1" ]] && IMAGE="$1" || MACHINE="${1:-*}"
 [[ -z "$IMAGE" ]] && { echo "Searching for image with MACHINE=$MACHINE..."; IMAGE=$(ls ${XDT_BUILD}/${MACHINE}/tmp/deploy/images/${MACHINE}/agl-*.ext4 | head -1); echo "Found ${IMAGE:-nothing}"; }
 
-echo "Using IMAGE=$IMAGE"
+info "Using IMAGE=$IMAGE"
 
-[[ ! -f $IMAGE ]] && { echo "Invalid image or machine $1" >&2; usage; }
+[[ ! -f $IMAGE ]] && { error "Invalid image or machine $1" >&2; usage; }
 
 REALIMG=$(realpath $IMAGE)
 [[ ! -f ${REALIMG}.bak ]] && cp -v ${REALIMG} ${REALIMG}.bak

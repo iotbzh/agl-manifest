@@ -14,20 +14,67 @@
 
 ################################################################################
 
-# load libzh
-. $(dirname $BASH_SOURCE)/libzh.sh
+stdout_in_terminal=0
+[[ -t 1 ]] && stdout_in_terminal=1
+function color {
+	[[ $stdout_in_terminal == 0 ]] && return
+	for k in $*; do
+		case $k in
+			bold) tput bold 2>/dev/null;;
+			none) tput sgr0 2>/dev/null;;
+			*) tput setaf $k 2>/dev/null;;
+		esac
+	done
+}
+color_green=$(color bold 2)
+color_yellow=$(color bold 3)
+color_red=$(color bold 1)
+color_none=$(color none)
 
-BUILD_MACHINES="m3ulcb h3ulcb qemux86-64 raspberrypi3 intel-corei7-64"
+function error() {
+	echo "${color_red}$@${color_none}" >&2
+}
 
-# source conf file used by build_all_boards
-CONF=build_all_boards.conf
-for x in /etc/$CONF $XDT_DIR/$CONF $HOME/$CONF; do
-	[[ -f $x ]] && { log "Loading config file $x"; . $x; }
-done
+function fatal() {
+	error "$@"
+	exit 56 # why 56 ? Morbihan of course!
+}
 
-for machine in $BUILD_MACHINES; do
-	info "----------- deploying image for $machine --------------"
-	save_deploy -m $machine "$@"
-	info "-------------------------------------------------------"
-done
+function warning() {
+	echo "${color_yellow}$@${color_none}" >&2
+}
+
+function info() {
+	echo "${color_green}$@${color_none}" >&2
+}
+
+function log() {
+	echo "$@" >&2
+}
+
+# template for options parsing:
+#
+# tmp=$(getopt -o a:hv --long arg:,help,verbose -n $(basename $BASH_SOURCE) -- "$@")
+# [[ $? != 0 ]] && { usage; exit 1; }
+# eval set -- $tmp
+# while true; do
+# 	case "$1" in 
+#		-a|--arg)
+#			ARG="$2";
+#			shift 2;;
+#		-v|--verbose)
+#			VERBOSE=1;
+#			shift;
+#			break;;
+#		-h|--help)
+#			HELP=1;
+#			shift;
+#			break;;
+#		--) shift; break;;
+#		*) fatal "Internal error";;
+#	esac
+# done
+
+source /etc/xdtrc 2>/dev/null || fatal "$(basename $BASH_SOURCE): Unable to source /etc/xdtrc"
+
 
