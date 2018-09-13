@@ -14,7 +14,7 @@ f875c60=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gp
 
 # BSP
 origin/master=master	    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-a055159=master				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
+a055159=v3.7.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 718bb38=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
 18ab0e9=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 
@@ -23,8 +23,7 @@ a055159=master				meta-rcar	          origin=https://github.com/CogentEmbedded/m
 489abdc=master				meta-security-isafw   origin=https://github.com/01org/meta-security-isafw
 
 # SOTA
-ff555e8=iotbzh				meta-updater          origin=https://github.com/advancedtelematic/meta-updater
-697632d=iotbzh				meta-updater-qemux86-64	origin=https://github.com/advancedtelematic/meta-updater-qemux86-64
-
+ff555e8=master				meta-updater          origin=https://github.com/advancedtelematic/meta-updater
+697632d=master				meta-updater-qemux86-64	origin=https://github.com/advancedtelematic/meta-updater-qemux86-64
 
 
