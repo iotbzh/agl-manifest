@@ -26,10 +26,28 @@ function color {
 		esac
 	done
 }
+
 color_green=$(color bold 2)
 color_yellow=$(color bold 3)
 color_red=$(color bold 1)
+color_blue=$(color bold 4)
+color_gray=$(color 250)
 color_none=$(color none)
+
+function dumpcolors() {
+	printcol(){
+		for c; do
+			printf '\e[48;5;%dm %03d ' $c $c
+		done
+		printf '\e[0m \n'
+	}
+
+	printcol {0..15}
+	for ((i=0;i<12;i++)); do
+		printcol $(seq $((i*18+16)) $((i*18+33)))
+	done
+	printcol {232..255}
+}
 
 function error() {
 	echo "${color_red}$@${color_none}" >&2
@@ -47,6 +65,11 @@ function warning() {
 function info() {
 	echo "${color_green}$@${color_none}" >&2
 }
+
+function debug() {
+	echo "${color_gray}$@${color_none}" >&2
+}
+
 
 function log() {
 	echo "$@" >&2
