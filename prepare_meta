@@ -283,7 +283,7 @@ mkdir -p $DSTDIR/meta
 for dir in ${LOCALMIRROR//:/ }; do
 	if [[ -d $dir/meta ]]; then
 		info "=== Copying $dir/meta to $DSTDIR/meta"
-		rsync -a $dir/meta/ $DSTDIR/meta/
+		rsync -a --delete $dir/meta/ $DSTDIR/meta/
 		break
 	fi
 done
@@ -474,7 +474,7 @@ EOF
 
 	# local caches must be copied to current download dir to be used as a reference when copying
 	for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/downloads; done); do
-		[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a ${mirror}/ $DSTDIR/downloads/
+		[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a --delete ${mirror}/ $DSTDIR/downloads/
 	done
 
 	# remote cache can only be referenced
@@ -497,7 +497,7 @@ EOF
 
 	# local cache copied, as previously
 	for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/sstate-cache; done); do
-		[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a ${mirror}/ $DSTDIR/sstate-cache/
+		[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a --delete ${mirror}/ $DSTDIR/sstate-cache/
 	done
 
 	# remote cache, simply referenced
@@ -515,7 +515,7 @@ EOF
 	if [[ "$option_ccache" == 1 ]]; then
 		info "=== conf: ccache"
 		for mirror in $(for x in ${LOCALMIRROR//:/ }; do echo $x/ccache; done); do
-			[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a ${mirror}/ $DSTDIR/ccache/
+			[[ -d $mirror ]] && [[ "$option_keepcache" == "0" ]] && rsync -a --delete ${mirror}/ $DSTDIR/ccache/
 		done
 
 		mkdir -p $DSTDIR/ccache
