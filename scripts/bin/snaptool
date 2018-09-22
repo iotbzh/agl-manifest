@@ -17,61 +17,66 @@
 # load libzh
 . $(dirname $BASH_SOURCE)/libzh.sh
 
-TOPDIR="${XDT_DIR}/deploy"
-PATTERN="^.*$"
+CONFIG_FILE=${SNAPTOOL_CONF:-$XDT_DIR/snaptool.conf}
 
-# retention policy:
-# keep last $DAYS
-# then keep last sunday for $WEEKS
-# then keep last sunday of each month for $MONTHS
-# then keep last sunday of last month of each $QUARTER
-# TOTAL: $DAYS + $(WEEKS+1) + $(MONTHS+1) + $(QUARTERS+1)
-DAYS=14
-WEEKS=2
-MONTHS=2
-QUARTERS=3
+# create config file if needed
+[[ ! -f $CONFIG_FILE ]] && {
+	info "Creating config file $CONFIG_FILE"
+	touch $CONFIG_FILE || fatal "Unable to create config file $CONFIG_FILE"
+	cat <<EOF >$CONFIG_FILE
+# configuration file for snaptool
+# see https://github.com/iotbzh/agl-manifest/tree/master/scripts for more information
 
-usage() {
-	cat <<EOF >&2
-Usage: $(basename $BASH_SOURCE) [options]
+# how mirror can be mounted/unmounted and accessed locally
+MIRROR[path]=$HOME/mirror
+MIRROR[mount]=
+MIRROR[umount]=
 
-Options:
-   -d|--dir
-      top directory to cleanup
-      current value: $TOPDIR 
-   -p|--pattern
-      only consider subdirs matching specified regexp
-      current value: $PATTERN 
-   -h|--help
-      get this help
+RESOURCES[path]=$HOME/mirror/proprietary-renesas-r-car
+RESOURCES[mount]=
+RESOURCES[umount]=
 
-Example:
-	$0 -m 'm3ulcb_2017.*'
+# temp build folder
+BUILD[path]=$XDT_DIR
+BUILD[mount]=
+BUILD[umount]=
+
+# deployment folder
+DEPLOY[pâth]=$XDT_DIR/deploy
+DEPLOY[mount]=
+DEPLOY[umount]=
 EOF
-	exit 1
+}
+[[ ! -f $CONFIG_FILE ]] && fatal "Unable to find config file $CONFIG_FILE"
+
+# load configuration file
+declare -A MIRROR RESOURCES BUILD DEPLOY
+
+. $CONFIG_FILE
+
+# ------------------------ ops on folder -----------------------------------------
+
+function folders_mount() {
+	for x in MIRROR RESOURCES BUILD DEPLOY; do
+		[[ -n "${!x[mount]}" ]] && echo "Running mount command for $x: ${!x[mount]}"
+	done
 }
 
-tmp=$(getopt -o d:p:h --long dir:,pattern:,help -n $(basename $BASH_SOURCE) -- "$@")
-[[ $? != 0 ]] && { usage; exit 1; }
-eval set -- $tmp
-while true; do
-	case "$1" in 
-		-d|--dir)
-			TOPDIR="$2";
-			shift 2;;
-		-p|--pattern)
-			PATTERN="$2";
-			shift 2;;
-		-h|--help)
-			HELP=1;
-			shift;
-			break;;
-		--) shift; break;;
-		*) fatal "Internal error";;
-	esac
-done
+function folders_check() {
+	for x in MIRROR RESOURCES BUILD DEPLOY; do
+		[[ ! -d ${x[path]} ]] && { error "Directory ${x[path]} ($x) doesn't exist"; return 1; }
+		debug "Directory ${x[path]} is available"
+	done
+	return 0
+}
 
-[[ "$HELP" == 1 ]] && usage
+function folders_umount() {
+	for x in MIRROR RESOURCES BUILD DEPLOY; do
+		[[ -n "${!x[umount]}" ]] && echo "Running umount command for $x: ${!x[umount]}"
+	done
+}
+
+# --------------------------- retention policy in deploy dir -------------------
 
 # compute dates to keep
 function compute_dates() {
@@ -148,12 +153,6 @@ function compute_dates() {
 	echo $dates
 }
 
-function debug_dates() {
-	for x in $(compute_dates "$@"); do
-		echo $x $(date --utc "+%a" -d $x)
-	done
-}
-
 function find_snapshots() {
 	local dir=$1
 	local pattern=$2
@@ -167,7 +166,7 @@ function find_snapshots() {
 	popd &>/dev/null #}
 }
 
-function simulate() {
+function simulate_gc() {
 	local tmpdir=/tmp/simulate_gc
 	local prefix=Snapshot_
 	rm -rf $tmpdir
@@ -205,6 +204,54 @@ function get_snapshots_age() {
 	done
 }
 
-#debug_dates "$@"
-#simulate
-get_snapshots_age "$@"
+
+function debug_dates() {
+	for x in $(compute_dates "$@"); do
+		debug $x $(date --utc "+%a" -d $x)
+	done
+}
+
+
+function debug_gc() {
+	#debug_dates "$@"
+	#simulate
+	#get_snapshots_age "$@"
+}
+
+# ------------------------- options parsing -------------------------------------
+
+usage() {
+	cat <<EOF >&2
+Usage: $(basename $BASH_SOURCE) <command> [options]
+
+	TODO
+	
+EOF
+}
+
+# pop first arg: -h|--help|help or command
+# tODO
+
+tmp=$(getopt -o d:p:h --long dir:,pattern:,help -n $(basename $BASH_SOURCE) -- "$@")
+[[ $? != 0 ]] && { usage; exit 1; }
+eval set -- $tmp
+while true; do
+	case "$1" in 
+		-d|--dir)
+			TOPDIR="$2";
+			shift 2;;
+		-p|--pattern)
+			PATTERN="$2";
+			shift 2;;
+		-h|--help)
+			HELP=1;
+			shift;
+			break;;
+		--) shift; break;;
+		*) fatal "Internal error";;
+	esac
+done
+
+[[ "$HELP" == 1 ]] && usage
+
+

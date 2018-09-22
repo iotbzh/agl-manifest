@@ -75,6 +75,12 @@ function log() {
 	echo "$@" >&2
 }
 
+##### date time functions
+function timestamp() {
+	date -u -d "${1:-now}" +"%Y-%m-%dT%H:%M:%S"
+}
+
+
 # template for options parsing:
 #
 # tmp=$(getopt -o a:hv --long arg:,help,verbose -n $(basename $BASH_SOURCE) -- "$@")
@@ -99,5 +105,4 @@ function log() {
 # done
 
 source /etc/xdtrc 2>/dev/null || fatal "$(basename $BASH_SOURCE): Unable to source /etc/xdtrc"
-
 
