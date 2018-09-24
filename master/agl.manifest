@@ -16,7 +16,7 @@ f875c60=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gp
 origin/master=master	    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 a055159=v3.7.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 718bb38=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
-18ab0e9=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
+8e4c537=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Security
 8f6969a=master				meta-security         origin=git://git.yoctoproject.org/meta-security
