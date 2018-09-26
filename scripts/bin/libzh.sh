@@ -66,8 +66,15 @@ function info() {
 	echo "${color_green}$@${color_none}" >&2
 }
 
+DEBUG=
+function setdebug() {
+	DEBUG=$1
+}
+	
 function debug() {
-	echo "${color_gray}$@${color_none}" >&2
+	[[ "$DEBUG" -ge 1 ]] && {
+		echo "${color_gray}$@${color_none} [${FUNCNAME[1]}@$(basename ${BASH_SOURCE[1]}):${BASH_LINENO[0]}]" >&2
+	}
 }
 
 

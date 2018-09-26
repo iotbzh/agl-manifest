@@ -14,16 +14,50 @@
 
 ################################################################################
 
+set -e
+
 # load libzh
 . $(dirname $BASH_SOURCE)/libzh.sh
 
+# specify config file
 CONFIG_FILE=${SNAPTOOL_CONF:-$XDT_DIR/snaptool.conf}
 
-# create config file if needed
-[[ ! -f $CONFIG_FILE ]] && {
-	info "Creating config file $CONFIG_FILE"
-	touch $CONFIG_FILE || fatal "Unable to create config file $CONFIG_FILE"
-	cat <<EOF >$CONFIG_FILE
+# ------------------------- options parsing -------------------------------------
+
+function __global_usage() {
+	cat <<EOF >&2
+General usage: $(basename $BASH_SOURCE) <command> [options]
+
+To get command specific help:
+	$(basename $BASH_SOURCE) help <command>
+
+Available commands:
+EOF
+	# help for other commands
+	local commands=$(typeset -F | awk '{print $3;}' | grep ^command_ | sort)
+	for x in $commands; do 
+		echo -e "\t${x#command_}" >&2
+	done
+	echo >&2
+	for x in $commands; do 
+ 		local func=usage_${x#command_}
+		[[ $(type -t $func) == "function" ]] && {
+			COMMAND="$(basename $BASH_SOURCE) ${x#command_}"
+			$func >&2
+			echo >&2
+		}
+	done
+	exit 0
+}
+
+declare -A MIRROR RESOURCES BUILD DEPLOY
+
+function __configure() {
+	# create config file if needed
+	[[ ! -f $CONFIG_FILE ]] && {
+		info "Creating config file $CONFIG_FILE"
+		touch $CONFIG_FILE || fatal "Unable to create config file $CONFIG_FILE"
+		cat <<EOF >$CONFIG_FILE
 # configuration file for snaptool
 # see https://github.com/iotbzh/agl-manifest/tree/master/scripts for more information
 
@@ -42,44 +76,74 @@ BUILD[mount]=
 BUILD[umount]=
 
 # deployment folder
-DEPLOY[pâth]=$XDT_DIR/deploy
+DEPLOY[path]=$XDT_DIR/deploy
 DEPLOY[mount]=
 DEPLOY[umount]=
 EOF
+	}
+	[[ ! -f $CONFIG_FILE ]] && fatal "Unable to find config file $CONFIG_FILE"
+
+	# load configuration file
+	info "Loading config file $CONFIG_FILE"
+	. $CONFIG_FILE
 }
-[[ ! -f $CONFIG_FILE ]] && fatal "Unable to find config file $CONFIG_FILE"
 
-# load configuration file
-declare -A MIRROR RESOURCES BUILD DEPLOY
+function __main() {
+	setdebug 1
 
-. $CONFIG_FILE
+	__configure
+
+	# special case for help
+	[[ "$1" =~ ^(-h|--help|help)$ ]] && {
+		shift
+		COMMAND="$(basename $BASH_SOURCE) $1"
+		USAGE="usage_$1"
+		[[ -n "$1" ]] && $USAGE || __global_usage
+		exit 0
+	}
+
+	COMMAND=$1
+	shift || { __global_usage; exit 1; }
+
+	# function "command_$COMMAND" must exist
+	USAGE="usage_$COMMAND"
+	funcname="command_$COMMAND"
+	[[ "$(type -t $funcname)" != "function" ]] && { error "Unknown command $COMMAND"; __global_usage; exit 1; }
+	COMMAND="$(basename $BASH_SOURCE) $COMMAND"
+	$funcname "$@" 
+}
 
 # ------------------------ ops on folder -----------------------------------------
 
-function folders_mount() {
-	for x in MIRROR RESOURCES BUILD DEPLOY; do
-		[[ -n "${!x[mount]}" ]] && echo "Running mount command for $x: ${!x[mount]}"
-	done
-}
+FOLDERS="MIRROR RESOURCES BUILD DEPLOY"
 
 function folders_check() {
-	for x in MIRROR RESOURCES BUILD DEPLOY; do
-		[[ ! -d ${x[path]} ]] && { error "Directory ${x[path]} ($x) doesn't exist"; return 1; }
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ ! -d ${folderx[path]} ]] && { error "Directory '${folder[path]}' ($x) doesn't exist"; return 1; }
 		debug "Directory ${x[path]} is available"
 	done
 	return 0
 }
 
+function folders_mount() {
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ -n "${folder[mount]}" ]] && echo "Running mount command for $x: ${folder[mount]}"
+	done
+}
+
 function folders_umount() {
-	for x in MIRROR RESOURCES BUILD DEPLOY; do
-		[[ -n "${!x[umount]}" ]] && echo "Running umount command for $x: ${!x[umount]}"
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ -n "${folder[umount]}" ]] && echo "Running umount command for $x: ${folder[umount]}"
 	done
 }
 
 # --------------------------- retention policy in deploy dir -------------------
 
 # compute dates to keep
-function compute_dates() {
+function compute_retention_dates() {
 	function dt() {
 		date --utc +%Y%m%d -d "$@"
 	}
@@ -156,7 +220,7 @@ function compute_dates() {
 function find_snapshots() {
 	local dir=$1
 	local pattern=$2
-#	info "Finding snapshots in $dir matching $pattern"
+	debug "Finding snapshots in $dir matching $pattern"
 
 	pushd $dir &>/dev/null || fatal "Invalid directory $dir" #{
 		# list all objects matching pattern and beeing a folder
@@ -174,7 +238,7 @@ function simulate_gc() {
 	for day in {0..600}; do
 		now=$(date --utc +%Y%m%d -d "20170101 +$day days")
 		mkdir $tmpdir/${prefix}$now
-		keepdates=$(compute_dates $now)
+		keepdates=$(compute_retention_dates $now)
 		snapshots=$(find_snapshots $tmpdir "^$prefix.*$")
 		echo -n $now: $(wc -w <<<$snapshots) snapshots.
 		for x in $(find_snapshots $tmpdir "^${prefix}_.*$"); do
@@ -204,54 +268,80 @@ function get_snapshots_age() {
 	done
 }
 
+# ------------------------- top level commands ----------------------------------
 
-function debug_dates() {
+function usage_prepare() {
+	cat <<EOF >&2
+Usage: $COMMAND [options] 
+	options:
+		-n|--dryrun : do nothing
+EOF
+}
+function command_prepare() {
+	local opts="-o n --long dryrun" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; $USAGE; return 1
+	}
+	eval set -- $tmp
+
+	local dryrun=
+
+	while true; do	
+		case "$1" in 
+			-n|--dryrun) dryrun=1; shift;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	# ----------
+
+	folders_check
+}
+
+function usage_mount() {
+	cat <<EOF >&2
+Usage: $COMMAND [options] 
+	options:
+		-n|--dryrun : do nothing
+EOF
+}
+function command_mount() {
+	local opts="-o n --long dryrun" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; $USAGE; return 1
+	}
+	eval set -- $tmp
+
+	local dryrun=
+
+	while true; do	
+		case "$1" in 
+			-n|--dryrun) dryrun=1; shift;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	# ----------
+	
+	debug "dryrun=$dryrun args=$@"
+}
+
+function command_umount() {
+	true
+}
+function command_gcdebug() {
+	debug "Retention dates:"
 	for x in $(compute_dates "$@"); do
 		debug $x $(date --utc "+%a" -d $x)
 	done
-}
-
-
-function debug_gc() {
-	#debug_dates "$@"
 	#simulate
 	#get_snapshots_age "$@"
 }
 
-# ------------------------- options parsing -------------------------------------
+# ----------------------------------------------------------------------
 
-usage() {
-	cat <<EOF >&2
-Usage: $(basename $BASH_SOURCE) <command> [options]
-
-	TODO
-	
-EOF
-}
-
-# pop first arg: -h|--help|help or command
-# tODO
-
-tmp=$(getopt -o d:p:h --long dir:,pattern:,help -n $(basename $BASH_SOURCE) -- "$@")
-[[ $? != 0 ]] && { usage; exit 1; }
-eval set -- $tmp
-while true; do
-	case "$1" in 
-		-d|--dir)
-			TOPDIR="$2";
-			shift 2;;
-		-p|--pattern)
-			PATTERN="$2";
-			shift 2;;
-		-h|--help)
-			HELP=1;
-			shift;
-			break;;
-		--) shift; break;;
-		*) fatal "Internal error";;
-	esac
-done
-
-[[ "$HELP" == 1 ]] && usage
-
-
+__main "$@"
