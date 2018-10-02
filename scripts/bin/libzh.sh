@@ -66,7 +66,6 @@ function info() {
 	echo "${color_green}$@${color_none}" >&2
 }
 
-DEBUG=
 function setdebug() {
 	DEBUG=$1
 }

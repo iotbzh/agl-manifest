@@ -14,67 +14,84 @@
 
 ################################################################################
 
-# load libzh
+# load libzh (loads /etc/xdtrc)
 . $(dirname $BASH_SOURCE)/libzh.sh
 
-TOPDIR="${XDT_DIR}/deploy"
-PATTERN="^.*$"
+# ---------------- configuration ------------------------------------------
 
-# retention policy:
-# keep last $DAYS
-# then keep last sunday for $WEEKS
-# then keep last sunday of each month for $MONTHS
-# then keep last sunday of last month of each $QUARTER
-# TOTAL: $DAYS + $(WEEKS+1) + $(MONTHS+1) + $(QUARTERS+1)
-DAYS=14
-WEEKS=2
-MONTHS=2
-QUARTERS=3
+# specify config file
+CONFIG_FILE=${SNAPTOOL_CONF:-$XDT_DIR/snaptool.conf}
 
-usage() {
-	cat <<EOF >&2
-Usage: $(basename $BASH_SOURCE) [options]
+declare -A MIRROR RESOURCES BUILD DEPLOY
+FOLDERS="MIRROR RESOURCES BUILD DEPLOY"
 
-Options:
-   -d|--dir
-      top directory to cleanup
-      current value: $TOPDIR 
-   -p|--pattern
-      only consider subdirs matching specified regexp
-      current value: $PATTERN 
-   -h|--help
-      get this help
+function __configure() {
+	# create config file if needed
+	[[ ! -f $CONFIG_FILE ]] && {
+		info "Creating config file $CONFIG_FILE"
+		touch $CONFIG_FILE || fatal "Unable to create config file $CONFIG_FILE"
+		cat <<EOF >$CONFIG_FILE
+# configuration file for snaptool
+# see https://github.com/iotbzh/agl-manifest/tree/master/scripts for more information
 
-Example:
-	$0 -m 'm3ulcb_2017.*'
+# how mirror can be mounted/unmounted and accessed locally
+MIRROR[path]=$HOME/mirror
+MIRROR[mount]=
+MIRROR[umount]=
+
+RESOURCES[path]=$HOME/mirror/proprietary-renesas-r-car
+RESOURCES[mount]=
+RESOURCES[umount]=
+
+# temp build folder
+BUILD[path]=$XDT_DIR
+BUILD[mount]=
+BUILD[umount]=
+
+# deployment folder
+DEPLOY[path]=$XDT_DIR/deploy
+DEPLOY[mount]=
+DEPLOY[umount]=
 EOF
-	exit 1
+	}
+	[[ ! -f $CONFIG_FILE ]] && fatal "Unable to find config file $CONFIG_FILE"
+
+	# load configuration file
+	info "Loading config file $CONFIG_FILE"
+	. $CONFIG_FILE
 }
 
-tmp=$(getopt -o d:p:h --long dir:,pattern:,help -n $(basename $BASH_SOURCE) -- "$@")
-[[ $? != 0 ]] && { usage; exit 1; }
-eval set -- $tmp
-while true; do
-	case "$1" in 
-		-d|--dir)
-			TOPDIR="$2";
-			shift 2;;
-		-p|--pattern)
-			PATTERN="$2";
-			shift 2;;
-		-h|--help)
-			HELP=1;
-			shift;
-			break;;
-		--) shift; break;;
-		*) fatal "Internal error";;
-	esac
-done
+__configure
 
-[[ "$HELP" == 1 ]] && usage
+# ------------------------ ops on folders -----------------------------------------
+
+function folders_check() {
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ ! -d ${folderx[path]} ]] && { error "Directory '${folder[path]}' ($x) doesn't exist"; return 1; }
+		debug "Directory ${x[path]} is available"
+	done
+	return 0
+}
+
+function folders_mount() {
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ -n "${folder[mount]}" ]] && echo "Running mount command for $x: ${folder[mount]}"
+	done
+}
+
+function folders_umount() {
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ -n "${folder[umount]}" ]] && echo "Running umount command for $x: ${folder[umount]}"
+	done
+}
+
+# --------------------------- retention policy in deploy dir -------------------
 
 # compute dates to keep
-function compute_dates() {
+function compute_retention_dates() {
 	function dt() {
 		date --utc +%Y%m%d -d "$@"
 	}
@@ -148,16 +165,10 @@ function compute_dates() {
 	echo $dates
 }
 
-function debug_dates() {
-	for x in $(compute_dates "$@"); do
-		echo $x $(date --utc "+%a" -d $x)
-	done
-}
-
 function find_snapshots() {
 	local dir=$1
 	local pattern=$2
-#	info "Finding snapshots in $dir matching $pattern"
+	debug "Finding snapshots in $dir matching $pattern"
 
 	pushd $dir &>/dev/null || fatal "Invalid directory $dir" #{
 		# list all objects matching pattern and beeing a folder
@@ -167,7 +178,7 @@ function find_snapshots() {
 	popd &>/dev/null #}
 }
 
-function simulate() {
+function simulate_gc() {
 	local tmpdir=/tmp/simulate_gc
 	local prefix=Snapshot_
 	rm -rf $tmpdir
@@ -175,7 +186,7 @@ function simulate() {
 	for day in {0..600}; do
 		now=$(date --utc +%Y%m%d -d "20170101 +$day days")
 		mkdir $tmpdir/${prefix}$now
-		keepdates=$(compute_dates $now)
+		keepdates=$(compute_retention_dates $now)
 		snapshots=$(find_snapshots $tmpdir "^$prefix.*$")
 		echo -n $now: $(wc -w <<<$snapshots) snapshots.
 		for x in $(find_snapshots $tmpdir "^${prefix}_.*$"); do
@@ -205,6 +216,82 @@ function get_snapshots_age() {
 	done
 }
 
-#debug_dates "$@"
-#simulate
-get_snapshots_age "$@"
+
+################ TODO: FIXME - OLD CODE
+# ------------------------- top level commands ----------------------------------
+
+function command_gcdebug() {
+	debug "Retention dates:"
+	for x in $(compute_dates "$@"); do
+		debug $x $(date --utc "+%a" -d $x)
+	done
+	#simulate
+	#get_snapshots_age "$@"
+}
+
+function command_mount() {
+	local dryrun=
+
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] 
+   options:
+      -n|--dryrun : do nothing
+      -h|--help   : get this help
+EOF
+	}
+
+	local opts="-o n,h --long dryrun,help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; _usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-n|--dryrun) dryrun=1; shift;;
+			-h|--help) __usage; exit 1;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	# TODO
+	debug "$COMMAND dryrun=$dryrun args=$@"
+}
+
+function command_umount() {
+	local dryrun=
+
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] 
+   options:
+      -n|--dryrun : do nothing
+      -h|--help   : get this help
+EOF
+	}
+
+	local opts="-o n,h --long dryrun,help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; _usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-n|--dryrun) dryrun=1; shift;;
+			-h|--help) __usage; exit 1;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	# TODO
+	debug "$COMMAND dryrun=$dryrun args=$@"
+}
+
+# ----------------------------------------------------------------------
+

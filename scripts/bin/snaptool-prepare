@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -e
+
+# load libsnaptool
+. $(dirname $BASH_SOURCE)/libsnaptool.sh
+
+COMMAND=$(basename $BASH_SOURCE .sh)
+
+dryrun=0
+
+function __usage() {
+	cat <<EOF >&2
+Usage: $COMMAND [options] 
+   options:
+      -n|--dryrun : do nothing
+      -h|--help   : get this help
+EOF
+}
+
+function __parse_args() {
+	local opts="-o n,h --long dryrun,help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; _usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-n|--dryrun) dryrun=1; shift;;
+			-h|--help) __usage; exit 1;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+}
+
+# ----------
+
+__parse_args "$@"
+
+debug "dryrun=$dryrun args=$@"
+
+
