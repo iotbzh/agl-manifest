@@ -27,12 +27,12 @@ function __getbuiltincommands() {
 	# enumerate all:
 	# - functions named command_xxxx
 	# - scripts named snaptool-xxxx
-	local builtins=$(typeset -F | awk '{print $3;}' | grep ^command_ | sort)
+	local builtins=$(typeset -F | awk '{print $3;}' | grep ^command_ | sed 's/^command_//g' | sort)
 
 	echo $builtins
 }
 function __getfilecommands() {
-	local external=$(find $(dirname $BASH_SOURCE) -name "${MYNAME}-*" | xargs basename | sort)
+	local external=$(find $(dirname $BASH_SOURCE) -name "${MYNAME}-*" | xargs basename | sed "s/^${MYNAME}-//g" | sort)
 	echo $external
 }
 
@@ -54,6 +54,7 @@ function __callcommand() {
 	fi
 
 	error "Command $cmd not found"
+
 	return 1
 }
 
@@ -72,6 +73,17 @@ EOF
 	done
 	echo >&2
 
+	if [[ "$1" =~ ^(-a|--all)$ ]]; then
+		for x in $(__getbuiltincommands); do
+			__callcommand $x --help >&2
+			echo >&2
+		done
+		for x in $(__getfilecommands); do
+			__callcommand $x --help >&2
+			echo >&2
+		done
+	fi
+
 	exit 0
 }
 
@@ -82,7 +94,7 @@ EOF
 cmd=$1
 shift
 [[ "$cmd" =~ ^(-h|--help|help)$ ]] && {
-	__global_usage
+	__global_usage "$@"
 	exit 1
 }
 

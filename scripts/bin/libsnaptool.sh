@@ -40,7 +40,7 @@ MIRROR[mount]=
 MIRROR[umount]=
 
 RESOURCES[path]=$HOME/mirror/proprietary-renesas-r-car
-RESOURCES[mount]=
+RESOURCES[mount]="echo hello world ; echo do that; "
 RESOURCES[umount]=
 
 # temp build folder
@@ -57,36 +57,11 @@ EOF
 	[[ ! -f $CONFIG_FILE ]] && fatal "Unable to find config file $CONFIG_FILE"
 
 	# load configuration file
-	info "Loading config file $CONFIG_FILE"
+	debug "Loading config file $CONFIG_FILE"
 	. $CONFIG_FILE
 }
 
 __configure
-
-# ------------------------ ops on folders -----------------------------------------
-
-function folders_check() {
-	for x in $FOLDERS; do
-		typeset -n folder=$x
-		[[ ! -d ${folderx[path]} ]] && { error "Directory '${folder[path]}' ($x) doesn't exist"; return 1; }
-		debug "Directory ${x[path]} is available"
-	done
-	return 0
-}
-
-function folders_mount() {
-	for x in $FOLDERS; do
-		typeset -n folder=$x
-		[[ -n "${folder[mount]}" ]] && echo "Running mount command for $x: ${folder[mount]}"
-	done
-}
-
-function folders_umount() {
-	for x in $FOLDERS; do
-		typeset -n folder=$x
-		[[ -n "${folder[umount]}" ]] && echo "Running umount command for $x: ${folder[umount]}"
-	done
-}
 
 # --------------------------- retention policy in deploy dir -------------------
 
@@ -218,15 +193,25 @@ function get_snapshots_age() {
 
 
 ################ TODO: FIXME - OLD CODE
-# ------------------------- top level commands ----------------------------------
 
-function command_gcdebug() {
+function commandBAD_gcdebug() {
 	debug "Retention dates:"
-	for x in $(compute_dates "$@"); do
+	for x in $(compute_retention_dates "$@"); do
 		debug $x $(date --utc "+%a" -d $x)
 	done
 	#simulate
 	#get_snapshots_age "$@"
+}
+
+# ------------------------ ops on folders -----------------------------------------
+
+function folders_check() {
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ ! -d ${folderx[path]} ]] && { error "Directory '${folder[path]}' ($x) doesn't exist"; return 1; }
+		debug "Directory ${x[path]} is available"
+	done
+	return 0
 }
 
 function command_mount() {
@@ -251,14 +236,24 @@ EOF
 	while true; do	
 		case "$1" in 
 			-n|--dryrun) dryrun=1; shift;;
-			-h|--help) __usage; exit 1;;
+			-h|--help) __usage; return 0;;
 			--) shift; break;;
 			*) fatal "Internal error";;
 		esac
 	done
 
-	# TODO
-	debug "$COMMAND dryrun=$dryrun args=$@"
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ "$dryrun" != 1 ]] && mkdir -p ${folder[path]}
+		[[ -n "${folder[mount]}" ]] && {
+			info "Running mount command for $x: ${folder[mount]}"
+			[[ "$dryrun" != 1 ]] && {
+				eval ${folder[mount]}
+			}
+		} || debug "Nothing to do for $x"
+	done
+
+	folders_check
 }
 
 function command_umount() {
@@ -283,14 +278,23 @@ EOF
 	while true; do	
 		case "$1" in 
 			-n|--dryrun) dryrun=1; shift;;
-			-h|--help) __usage; exit 1;;
+			-h|--help) __usage; return 0;;
 			--) shift; break;;
 			*) fatal "Internal error";;
 		esac
 	done
 
-	# TODO
-	debug "$COMMAND dryrun=$dryrun args=$@"
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ -n "${folder[umount]}" ]] && {
+			info "Running umount command for $x: ${folder[umount]}"
+			[[ "$dryrun" != 1 ]] && {
+				eval ${folder[umount]}
+			}
+		}
+	done
+
+	folders_check
 }
 
 # ----------------------------------------------------------------------
