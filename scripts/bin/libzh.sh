@@ -53,6 +53,12 @@ function error() {
 	echo "${color_red}$@${color_none}" >&2
 }
 
+# give caller position 
+function where() {
+	local i=${1:-1}
+	echo -n "[${FUNCNAME[$i]}@$(basename ${BASH_SOURCE[$i]}):${BASH_LINENO[$(( i - 1 ))]}]"
+}
+
 function fatal() {
 	error "$@"
 	exit 56 # why 56 ? Morbihan of course!
@@ -72,8 +78,8 @@ function setdebug() {
 	
 function debug() {
 	[[ "$DEBUG" -ge 1 ]] && {
-		echo "${color_gray}$@${color_none} [${FUNCNAME[1]}@$(basename ${BASH_SOURCE[1]}):${BASH_LINENO[0]}]" >&2
-	}
+		echo "${color_gray}$@${color_none} $(where 2)" >&2
+	} || return 0
 }
 
 

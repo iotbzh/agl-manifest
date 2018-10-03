@@ -17,6 +17,9 @@
 # load libzh (loads /etc/xdtrc)
 . $(dirname $BASH_SOURCE)/libzh.sh
 
+# trap and exit on error
+trap 'rc=$?; error "command failed"; exit $rc;' ERR
+
 # ---------------- configuration ------------------------------------------
 
 # specify config file
@@ -30,17 +33,18 @@ function __configure() {
 	[[ ! -f $CONFIG_FILE ]] && {
 		info "Creating config file $CONFIG_FILE"
 		touch $CONFIG_FILE || fatal "Unable to create config file $CONFIG_FILE"
-		cat <<EOF >$CONFIG_FILE
+		cat <<'EOF' >$CONFIG_FILE
 # configuration file for snaptool
 # see https://github.com/iotbzh/agl-manifest/tree/master/scripts for more information
 
 # how mirror can be mounted/unmounted and accessed locally
 MIRROR[path]=$HOME/mirror
-MIRROR[mount]=
-MIRROR[umount]=
+MIRROR[mount_init]="[[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -N '' -f ~/.ssh/id_rsa; ssh-copy-id -p 2222 devel@thor"
+MIRROR[mount]="sshfs -p 2222 devel@thor:/home/devel/mirror -o nonempty ${MIRROR[path]}"
+MIRROR[umount]="fusermount -u ${MIRROR[path]}"
 
 RESOURCES[path]=$HOME/mirror/proprietary-renesas-r-car
-RESOURCES[mount]="echo hello world ; echo do that; "
+RESOURCES[mount]=
 RESOURCES[umount]=
 
 # temp build folder
@@ -208,94 +212,138 @@ function commandBAD_gcdebug() {
 function folders_check() {
 	for x in $FOLDERS; do
 		typeset -n folder=$x
-		[[ ! -d ${folderx[path]} ]] && { error "Directory '${folder[path]}' ($x) doesn't exist"; return 1; }
+		[[ ! -d ${folder[path]} ]] && { error "Directory '${folder[path]}' ($x) doesn't exist"; return 1; }
 		debug "Directory ${x[path]} is available"
 	done
 	return 0
 }
 
-function command_mount() {
-	local dryrun=
+function folders_init() {
 
-	function __usage() {
-		cat <<EOF >&2
-Usage: $COMMAND [options] 
-   options:
-      -n|--dryrun : do nothing
-      -h|--help   : get this help
-EOF
-	}
-
-	local opts="-o n,h --long dryrun,help" tmp
-	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
-		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
-		error $tmp; _usage; return 1
-	}
-	eval set -- $tmp
-
-	while true; do	
-		case "$1" in 
-			-n|--dryrun) dryrun=1; shift;;
-			-h|--help) __usage; return 0;;
-			--) shift; break;;
-			*) fatal "Internal error";;
-		esac
-	done
-
+	info "Initializing folders..."
 	for x in $FOLDERS; do
 		typeset -n folder=$x
-		[[ "$dryrun" != 1 ]] && mkdir -p ${folder[path]}
-		[[ -n "${folder[mount]}" ]] && {
-			info "Running mount command for $x: ${folder[mount]}"
-			[[ "$dryrun" != 1 ]] && {
-				eval ${folder[mount]}
-			}
+		mkdir -p ${folder[path]}
+		[[ -n "${folder[mount_init]}" ]] && {
+			info "Running mount_init command for $x: ${folder[mount_init]}"
+			eval ${folder[mount_init]} || fatal "mount_init failed"
 		} || debug "Nothing to do for $x"
 	done
-
-	folders_check
+	debug "folders_init done"
 }
 
-function command_umount() {
-	local dryrun=
-
-	function __usage() {
-		cat <<EOF >&2
-Usage: $COMMAND [options] 
-   options:
-      -n|--dryrun : do nothing
-      -h|--help   : get this help
-EOF
-	}
-
-	local opts="-o n,h --long dryrun,help" tmp
-	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
-		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
-		error $tmp; _usage; return 1
-	}
-	eval set -- $tmp
-
-	while true; do	
-		case "$1" in 
-			-n|--dryrun) dryrun=1; shift;;
-			-h|--help) __usage; return 0;;
-			--) shift; break;;
-			*) fatal "Internal error";;
-		esac
+function folders_mount() {
+	info "Mounting folders..."
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		mkdir -p ${folder[path]}
+		[[ -n "${folder[mount]}" ]] && {
+			info "Running mount command for $x: ${folder[mount]}"
+			eval ${folder[mount]} || fatal "mount failed"
+		} || debug "Nothing to do for $x"
 	done
+	debug "folders_mount done"
+}
 
+function folders_umount() {
+	info "Unmounting folders..."
 	for x in $FOLDERS; do
 		typeset -n folder=$x
 		[[ -n "${folder[umount]}" ]] && {
 			info "Running umount command for $x: ${folder[umount]}"
-			[[ "$dryrun" != 1 ]] && {
-				eval ${folder[umount]}
-			}
-		}
+			eval ${folder[umount]}
+		} || debug "Nothing to do for $x"
 	done
-
-	folders_check
+	info "folders_umount done"
 }
 
 # ----------------------------------------------------------------------
+
+function command_clean() {
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] 
+   options:
+      -h|--help   : get this help
+EOF
+	}
+
+	local opts="-o h --long help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; _usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-h|--help) __usage; return 0;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	folders_umount
+}
+
+function command_prepare() {
+	local init flavour machine
+
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] -- [extra features]
+    options:
+        -i|--init           : run initialization steps
+        -f|--flavour <name> : flavour to build
+        -m|--machine <name> : machine to build for
+        -h|--help           : get this help
+   [extra features] are passed to prepare_meta
+EOF
+	}
+
+	local opts="-o i,f:,m:,h --long init,flavour:,machine:,help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; _usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-i|--init) init=1; shift;;
+			-f|--flavour) flavour=$2; shift 2;;
+			-m|--machine) machine=$2; shift 2;;
+			-h|--help) __usage; return 0;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	[[ -z "$flavour" ]] && fatal "flavour not specified"
+	[[ -z "$machine" ]] && fatal "machine not specified"
+	info "Prepare for $machine flavour $flavour"
+
+	command_clean
+
+	[[ "$init" == 1 ]] && folders_init
+	folders_mount
+
+	# run prepare_meta
+	local opts="-t $machine -f $flavour -o ${BUILD[path]} -l ${MIRROR[path]} -e wipeconfig -e cleartemp -e rm_work -p ${RESOURCES[path]}"
+
+	info "Running: prepare_meta $opts"
+	prepare_meta $opts
+
+	# generate script to be run by "snaptool build"
+	scriptfile=${BUILD[path]}/__snaptool-build
+	cat <<EOF >$scriptfile
+#!/bin/bash
+MACHINE=$machine
+FLAVOUR=$flavour
+
+. ${BUILD[path]}/$machine/agl-init-build-env
+bitbake "\$@"
+EOF
+	chmod +x ${BUILD[path]}/__snaptool-build
+}
 
