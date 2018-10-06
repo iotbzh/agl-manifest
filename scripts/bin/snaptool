@@ -21,41 +21,6 @@ MYNAME=$(basename $BASH_SOURCE .sh)
 
 # ------------------------- options parsing -------------------------------------
 
-function __getbuiltincommands() {
-	# enumerate all:
-	# - functions named command_xxxx
-	# - scripts named snaptool-xxxx
-	local builtins=$(typeset -F | awk '{print $3;}' | grep ^command_ | sed 's/^command_//g' | sort)
-
-	echo $builtins
-}
-function __getfilecommands() {
-	local external=$(find $(dirname $BASH_SOURCE) -name "${MYNAME}-*" | xargs basename | sed "s/^${MYNAME}-//g" | sort)
-	echo $external
-}
-
-function __callcommand() {
-	cmd=$1
-	shift
-	local funcname=command_$cmd
-	if [[ $(type -t $funcname) == "function" ]]; then
-		COMMAND=$(basename $BASH_SOURCE .sh)-$cmd
-		$funcname "$@"
-		return $?
-	fi
-
-	# find file
-	local extname=$(dirname $BASH_SOURCE)/${MYNAME}-$cmd
-	if [[ -f $extname ]]; then
-		$extname "$@"
-		return $?
-	fi
-
-	error "Command $cmd not found"
-
-	return 1
-}
-
 function __global_usage() {
 	cat <<EOF >&2
 General usage: $(basename $BASH_SOURCE) <command> [options]

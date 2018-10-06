@@ -25,8 +25,8 @@ trap 'rc=$?; error "command failed"; exit $rc;' ERR
 # specify config file
 CONFIG_FILE=${SNAPTOOL_CONF:-$XDT_DIR/snaptool.conf}
 
-declare -A MIRROR RESOURCES BUILD DEPLOY
-FOLDERS="MIRROR RESOURCES BUILD DEPLOY"
+declare -A MIRROR RESOURCES BUILD PUBLISH
+FOLDERS="MIRROR RESOURCES BUILD PUBLISH"
 
 function __configure() {
 	# create config file if needed
@@ -39,8 +39,8 @@ function __configure() {
 
 # how mirror can be mounted/unmounted and accessed locally
 MIRROR[path]=$HOME/mirror
-MIRROR[mount_init]="[[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -N '' -f ~/.ssh/id_rsa; ssh-copy-id -p 2222 devel@thor"
-MIRROR[mount]="sshfs -p 2222 devel@thor:/home/devel/mirror -o nonempty ${MIRROR[path]}"
+MIRROR[mount_init]="[[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -N '' -f ~/.ssh/id_rsa; ssh-copy-id sdx@thor"
+MIRROR[mount]="sshfs sdx@thor:/data/snaptool_refmirror -o nonempty ${MIRROR[path]}"
 MIRROR[umount]="fusermount -u ${MIRROR[path]}"
 
 RESOURCES[path]=$HOME/mirror/proprietary-renesas-r-car
@@ -53,10 +53,10 @@ BUILD[mount]=
 BUILD[umount]=
 BUILD[targets]=agl-demo-platform-crosssdk
 
-# deployment folder
-DEPLOY[path]=$XDT_DIR/deploy
-DEPLOY[mount]=
-DEPLOY[umount]=
+# publishing folder
+PUBLISH[path]=$XDT_DIR/publish/snapshots
+PUBLISH[mount]=
+PUBLISH[umount]=
 EOF
 	}
 	[[ ! -f $CONFIG_FILE ]] && fatal "Unable to find config file $CONFIG_FILE"
@@ -68,14 +68,106 @@ EOF
 	[[ -z "${MIRROR[path]}" ]] && fatal "Invalid value for MIRROR[path] in $CONFIG_FILE"
 	[[ -z "${RESOURCES[path]}" ]] && fatal "Invalid value for RESOURCES[path] in $CONFIG_FILE"
 	[[ -z "${BUILD[path]}" ]] && fatal "Invalid value for BUILD[path] in $CONFIG_FILE"
-	[[ -z "${DEPLOY[path]}" ]] && fatal "Invalid value for DEPLOY[path] in $CONFIG_FILE"
+	[[ -z "${PUBLISH[path]}" ]] && fatal "Invalid value for PUBLISH[path] in $CONFIG_FILE"
 
 	return 0
 }
 
 __configure
 
-# --------------------------- retention policy in deploy dir -------------------
+# ----------------------- commands handling -----------------------------------
+
+function __getbuiltincommands() {
+	# enumerate all:
+	# - functions named command_xxxx
+	# - scripts named snaptool-xxxx
+	local builtins=$(typeset -F | awk '{print $3;}' | grep ^command_ | sort | sed 's/^command_[0-9]\+_//g')
+
+	echo $builtins
+}
+function __getfilecommands() {
+	local external=$(find $(dirname $BASH_SOURCE) -name "${MYNAME}-*" | xargs basename | sed "s/^${MYNAME}-//g" | sort)
+	echo $external
+}
+
+function __callcommand() {
+	cmd=$1
+	shift
+	local funcname=$(typeset -F | awk '{print $3;}' | grep "^command_[0-9]\+_$cmd")
+
+	if [[ $(type -t $funcname) == "function" ]]; then
+		COMMAND=$(basename $BASH_SOURCE .sh)-$cmd
+		$funcname "$@"
+		return $?
+	fi
+
+	# find file
+	local extname=$(dirname $BASH_SOURCE)/${MYNAME}-$cmd
+	if [[ -f $extname ]]; then
+		$extname "$@"
+		return $?
+	fi
+
+	error "Command $cmd not found"
+
+	return 1
+}
+
+# ------------------------ ops on folders -----------------------------------------
+
+function folders_check() {
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ ! -d ${folder[path]} ]] && { error "Directory '${folder[path]}' ($x) doesn't exist"; return 1; }
+		debug "Directory ${x[path]} is available"
+	done
+	return 0
+}
+
+function folders_init() {
+
+	info "Initializing folders..."
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		mkdir -p ${folder[path]}
+		[[ -n "${folder[mount_init]}" ]] && {
+			info "Running mount_init command for $x: ${folder[mount_init]}"
+			eval ${folder[mount_init]} || fatal "mount_init failed"
+		} || debug "Nothing to do for $x"
+	done
+	debug "folders_init done"
+}
+
+function folders_mount() {
+	info "Mounting folders..."
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		mkdir -p ${folder[path]}
+		[[ -n "${folder[mount]}" ]] && {
+			log "Running mount command for $x: ${folder[mount]}"
+			eval ${folder[mount]} || fatal "mount failed"
+		} || debug "Nothing to do for $x"
+	done
+	debug "folders_mount done"
+}
+
+function folders_umount() {
+	info "Unmounting folders..."
+	for x in $FOLDERS; do
+		typeset -n folder=$x
+		[[ -n "${folder[umount]}" ]] && {
+			log "Running umount command for $x: ${folder[umount]}"
+			eval ${folder[umount]} || error "Unmount failed"
+		} || debug "Nothing to do for $x"
+	done
+	debug "folders_umount done"
+}
+
+function get_setupfile() {
+	echo ${BUILD[path]}/snaptool-setup.conf
+}
+
+# --------------------------- retention policy in PUBLISH dir -------------------
 
 # compute dates to keep
 function compute_retention_dates() {
@@ -203,75 +295,53 @@ function get_snapshots_age() {
 	done
 }
 
-
 ################ TODO: FIXME - OLD CODE
 
-function commandBAD_gcdebug() {
-	debug "Retention dates:"
-	for x in $(compute_retention_dates "$@"); do
-		debug $x $(date --utc "+%a" -d $x)
-	done
-	#simulate
-	#get_snapshots_age "$@"
-}
+#function commandBAD_gcdebug() {
+#	debug "Retention dates:"
+#	for x in $(compute_retention_dates "$@"); do
+#		debug $x $(date --utc "+%a" -d $x)
+#	done
+#	#simulate
+#	#get_snapshots_age "$@"
+#}
 
-# ------------------------ ops on folders -----------------------------------------
-
-function folders_check() {
-	for x in $FOLDERS; do
-		typeset -n folder=$x
-		[[ ! -d ${folder[path]} ]] && { error "Directory '${folder[path]}' ($x) doesn't exist"; return 1; }
-		debug "Directory ${x[path]} is available"
-	done
-	return 0
-}
-
-function folders_init() {
-
-	info "Initializing folders..."
-	for x in $FOLDERS; do
-		typeset -n folder=$x
-		mkdir -p ${folder[path]}
-		[[ -n "${folder[mount_init]}" ]] && {
-			info "Running mount_init command for $x: ${folder[mount_init]}"
-			eval ${folder[mount_init]} || fatal "mount_init failed"
-		} || debug "Nothing to do for $x"
-	done
-	debug "folders_init done"
-}
-
-function folders_mount() {
-	info "Mounting folders..."
-	for x in $FOLDERS; do
-		typeset -n folder=$x
-		mkdir -p ${folder[path]}
-		[[ -n "${folder[mount]}" ]] && {
-			info "Running mount command for $x: ${folder[mount]}"
-			eval ${folder[mount]} || fatal "mount failed"
-		} || debug "Nothing to do for $x"
-	done
-	debug "folders_mount done"
-}
-
-function folders_umount() {
-	info "Unmounting folders..."
-	for x in $FOLDERS; do
-		typeset -n folder=$x
-		[[ -n "${folder[umount]}" ]] && {
-			info "Running umount command for $x: ${folder[umount]}"
-			eval ${folder[umount]}
-		} || debug "Nothing to do for $x"
-	done
-	info "folders_umount done"
-}
-
-function get_setupfile() {
-	echo ${BUILD[path]}/snaptool-setup.conf
-}
 
 # ----------------------------------------------------------------------
 
-function command_clean() {
+function command_90_mount() {
+	local init
+
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] 
+    options:
+        -i|--init : run mount_init steps prior to mount
+        -h|--help : get this help
+EOF
+	}
+
+	local opts="-o i,h --long init,help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; __usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-i|--init) init=1; shift;;
+			-h|--help) __usage; return 0;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	[[ "$init" == 1 ]] && folders_init
+	folders_mount
+}
+
+function command_91_umount() {
 	function __usage() {
 		cat <<EOF >&2
 Usage: $COMMAND [options] 
@@ -283,7 +353,34 @@ EOF
 	local opts="-o h --long help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
-		error $tmp; _usage; return 1
+		error $tmp; __usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-h|--help) __usage; return 0;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	folders_umount
+}
+
+function command_89_clean() {
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] 
+   options:
+      -h|--help   : get this help
+EOF
+	}
+
+	local opts="-o h --long help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; __usage; return 1
 	}
 	eval set -- $tmp
 
@@ -300,7 +397,7 @@ EOF
 	rm -f $(get_setupfile)
 }
 
-function command_prepare() {
+function command_10_prepare() {
 	local init flavour machine
 
 	function __usage() {
@@ -318,7 +415,7 @@ EOF
 	local opts="-o i,f:,m:,h --long init,flavour:,machine:,help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
-		error $tmp; _usage; return 1
+		error $tmp; __usage; return 1
 	}
 	eval set -- $tmp
 
@@ -337,7 +434,8 @@ EOF
 	[[ -z "$machine" ]] && fatal "machine not specified"
 	info "Prepare for $machine flavour $flavour"
 
-	command_clean
+	# first, do some cleanup
+	__callcommand clean
 
 	[[ "$init" == 1 ]] && folders_init
 	folders_mount
@@ -345,11 +443,11 @@ EOF
 	# run prepare_meta
 	local opts="-t $machine -f $flavour -o ${BUILD[path]} -l ${MIRROR[path]} -e wipeconfig -e cleartemp -e rm_work -p ${RESOURCES[path]}"
 	local ts0=$(date +%s)
-	info "Running: prepare_meta $opts"
+	log "Running: prepare_meta $opts"
 
 	prepare_meta $opts
 
-	# generate config file to be sourced by other steps (build; deploy ...)
+	# generate config file to be sourced by other steps (build; publish ...)
 	local ts=$(( $(date +%s) - ts0))
 	cat <<EOF >$(get_setupfile)
 # file generated by $(basename $0)
@@ -362,6 +460,9 @@ MACHINE=$machine
 FLAVOUR=$flavour
 PREPARE_TS="$ts0"
 PREPARE_TIME="$(date +%H:%M:%S -u -d @$ts)"
+BB_META=${BUILD[path]}/meta
+BB_SSTATECACHE=${BUILD[path]}/sstate-cache
+BB_DOWNLOADS=${BUILD[path]}/downloads
 BB_BUILD=${BUILD[path]}/build/$machine
 EOF
 
@@ -369,7 +470,7 @@ EOF
 	folders_umount
 }
 
-function command_build() {
+function command_20_build() {
 	function __usage() {
 		cat <<EOF >&2
 Usage: $COMMAND [options] [build_targets]
@@ -379,7 +480,7 @@ Usage: $COMMAND [options] [build_targets]
    build_targets:
       list of targets to pass to bitbake
       default is specified in configuration file $CONFIG_FILE
-	  current value: ${BUILD[targets]}
+      current value: ${BUILD[targets]}
 
 EOF
 	}
@@ -387,7 +488,7 @@ EOF
 	local opts="-o h --long help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
-		error $tmp; _usage; return 1
+		error $tmp; __usage; return 1
 	}
 	eval set -- $tmp
 
@@ -404,6 +505,7 @@ EOF
 	. $setupfile
 
 	[[ -z "$MACHINE" ]] && fatal "Invalid machine name. Check $setupfile."
+	[[ -z "$FLAVOUR" ]] && fatal "Invalid flavour name. Check $setupfile."
 	[[ ! -d "$BB_BUILD" ]] && fatal "Invalid bitbake build dir. Check $setupfile."
 
 	targets="$@"
@@ -411,10 +513,10 @@ EOF
 	[[ -z "$targets" ]] && fatal "No targets specified"
 
 	info "Starting build"
-	info "   FLAVOUR:     $FLAVOUR"
-	info "   MACHINE:     $MACHINE"
-	info "   BB_BUILD:    $BB_BUILD"
-	info "   BB_TARGETS:  $targets"
+	log "   FLAVOUR:     $FLAVOUR"
+	log "   MACHINE:     $MACHINE"
+	log "   BB_BUILD:    $BB_BUILD"
+	log "   BB_TARGETS:  $targets"
 
 	. $BB_BUILD/agl-init-build-env || fatal "Unable to source bitbake environment"
 
@@ -434,6 +536,7 @@ BB_BUILDTIME="$(date +%H:%M:%S -u -d @$ts)"
 BB_STATUS=$status
 EOF
 
+	log "Elapsted time: $(date +%H:%M:%S -u -d @$ts)"
 	[[ $status == "ok" ]] && {
 		info "Bitbake build succeeded for ($FLAVOUR:$MACHINE:$targets)"
 	} || {
@@ -441,29 +544,29 @@ EOF
 	}
 }
 
-function command_deploy() {
+function command_30_publish() {
 	local EXCLUDE_PATTERN="*ostree* *otaimg *.tar.xz"
-	local doimage=y dopackages=n dosdk=y
+	local doimage=y dopackages=n dosdk=y version=
 
 	function __usage() {
 		cat <<EOF >&2
 Usage: $COMMAND [options]
    options:
       -h|--help    : get this help
-	  -i|--image   : enable image deployment (default: yes)
-	  --no-image   : disable image deployment
-	  -p|--packages: enable packages deployment (default: no)
-	  -s|--sdk     : enable SDK deployment (default: yes)
-	  --no-sdk     : disable SDK deployment
+      -i|--image   : enable image publishing (default: yes)
+      --no-image   : disable image publishing
+      -p|--packages: enable packages publishing (default: no)
+      -s|--sdk     : enable SDK publishing (default: yes)
+      --no-sdk     : disable SDK publishing
       -x|--exclude : file exlusion pattern when copying
                      default: $EXCLUDE_PATTERN
 EOF
 	}
 
-	local opts="-o h,i,p,s,x: --long,--image,--no-image,--packages,--sdk,--no-sdk,--exclude: help" tmp
+	local opts="-o h,i,p,s,x: --long image,no-image,packages,sdk,no-sdk,exclude:,help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
-		error $tmp; _usage; return 1
+		error $tmp; __usage; return 1
 	}
 	eval set -- $tmp
 
@@ -483,24 +586,34 @@ EOF
 
 	setupfile=$(get_setupfile)
 	[[ ! -f $setupfile ]] && fatal "Setup file $setupfile not found. Does '$MYNAME prepare' has been run ?"
-
 	. $setupfile
 
+	[[ -z "$MACHINE" ]] && fatal "Invalid machine name. Check $setupfile."
+	[[ -z "$FLAVOUR" ]] && fatal "Invalid flavour name. Check $setupfile."
 	[[ "$BB_STATUS" != "ok" ]] && fatal "Last build failed. Check $setupfile."
 	[[ ! -d "$BB_DEPLOY" ]] && fatal "Invalid bitbake deploy dir. Check $setupfile."
+	[[ -z "$BB_TS" ]] && fatal "Invalid build timestamp. Check $setupfile."
+
+	# use the build timestamp as version
+	version=$(date -u "+%Y%m%d_%H%M%S" -d "@$BB_TS")
+	
+	# compute destination dir
+	local destdir=${PUBLISH[path]}/$FLAVOUR/$MACHINE/$version
+
+	info "Starting publishing"
+	log "   source dir:      $BB_DEPLOY"
+	log "   version:         $version"
+	log "   destination dir: $destdir"
+	log "   image:           $doimage"
+	log "   packages:        $dopackages"
+	log "   sdk:             $dosdk"
+	log "   exclude pattern: $EXCLUDE_PATTERN"
 
 	# locate image and version
 	local imgfile imgdir
 	[[ "$doimage" == "y" ]] && {
 		imgdir="$BB_DEPLOY/images/${MACHINE}/"
 		[[ ! -d "$imgdir" ]] && fatal "No image dir found at $imgdir" 
-		pushd $imgdir &>/dev/null
-			local lnkname=$(find . -type l -name "*.wic.xz")
-			[[ -z "$lnkname" ]] && lnkname=$(find . -type l -name "*.wic.vmdk") # exception for qemu
-			[[ ! -e $lnkname ]] && fatal "No image link found in $imgdir" || log "Found image link $lnkname"
-			imgfile=$(readlink $lnkname)
-			[[ ! -f $imgfile ]] && fatal "No image found in $imgdir" || log "Found image file $imgfile"
-		popd &>/dev/null
 	}
 
 	# locate SDK
@@ -508,10 +621,6 @@ EOF
 	[[ "$dosdk" == "y" ]] && {
 		sdkdir="$BB_DEPLOY/sdk/"
 		[[ ! -d $sdkdir ]] && fatal "No SDK dir found at $sdkdir"
-		pushd $sdkdir &>/dev/null
-			sdkfile=$(find . -type f -name "poky-*.sh")
-			[[ ! -f $sdkfile ]] && fatal "Unable to find SDK file in $sdkdir"
-		popd &>/dev/null
 	}
 
 	# locate packages
@@ -520,8 +629,13 @@ EOF
 		pkgdir="$BB_DEPLOY/rpm"
 		[[ ! -d $pkgdir ]] && fatal "No packages dir found at $pkgdir"
 	}
-	 
-fatal "NOT FINISHED" # TODO
+
+fatal not finished
+# get version
+# mount
+# copy
+# unmount
+
 	# compute destination dir
 	local DSTDIR=
 [[ ! -d "${DSTDIR}" ]] && fatal "Invalid destination directory $DSTDIR"
@@ -557,4 +671,69 @@ fi
 
 log "Image saved in $SAVEDIR"
 	# TODO
+}
+
+function command_40_mirrorupdate() {
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] [build_targets]
+   options:
+      -h|--help   : get this help
+
+   build_targets:
+      list of targets to pass to bitbake
+      default is specified in configuration file $CONFIG_FILE
+	  current value: ${BUILD[targets]}
+
+EOF
+	}
+
+	setupfile=$(get_setupfile)
+	[[ ! -f $setupfile ]] && fatal "Setup file $setupfile not found. Does '$MYNAME prepare' has been run ?"
+	. $setupfile
+
+	[[ "$BB_STATUS" != "ok" ]] && fatal "Last build failed. Check $setupfile."
+	[[ ! -d "$BB_META" ]] && fatal "Invalid meta folder (BB_META). Check $setupfile."
+	[[ ! -d "$BB_SSTATECACHE" ]] && fatal "Invalid sstate-cache folder (BB_SSTATECACHE). Check $setupfile."
+	[[ ! -d "$BB_DOWNLOADS" ]] && fatal "Invalid downloads-cache folder (BB_DOWNLOADS). Check $setupfile."
+
+	info "Starting mirrorupdate"
+
+	folders_mount
+
+	# do some cleanup in sstate-cache (remove duplicates and useless entries)
+	info "Clean sstate-cache $BB_SSTATECACHE ..."
+
+	local bbmanage=$BB_META/poky/scripts/sstate-cache-management.sh
+	[[ -f $bbmanage ]] && {
+		chmod +x $bbmanage
+		$bbmanage \
+			--cache-dir=$BB_SSTATECACHE \
+			--remove-duplicated \
+			--yes 
+
+		$bbmanage \
+			--cache-dir=$BB_SSTATECACHE \
+			--stamps-dir=$BB_BUILD/tmp/stamps \
+			--yes
+	}
+
+	# TODO: clean download cache (based on atime ?)
+	# one way: https://lists.yoctoproject.org/pipermail/yocto/2015-October/026703.html
+	for dir in $BB_META $BB_DOWNLOADS $BB_SSTATECACHE; do
+		info "Syncing $dir to ${MIRROR[path]}/$(basename $dir)"
+		rsync -a --no-o --no-g --delete $dir/ ${MIRROR[path]}/$(basename $dir)/
+	done
+
+	info "Folders size:"
+	for dir in $BB_META $BB_DOWNLOADS $BB_SSTATECACHE; do
+		log "   $(basename $dir) : $(du -hs $dir|awk '{print $1;}')"
+	done
+
+	# always remove agl-manifest from mirror to force refresh on manifest files
+	rm -rf ${MIRROR[path]}/$(basename $BB_META)/agl-manifest
+
+	folders_umount
+
+	info "Mirrorupdate done"
 }
