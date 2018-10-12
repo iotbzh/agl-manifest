@@ -13,7 +13,7 @@ f875c60=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gp
 682ad61=rocko				meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/flounder=flounder	meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+flounder/6.0.1=flounder		meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 a055159=v3.7.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 718bb38=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
 8e4c537=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
@@ -21,9 +21,4 @@ a055159=v3.7.0				meta-rcar	          origin=https://github.com/CogentEmbedded/m
 # Security
 8f6969a=flounder			meta-security         origin=git://git.yoctoproject.org/meta-security
 489abdc=flounder			meta-security-isafw   origin=https://github.com/01org/meta-security-isafw
-
-# SOTA
-ff555e8=flounder			meta-updater          origin=https://github.com/advancedtelematic/meta-updater
-697632d=flounder			meta-updater-qemux86-64	origin=https://github.com/advancedtelematic/meta-updater-qemux86-64
-
 
