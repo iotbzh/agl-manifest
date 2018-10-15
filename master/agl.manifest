@@ -5,8 +5,8 @@ origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinu
 origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
-3525310=rocko				meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-yocto-2.4.3=rocko			poky                  origin=git://git.yoctoproject.org/poky
+eae9963=rocko				meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+05711ba=rocko				poky                  origin=git://git.yoctoproject.org/poky
 f875c60=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
@@ -14,16 +14,12 @@ f875c60=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gp
 
 # BSP
 origin/master=master	    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-a055159=v3.7.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
+0572282=v3.9.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 718bb38=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
 8e4c537=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 
 # Security
 8f6969a=master				meta-security         origin=git://git.yoctoproject.org/meta-security
 489abdc=master				meta-security-isafw   origin=https://github.com/01org/meta-security-isafw
-
-# SOTA
-ff555e8=master				meta-updater          origin=https://github.com/advancedtelematic/meta-updater
-697632d=master				meta-updater-qemux86-64	origin=https://github.com/advancedtelematic/meta-updater-qemux86-64
 
 
