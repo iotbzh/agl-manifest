@@ -1,0 +1,7 @@
+Example run:
+
+snaptool prepare -i -f flounder -m h3ulcb
+snaptool build agl-demo-platform-crosssdk
+snaptool publish
+snaptool mirrorupdate
+snaptool clean

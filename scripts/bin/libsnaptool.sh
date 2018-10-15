@@ -295,7 +295,7 @@ function get_snapshots_age() {
 	done
 }
 
-################ TODO: FIXME - OLD CODE
+################ FIXME - OLD CODE
 
 #function commandBAD_gcdebug() {
 #	debug "Retention dates:"
@@ -439,6 +439,7 @@ EOF
 
 	[[ "$init" == 1 ]] && folders_init
 	folders_mount
+	trap "folders_umount" STOP INT QUIT EXIT
 
 	# run prepare_meta
 	local opts="-t $machine -f $flavour -o ${BUILD[path]} -l ${MIRROR[path]} -e wipeconfig -e cleartemp -e rm_work -p ${RESOURCES[path]}"
@@ -465,9 +466,6 @@ BB_SSTATECACHE=${BUILD[path]}/sstate-cache
 BB_DOWNLOADS=${BUILD[path]}/downloads
 BB_BUILD=${BUILD[path]}/build/$machine
 EOF
-
-	# remote dirs are not needed anymore
-	folders_umount
 }
 
 function command_20_build() {
@@ -545,7 +543,7 @@ EOF
 }
 
 function command_30_publish() {
-	local EXCLUDE_PATTERN="*ostree* *otaimg *.tar.xz"
+	local exclude_pattern="*ostree* *otaimg *.tar.xz"
 	local doimage=y dopackages=n dosdk=y version=
 
 	function __usage() {
@@ -559,7 +557,7 @@ Usage: $COMMAND [options]
       -s|--sdk     : enable SDK publishing (default: yes)
       --no-sdk     : disable SDK publishing
       -x|--exclude : file exlusion pattern when copying
-                     default: $EXCLUDE_PATTERN
+                     default: $exclude_pattern
 EOF
 	}
 
@@ -578,7 +576,7 @@ EOF
 			-p|--packages) dopackages=y; shift;;
 			-s|--sdk) dosdk=y; shift;;
 			--no-sdk) dosdk=n; shift;;
-			-x|--exclude) EXCLUDE_PATTERN=$2; shift 2;;
+			-x|--exclude) exclude_pattern=$2; shift 2;;
 			--) shift; break;;
 			*) fatal "Internal error";;
 		esac
@@ -607,7 +605,7 @@ EOF
 	log "   image:           $doimage"
 	log "   packages:        $dopackages"
 	log "   sdk:             $dosdk"
-	log "   exclude pattern: $EXCLUDE_PATTERN"
+	log "   exclude pattern: $exclude_pattern"
 
 	# locate image and version
 	local imgfile imgdir
@@ -625,68 +623,62 @@ EOF
 
 	# locate packages
 	local pkgdir
-	[[ "dopackages" == "y" ]] && {
+	[[ "$dopackages" == "y" ]] && {
 		pkgdir="$BB_DEPLOY/rpm"
 		[[ ! -d $pkgdir ]] && fatal "No packages dir found at $pkgdir"
 	}
 
-fatal not finished
-# get version
-# mount
-# copy
-# unmount
+	# mount publish folder
+	folders_mount
+	trap "folders_umount" STOP INT QUIT EXIT
 
-	# compute destination dir
-	local DSTDIR=
-[[ ! -d "${DSTDIR}" ]] && fatal "Invalid destination directory $DSTDIR"
-DSTDIR=$(realpath ${DSTDIR})
+	mkdir -p $destdir
 
-# determine version
-[[ "$imgfile" =~ -([0-9]+)\.rootfs\.wic\..+$ ]] && VERSION=${BASH_REMATCH[1]} || error "Unable to find image version"
-log "Found version $VERSION"
+	local rsyncopts=""
+	for x in ${exclude_pattern}; do
+		rsyncopts="${rsyncopts} --exclude '$e' "
+	done
 
-# create destination dir
-SAVEDIR="${DSTDIR}/${MACHINE}-${VERSION}/"
-mkdir -p ${SAVEDIR}
+	[[ "$doimage" == "y" ]] && {
+		info "Syncing $imgdir to $destdir/images ..."
+		rsync -a --delete $rsyncopts $imgdir/ $destdir/images/
+	}
+	[[ "$dosdk" == "y" ]] && {
+		info "Syncing $sdkdir to $destdir/sdk ..."
+		rsync -a --delete $rsyncopts $sdkdir/ $destdir/sdk/
+	}
+	[[ "$dopackages" == "y" ]] && {
+		info "Syncing $pkgdir to $destdir/rpm ..."
+		rsync -a --delete $rsyncopts $pkgdir/ $destdir/rpm/
+	}
 
-RSYNCEXCLUDE=""
-log "Exclusion pattern: ${EXCLUDE}"
-for e in ${EXCLUDE}; do
-	RSYNCEXCLUDE="${RSYNCEXCLUDE} --exclude "$e" "
-done
-
-BASESAVEDIR=$(basename "${SAVEDIR}")
-DIRSAVEDIR=$(dirname "${SAVEDIR}")
-
-info "Syncing $IMGDIR to $SAVEDIR..."
-rsync -a --delete ${RSYNCEXCLUDE} ${IMGDIR}/ ${SAVEDIR}/
-[[ -n "$sdkfile" ]] && { log "Syncing SDK file $sdkfile to $SAVEDIR"; rsync -a ${SDKDIR}/$sdkfile ${SAVEDIR}/; }
-
-if [[ -L ${DIRSAVEDIR}/${MACHINE} ]]; then
-	rm ${DIRSAVEDIR}/${MACHINE}
-fi
-if [[ ! -e ${DIRSAVEDIR}/${MACHINE} ]]; then
-	ln -sf ${BASESAVEDIR} ${DIRSAVEDIR}/${MACHINE}
-fi
-
-log "Image saved in $SAVEDIR"
-	# TODO
+	info "Copying config file to $destdir"
+	cp $setupfile $destdir/
 }
 
 function command_40_mirrorupdate() {
 	function __usage() {
 		cat <<EOF >&2
-Usage: $COMMAND [options] [build_targets]
+Usage: $COMMAND [options] 
    options:
       -h|--help   : get this help
-
-   build_targets:
-      list of targets to pass to bitbake
-      default is specified in configuration file $CONFIG_FILE
-	  current value: ${BUILD[targets]}
-
 EOF
 	}
+
+	local opts="-o h --long help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; __usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-h|--help) __usage; return 0;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
 
 	setupfile=$(get_setupfile)
 	[[ ! -f $setupfile ]] && fatal "Setup file $setupfile not found. Does '$MYNAME prepare' has been run ?"
@@ -700,6 +692,7 @@ EOF
 	info "Starting mirrorupdate"
 
 	folders_mount
+	trap "folders_umount" STOP INT QUIT EXIT
 
 	# do some cleanup in sstate-cache (remove duplicates and useless entries)
 	info "Clean sstate-cache $BB_SSTATECACHE ..."
@@ -732,8 +725,6 @@ EOF
 
 	# always remove agl-manifest from mirror to force refresh on manifest files
 	rm -rf ${MIRROR[path]}/$(basename $BB_META)/agl-manifest
-
-	folders_umount
 
 	info "Mirrorupdate done"
 }
