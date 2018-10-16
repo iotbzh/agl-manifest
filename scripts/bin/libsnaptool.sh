@@ -544,7 +544,7 @@ EOF
 
 function command_30_publish() {
 	local exclude_pattern="*ostree* *otaimg *.tar.xz"
-	local doimage=y dopackages=n dosdk=y version=
+	local doimage=y dopackages=n dosdk=y version= gcpolicy=smart
 
 	function __usage() {
 		cat <<EOF >&2
@@ -558,10 +558,19 @@ Usage: $COMMAND [options]
       --no-sdk     : disable SDK publishing
       -x|--exclude : file exlusion pattern when copying
                      default: $exclude_pattern
+      -g|--gc      : specify garbage collecting (retention) policy for snapshots
+	                 - 'smart' (default): apply a non-uniform temporal density
+	                    keep last 15 days full, then 1 for every next 2 weeks,
+                        then 1 for every next 2 months, then 1 for every next 5 quarters
+						This gives roughly 24 snapshots covering 1.5 years.
+	                 - 'duration:<duration>': drop snapshots older than the specified duration
+					 - 'size:<size>': drop old snapshots based on publish folder size
+	                 - 'none': do not apply any policy
+      --no-gc      : an alias for '--gc none'
 EOF
 	}
 
-	local opts="-o h,i,p,s,x: --long image,no-image,packages,sdk,no-sdk,exclude:,help" tmp
+	local opts="-o h,i,p,s,x:,g: --long image,no-image,packages,sdk,no-sdk,exclude:,gc:,--no-gc,help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
 		error $tmp; __usage; return 1
@@ -577,6 +586,8 @@ EOF
 			-s|--sdk) dosdk=y; shift;;
 			--no-sdk) dosdk=n; shift;;
 			-x|--exclude) exclude_pattern=$2; shift 2;;
+			-g|--gc) gcpolicy=$2; shift 2;;
+			--no-gc) gcpolicy=none; shift;;
 			--) shift; break;;
 			*) fatal "Internal error";;
 		esac
@@ -606,6 +617,7 @@ EOF
 	log "   packages:        $dopackages"
 	log "   sdk:             $dosdk"
 	log "   exclude pattern: $exclude_pattern"
+	log "   GC policy      : $gcpolicy"
 
 	# locate image and version
 	local imgfile imgdir
@@ -654,6 +666,26 @@ EOF
 
 	info "Copying config file to $destdir"
 	cp $setupfile $destdir/
+
+	# apply GC policy
+	FIXME() { error "NOT IMPLEMENTED"; }
+	case $gcpolicy in
+		smart)
+			[[ -z "$dryrun" ]] && FIXME || true
+			;;
+		size*)
+			[[ -z "$dryrun" ]] && FIXME || true
+			;;
+		duration*)
+			[[ -z "$dryrun" ]] && FIXME || true
+			;;
+		none)
+			[[ -z "$dryrun" ]] && FIXME || true
+			;;
+		*)
+			error "Invalid Garbage Collecting policy. Skipping."
+			;;
+	esac
 }
 
 function command_40_mirrorupdate() {
