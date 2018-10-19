@@ -17,8 +17,6 @@ Boot the board and execute the following commands from the target console:
 ```bash
 root@m3ulcb:~# sed -i "s/ivi-shell/desktop-shell/g" /etc/xdg/weston/weston.ini
 
-root@m3ulcb:~# for svr in HomeScreenAppFrameworkBinderAGL.service HomeScreen WindowManager.service; do systemctl --user stop $svr; systemctl --user disable $svr; done
-
 root@m3ulcb:~# systemctl restart weston
 ```
 
@@ -27,7 +25,20 @@ root@m3ulcb:~# systemctl restart weston
 From the target console enter the following command to open chromium application:
 
 ```bash
-/usr/bin/google-chrome --touch-events=enabled --no-sandbox --enable-wayland-ime --use-ime-service --ignore-gpu-blacklist http://docs.iot.bzh
+/usr/bin/google-chrome \
+	--no-sandbox \
+	http://docs.iot.bzh
 ```
 
+Other useful options:
 
+* --use-ime-service 
+* --ignore-gpu-blacklist
+* --touch-events=enabled
+* --enable-wayland-ime : Enable Wayland IME
+* --autoplay-policy=no-user-gesture-required : Enable movie autoplay
+* --disable-infobars : Disable info bars
+* --app=${URL} : Application mode
+* --kiosk : Kiosk mode
+* --window-size=1920,1080 : Set window size
+* --start-maximized : Window maximize

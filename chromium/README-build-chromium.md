@@ -3,7 +3,7 @@ Author: Stephane Desneux <sdx@iot.bzh>
 title: How to build Chromium for AGL
 ---
 
-Inside an [AGL docker container](https://download.automotivelinux.org/AGL/snapshots/sdk/docker/docker_agl_worker-generic-3.99.1.tar.xz)
+Inside an [AGL docker container](https://download.automotivelinux.org/AGL/snapshots/sdk/docker/)
 use the facility tool `prepare_meta` to set up your Yocto layers:
 
 ```bash

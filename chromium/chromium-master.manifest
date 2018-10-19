@@ -4,4 +4,4 @@
 origin/master=master    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
 
 # Chromium
-origin/ozone/wayland/67.0.3375.0.r543955=chromium_67.0.3375.0.r543955  meta-browser      origin=https://github.com/Igalia/meta-browser
+origin/ozone/wayland/71.0.3545.0.r589108=chromium_71.0.3545.0.r589108  meta-browser      origin=https://github.com/Igalia/meta-browser
