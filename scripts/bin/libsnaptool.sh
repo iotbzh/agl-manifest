@@ -55,8 +55,9 @@ BUILD[targets]=agl-demo-platform-crosssdk
 
 # publishing folder
 PUBLISH[path]=$XDT_DIR/publish/snapshots
-PUBLISH[mount]=
-PUBLISH[umount]=
+PUBLISH[mount_init]="[[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -N '' -f ~/.ssh/id_rsa; ssh-copy-id sdx@thor"
+PUBLISH[mount]="sshfs sdx@thor:/data/snaptool_publish -o nonempty ${PUBLISH[path]}"
+PUBLISH[umount]="fusermount -u ${PUBLISH[path]}"
 EOF
 	}
 	[[ ! -f $CONFIG_FILE ]] && fatal "Unable to find config file $CONFIG_FILE"
@@ -369,15 +370,18 @@ EOF
 }
 
 function command_89_clean() {
+	local force=0
+
 	function __usage() {
 		cat <<EOF >&2
 Usage: $COMMAND [options] 
    options:
       -h|--help   : get this help
+      -f|--force  : remove everything including build dir
 EOF
 	}
 
-	local opts="-o h --long help" tmp
+	local opts="-o hf --long help,force" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
 		error $tmp; __usage; return 1
@@ -387,6 +391,7 @@ EOF
 	while true; do	
 		case "$1" in 
 			-h|--help) __usage; return 0;;
+			-f|--force) force=1; shift ;;
 			--) shift; break;;
 			*) fatal "Internal error";;
 		esac
@@ -394,11 +399,24 @@ EOF
 
 	folders_umount
 
-	rm -f $(get_setupfile)
+	setupfile=$(get_setupfile)
+	if [[ -f $setupfile ]]; then
+		# a build may have been done
+		. $setupfile
+
+		# clean the build dir if --force is used
+		if [[ -d "$BB_TOPDIR" ]]; then 
+			[[ "$force" == 1 ]] && rm -rf $BB_TOPDIR || {
+				info "Leaving build dir $BUILD_DIR."
+				info "Use 'snaptool clean -f' to remove it."
+			}
+		fi
+	fi
+	rm -f $setupfile
 }
 
 function command_10_prepare() {
-	local init flavour machine
+	local init flavour machine tag="default"
 
 	function __usage() {
 		cat <<EOF >&2
@@ -407,12 +425,16 @@ Usage: $COMMAND [options] -- [extra features]
         -i|--init           : run initialization steps
         -f|--flavour <name> : flavour to build
         -m|--machine <name> : machine to build for
+        -t|--tag <value>    : unique tag to represent features set
+                              example: when building with features "agl-demo agl-devel",
+                              the tag could be 'demo-devel'
+                              default tag is 'default'
         -h|--help           : get this help
    [extra features] are passed to prepare_meta
 EOF
 	}
 
-	local opts="-o i,f:,m:,h --long init,flavour:,machine:,help" tmp
+	local opts="-o i,f:,m:,t:,h --long init,flavour:,machine:,tag:help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
 		error $tmp; __usage; return 1
@@ -424,6 +446,7 @@ EOF
 			-i|--init) init=1; shift;;
 			-f|--flavour) flavour=$2; shift 2;;
 			-m|--machine) machine=$2; shift 2;;
+			-t|--tag) tag=$2; shift 2;;
 			-h|--help) __usage; return 0;;
 			--) shift; break;;
 			*) fatal "Internal error";;
@@ -432,7 +455,8 @@ EOF
 
 	[[ -z "$flavour" ]] && fatal "flavour not specified"
 	[[ -z "$machine" ]] && fatal "machine not specified"
-	info "Prepare for $machine flavour $flavour"
+	[[ -z "$tag" ]] && fatal "tag not specified"
+	info "Prepare for $machine flavour $flavour tagged $tag"
 
 	# first, do some cleanup
 	__callcommand clean
@@ -442,11 +466,16 @@ EOF
 	trap "folders_umount" STOP INT QUIT EXIT
 
 	# run prepare_meta
-	local opts="-t $machine -f $flavour -o ${BUILD[path]} -l ${MIRROR[path]} -e wipeconfig -e cleartemp -e rm_work -p ${RESOURCES[path]}"
+	# NB; machine is added to output dir by prepare_meta
+	local outdir=${BUILD[path]}/$flavour/$tag 
+	mkdir -p $outdir || fatal "Unable to create dir $outdir"
+	local mirdir=${MIRROR[path]}/$flavour/$machine/$tag
+
+	local opts="-t $machine -f $flavour -o $outdir -l $mirdir -e wipeconfig -e cleartemp -e rm_work -p ${RESOURCES[path]}"
 	local ts0=$(date +%s)
 	log "Running: prepare_meta $opts"
 
-	prepare_meta $opts
+	prepare_meta $opts "$@"
 
 	# generate config file to be sourced by other steps (build; publish ...)
 	local ts=$(( $(date +%s) - ts0))
@@ -455,16 +484,19 @@ EOF
 #
 # ---------- prepare at $(date -u -Iseconds -d @$ts0) -------
 # prepare_meta run as:
-#    prepare_meta $opts
+#    prepare_meta $opts "$@"
 HOST="$(id -un)@$(hostname -f)"
 MACHINE=$machine
 FLAVOUR=$flavour
+TAG=$tag
 PREPARE_TS="$ts0"
 PREPARE_TIME="$(date +%H:%M:%S -u -d @$ts)"
-BB_META=${BUILD[path]}/meta
-BB_SSTATECACHE=${BUILD[path]}/sstate-cache
-BB_DOWNLOADS=${BUILD[path]}/downloads
-BB_BUILD=${BUILD[path]}/build/$machine
+MIRROR_DIR=$mirdir
+BB_TOPDIR=$outdir
+BB_META=$outdir/meta
+BB_SSTATECACHE=$outdir/sstate-cache
+BB_DOWNLOADS=$outdir/downloads
+BB_BUILD=$outdir/build/$machine
 EOF
 }
 
@@ -502,8 +534,9 @@ EOF
 	[[ ! -f $setupfile ]] && fatal "Setup file $setupfile not found. Does '$MYNAME prepare' has been run ?"
 	. $setupfile
 
-	[[ -z "$MACHINE" ]] && fatal "Invalid machine name. Check $setupfile."
-	[[ -z "$FLAVOUR" ]] && fatal "Invalid flavour name. Check $setupfile."
+	[[ -z "$MACHINE" ]] && fatal "Invalid machine name. Check $setupfile and 'prepare' step."
+	[[ -z "$FLAVOUR" ]] && fatal "Invalid flavour name. Check $setupfile and 'prepare' step."
+	[[ -z "$TAG" ]] && fatal "Invalid tag name. Check $setupfile and 'prepare' step."
 	[[ ! -d "$BB_BUILD" ]] && fatal "Invalid bitbake build dir. Check $setupfile."
 
 	targets="$@"
@@ -513,6 +546,7 @@ EOF
 	info "Starting build"
 	log "   FLAVOUR:     $FLAVOUR"
 	log "   MACHINE:     $MACHINE"
+	log "   TAG:         $TAG"
 	log "   BB_BUILD:    $BB_BUILD"
 	log "   BB_TARGETS:  $targets"
 
@@ -556,6 +590,8 @@ Usage: $COMMAND [options]
       -p|--packages: enable packages publishing (default: no)
       -s|--sdk     : enable SDK publishing (default: yes)
       --no-sdk     : disable SDK publishing
+      -a|--all     : enable all parts (image, sdk, packages)
+                     equivalent to -i -p -s
       -x|--exclude : file exlusion pattern when copying
                      default: $exclude_pattern
       -g|--gc      : specify garbage collecting (retention) policy for snapshots
@@ -570,7 +606,7 @@ Usage: $COMMAND [options]
 EOF
 	}
 
-	local opts="-o h,i,p,s,x:,g: --long image,no-image,packages,sdk,no-sdk,exclude:,gc:,--no-gc,help" tmp
+	local opts="-o h,a,i,p,s,x:,g: --long all,image,no-image,packages,sdk,no-sdk,exclude:,gc:,--no-gc,help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
 		error $tmp; __usage; return 1
@@ -580,6 +616,7 @@ EOF
 	while true; do	
 		case "$1" in 
 			-h|--help) __usage; return 0;;
+			-a|--all) doimage=y; dopackages=y; dosdk=y; shift;;
 			-i|--image) doimage=y; shift;;
 			--no-image) doimage=n; shift;;
 			-p|--packages) dopackages=y; shift;;
@@ -599,6 +636,7 @@ EOF
 
 	[[ -z "$MACHINE" ]] && fatal "Invalid machine name. Check $setupfile."
 	[[ -z "$FLAVOUR" ]] && fatal "Invalid flavour name. Check $setupfile."
+	[[ -z "$TAG" ]] && fatal "Invalid tag name. Check $setupfile."
 	[[ "$BB_STATUS" != "ok" ]] && fatal "Last build failed. Check $setupfile."
 	[[ ! -d "$BB_DEPLOY" ]] && fatal "Invalid bitbake deploy dir. Check $setupfile."
 	[[ -z "$BB_TS" ]] && fatal "Invalid build timestamp. Check $setupfile."
@@ -607,7 +645,7 @@ EOF
 	version=$(date -u "+%Y%m%d_%H%M%S" -d "@$BB_TS")
 	
 	# compute destination dir
-	local destdir=${PUBLISH[path]}/$FLAVOUR/$MACHINE/$version
+	local destdir=${PUBLISH[path]}/$FLAVOUR/$MACHINE/$TAG/$version
 
 	info "Starting publishing"
 	log "   source dir:      $BB_DEPLOY"
@@ -646,22 +684,22 @@ EOF
 
 	mkdir -p $destdir
 
-	local rsyncopts=""
+	local rsyncopts="-a --delete --no-o --no-g --omit-link-times"
 	for x in ${exclude_pattern}; do
 		rsyncopts="${rsyncopts} --exclude '$e' "
 	done
 
 	[[ "$doimage" == "y" ]] && {
 		info "Syncing $imgdir to $destdir/images ..."
-		rsync -a --delete $rsyncopts $imgdir/ $destdir/images/
+		rsync $rsyncopts $imgdir/ $destdir/images/
 	}
 	[[ "$dosdk" == "y" ]] && {
 		info "Syncing $sdkdir to $destdir/sdk ..."
-		rsync -a --delete $rsyncopts $sdkdir/ $destdir/sdk/
+		rsync $rsyncopts $sdkdir/ $destdir/sdk/
 	}
 	[[ "$dopackages" == "y" ]] && {
 		info "Syncing $pkgdir to $destdir/rpm ..."
-		rsync -a --delete $rsyncopts $pkgdir/ $destdir/rpm/
+		rsync $rsyncopts $pkgdir/ $destdir/rpm/
 	}
 
 	info "Copying config file to $destdir"
@@ -717,6 +755,7 @@ EOF
 	. $setupfile
 
 	[[ "$BB_STATUS" != "ok" ]] && fatal "Last build failed. Check $setupfile."
+	[[ -z "$MIRROR_DIR" ]] && fatal "Invalid MIRROR_DIR folder. Check $setupfile."
 	[[ ! -d "$BB_META" ]] && fatal "Invalid meta folder (BB_META). Check $setupfile."
 	[[ ! -d "$BB_SSTATECACHE" ]] && fatal "Invalid sstate-cache folder (BB_SSTATECACHE). Check $setupfile."
 	[[ ! -d "$BB_DOWNLOADS" ]] && fatal "Invalid downloads-cache folder (BB_DOWNLOADS). Check $setupfile."
@@ -745,9 +784,13 @@ EOF
 
 	# TODO: clean download cache (based on atime ?)
 	# one way: https://lists.yoctoproject.org/pipermail/yocto/2015-October/026703.html
+
+	# do sync
+	mkdir -p $MIRROR_DIR || fatal "Unable to create mirror dir $mirdir"
+
 	for dir in $BB_META $BB_DOWNLOADS $BB_SSTATECACHE; do
-		info "Syncing $dir to ${MIRROR[path]}/$(basename $dir)"
-		rsync -a --no-o --no-g --delete $dir/ ${MIRROR[path]}/$(basename $dir)/
+		info "Syncing $dir to $MIRROR_DIR/$(basename $dir)"
+		rsync -a --no-o --no-g --omit-link-times --delete $dir/ $MIRROR_DIR/$(basename $dir)/
 	done
 
 	info "Folders size:"
@@ -756,7 +799,7 @@ EOF
 	done
 
 	# always remove agl-manifest from mirror to force refresh on manifest files
-	rm -rf ${MIRROR[path]}/$(basename $BB_META)/agl-manifest
+	rm -rf $MIRROR_DIR/$(basename $BB_META)/agl-manifest
 
 	info "Mirrorupdate done"
 }
