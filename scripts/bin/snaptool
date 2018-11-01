@@ -14,7 +14,7 @@
 
 ################################################################################
 
-MYNAME=$(basename $BASH_SOURCE .sh)
+SCRIPTNAME=$(basename $BASH_SOURCE .sh)
 
 # load libsnaptool
 . $(dirname $BASH_SOURCE)/libsnaptool.sh
@@ -32,7 +32,7 @@ EOF
 		echo "   ${x#command_} (builtin)" >&2
 	done
 	for x in $(__getfilecommands); do
-		echo "   ${x#$MYNAME-} (external)" >&2
+		echo "   ${x#$SCRIPTNAME-} (external)" >&2
 	done
 	echo >&2
 

@@ -1,0 +1,61 @@
+#!/bin/bash
+
+set -e
+
+# load libsnaptool
+. $(dirname $BASH_SOURCE)/../bin/libsnaptool.sh
+
+function __gen_snapshots() {
+	local basedir setupfile
+	basedir=${1:-${PUBLISH[path]}}
+	mode=${2:-short}
+	setupfile=$(basename $(get_setupfile))
+
+	[[ -z "$basedir" ]] && fatal "Usage: $0 <basedir>"
+	[[ ! -d $basedir ]] && fatal "invalid dir '$basedir'"
+
+	local flavours machines tags days
+	case $mode in
+		long)
+			flavours="master iotbzh chromium"
+			machines="m3ulcb h3ulcb intel-corei7-64 qemux86-64 raspberrypi3"
+			tags="default devel"
+			days=545
+			;;
+		*)
+			flavours="master iotbzh"
+			machines="m3ulcb intel-corei7-64"
+			tags="default devel"
+			days=30
+	esac
+
+	for flavour in $flavours; do
+		for machine in $machines; do
+			for tag in $tags; do
+				for day in $(seq 0 $days); do
+					ts=$(date -u -d "$day days ago 12:34:56" +"%s")
+					version=$(date -u "+%Y%m%d_%H%M%S" -d "@$ts")
+					dir=$basedir/$flavour/$machine/$tag/$version
+					echo $dir
+
+					mkdir -p $dir
+					status=ok
+					[[ $(( RANDOM % 10 )) == 0 ]] && status=fail
+					cat <<EOF >$dir/$setupfile
+MACHINE=$machine
+FLAVOUR=$flavour
+TAG=$tag
+BB_TS=$ts
+BB_STATUS=$status
+EOF
+					# create 1G sparse file
+					[[ ! -f $dir/payload ]] && truncate -s $(( (RANDOM + 16384)*1024*1024/4 )) $dir/payload
+				done
+			done
+		done
+	done
+}
+
+__gen_snashots "$@"
+
+
