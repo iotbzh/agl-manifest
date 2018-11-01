@@ -789,7 +789,7 @@ function __gc_find_snapshots() {
 	setupfile=$(basename $(get_setupfile))
 	now=$(getts)
 
-	for x in $(find $basedir -name $setupfile -exec realpath {} \;); do
+	for x in $(find -L $basedir -name $setupfile -exec realpath {} \;); do
 		( 
 			. $x
 			dir="${x%/*}"
@@ -981,17 +981,32 @@ function __gc_date() {
 
 __gc_dryrun=0
 function __gc_remove() {
-	while read victim; do
+	# read snapshots dir to remove from stdin
+	sort -u | (
+		local cnt=0
+		while read victim; do
+			if [[ -d $victim ]]; then
+				if [[ "$__gc_dryrun" == 1 ]]; then
+					echo "DRYRUN - removing $victim"
+				else
+					echo -n "Removing $victim ... "
+					delete_indices $victim
+					rm -rf $victim
+					rmdir --ignore-fail-on-non-empty -p $(dirname $victim) # remove parent dirs if empty
+					echo "Done"
+				fi
+				((cnt++))
+			else
+				error "Invalid snapshot to remove: $victim"
+			fi
+		done
+
 		if [[ "$__gc_dryrun" == 1 ]]; then
-			echo "DRYRUN - removing $victim"
+			info "$cnt snapshots would have been removed (dryrun is enabled)"
 		else
-			echo -n "Removing $victim ... "
-			delete_indices $victim
-			rm -rf $victim
-			rmdir --ignore-fail-on-non-empty -p $(dirname $victim) # remove parent dirs if empty
-			echo "Done"
+			info "$cnt snapshots removed"
 		fi
-	done
+	)
 }
 
 function command_50_gc() {
@@ -1003,24 +1018,31 @@ Usage: $COMMAND [options]
       -n|--dryrun : do nothing
       -h|--help   : get this help
       -p|--publish-dir : publish dir to consider for GC
-      -s|--size <size>  : limit on size (accepted suffixes: TtGgMmKkBb, default is MB)
+      -s|--size <size>  : keep most recent snapshots until <size> is reached
+         accepted suffixes for size: TtGgMmKkBb (default is M)
          examples:
          --size 2   # 2 MB (default unit)
          --size 2M  # 2 MB
          --size 3G  # 3 GB
          --size 4T  # 4 TB
-      -d|--date <date>  : limit on date (as with -d in date(1))
+      -d|--date <date>  : remove snapshots older than specified date
+         date format must be understood by date(1)
          examples:
          --date '1 year ago'
          --date '3 weeks ago'
          --date '20180630'
       -v|--variable <specification> : variable date distribution
+         keeps all snapshots produced:
+           * in the last <d> days
+           * then older ones on sunday of the <w> weeks before
+           * then older ones on last sunday of the <m> months before
+           * then older ones on last sunday of the <q> quarters before
          <specification> can be:
          'd'       : number of days
          'd:w'     : number of days and weeks
          'd:w:m'   : number of days, weeks and months
          'd:w:m:q' : number of days, weeks, months and quarters
-         'auto'    : meaning 14 days, 2 weeks, 2 months, 3 quarters ~= 24 snapshots
+         'auto'    : meaning 14 days, 2 weeks, 2 months, 3 quarters ~= 22 to 24 snapshots
 EOF
 	}
 
@@ -1070,4 +1092,92 @@ EOF
 		esac
 	) | __gc_remove
 }
+
+function __gc_resolve_snapshot() {
+	local basedir=$1
+	local hint=$2
+	local setupfile=$(basename $(get_setupfile))
+
+	# can be a dir name
+	for x in $hint $basedir/$hint; do
+		if [[ -d $x && -f $x/$setupfile ]]; then
+			echo $(realpath -L $x)
+			debug "resolved as snapshot dir name"
+			return 0
+		fi
+	done
+
+	lst=( $(ls -d $basedir/*/*/*/$hint/$setupfile 2>/dev/null) )
+	if [[ ${#lst} -gt 0 ]]; then
+		for x in ${lst[@]}; do
+			echo $(realpath -L $(dirname $x))
+		done
+		debug "resolved as snapshot id"
+		return 0
+	fi
+
+	# if a folder, try to resolve all subfolders
+	found=0
+	for x in $hint $basedir/$hint; do 
+		if [[ -d $x ]]; then
+			for x in $(find -L $x -name $setupfile); do
+				echo $(realpath -L $(dirname $x))
+				found=1
+			done
+			[[ "$found" == 1 ]] && {
+				debug "resolved by finding snapshots in subdir"
+				return 0
+			}
+		fi
+	done
+
+	debug "no snapshot found"
+	# not found
+}
+
+function command_55_rmsnapshot() {
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] <snapshot_id> [snapshot_id ...]
+   if <snapshot_id> is '-', the list of snapshots is taken from standard input
+   options:
+      -n|--dryrun : do nothing
+      -h|--help   : get this help
+EOF
+	}
+
+	local opts="-o p:,n,h --long publish-dir:,dryrun,help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; _usage; return 1
+	}
+	eval set -- $tmp
+
+	local basedir=$(get_snapshots_basedir)
+
+	while true; do	
+		case "$1" in 
+			-n|--dryrun) __gc_dryrun=1; shift;;
+			-h|--help) __usage; return 0;;
+			-p|--publish-dir) basedir=$2; shift 2;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	[[ ! -d "$basedir" ]] && fatal "No directory '$basedir' found."
+
+	(
+		for x in "$@"; do
+			if [[ "$x" == "-" ]]; then
+				while read x; do
+					__gc_resolve_snapshot $basedir $x
+				done
+			else 
+				__gc_resolve_snapshot $basedir $x
+			fi
+		done
+	) | __gc_remove
+}
+
 
