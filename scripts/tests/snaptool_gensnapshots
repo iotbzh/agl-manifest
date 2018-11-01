@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -e
+
+SCRIPTNAME=$(basename $BASH_SOURCE .sh)
+
+# load libsnaptool
+. $(dirname $BASH_SOURCE)/../bin/libsnaptool.sh
+
+function __gen_snapshots() {
+	local mode=${1:-short}
+	local basedir=${PUBLISH[path]}
+
+	[[ -z "$basedir" ]] && fatal "Usage: $0 <basedir>"
+	[[ ! -d $basedir ]] && fatal "invalid dir '$basedir'"
+
+	local flavours machines tags days
+	case $mode in
+		long)
+			flavours="master iotbzh chromium"
+			machines="m3ulcb h3ulcb intel-corei7-64 qemux86-64 raspberrypi3"
+			tags="prod devel"
+			days=545
+			;;
+		short)
+			flavours="master iotbzh"
+			machines="m3ulcb intel-corei7-64"
+			tags="prod devel"
+			days=30
+			;;
+		tiny|*)
+			flavours="master iotbzh"
+			machines="m3ulcb intel-corei7-64"
+			tags="prod devel"
+			days=2
+			;;
+	esac
+
+	local setupfile
+	for flavour in $flavours; do
+		for tag in $tags; do
+			for machine in $machines; do
+				for day in $(seq 0 $days); do
+					ts=$(date -u -d "$day days ago 01:23:45" +"%s")
+					snapshot_date=$(date -u "+%Y%m%d" -d "@$ts")
+					snapshot_datetime=$(date -u "+%Y%m%d_%H%M%S" -d "@$ts")
+					snapshot_id=${flavour}_${tag}_${machine}_${snapshot_datetime}
+					dir=$(get_snapshotdir $flavour $tag $machine $ts)
+					echo $dir
+
+					mkdir -p $dir
+					status=ok
+					[[ $(( RANDOM % 10 )) == 0 ]] && status=fail
+					setupfile=$(get_setupfile $dir)
+					cat <<EOF >$setupfile
+FLAVOUR=$flavour
+TAG=$tag
+MACHINE=$machine
+BB_TS=$ts
+BB_STATUS=$status
+SNAPSHOT_TS=$ts
+SNAPSHOT_ID=$snapshot_id
+SNAPSHOT_DATE=$snapshot_date
+SNAPSHOT_DATETIME=$snapshot_datetime
+SNAPSHOT_DIR=$(realpath -L --relative-to=${PUBLISH[path]} $dir)
+EOF
+					# create 1G sparse file
+					[[ -f $dir/payload ]] || truncate -s $(( (RANDOM + 16384)*1024*1024/4 )) $dir/payload
+					
+					create_indices $dir
+				done
+			done
+		done
+	done
+}
+
+__gen_snapshots "$@"
+
+
