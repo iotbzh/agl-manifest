@@ -928,7 +928,7 @@ function __gc_variable() {
 	debug "Dates to keep: $dtkeep"
 
 	local ts age status flavour tag machine size dir
-	__gc_find_snapshots $basedir | sort -rn | while read ts age status flavour tag machine size dir; do
+	__gc_find_snapshots $basedir | while read ts age status flavour tag machine size dir; do
 		sdt=$(getdt "@$ts") # snapshot date
 		grep -q $sdt <<< $dtkeep && debug "$sdt keep $dir" || { echo $dir; debug "$sdt drop $dir"; }
 	done
@@ -949,7 +949,7 @@ function __gc_size() {
 	
 	local ts age status flavour tag machine size dir totsz
 	totsz=0
-	__gc_find_snapshots $basedir | sort -rn | while read ts age status flavour tag machine size dir; do
+	__gc_find_snapshots $basedir | sort -r | while read ts age status flavour tag machine size dir; do
 		totsz=$(( $totsz + $size ))
 		[[ $totsz -lt $szlimit ]] && {
 			debug "totalsize=$totsz < $szlimit : keep $dir ($size)"
@@ -994,7 +994,7 @@ function __gc_date() {
 	debug "Dates to keep: $dtkeep"
 
 	local ts age status flavour tag machine size dir
-	__gc_find_snapshots $basedir | sort -rn | while read ts age status flavour tag machine size dir; do
+	__gc_find_snapshots $basedir | while read ts age status flavour tag machine size dir; do
 		sdt=$(getdt "@$ts") # snapshot date
 		grep -q $sdt <<< $dtkeep && debug "$sdt keep $dir" || { echo $dir; debug "$sdt drop $dir"; }
 	done
@@ -1177,9 +1177,9 @@ function __gc_resolve_snapshot() {
 	local setupfile=$(basename $(get_setupfile))
 
 	# can be a dir name
-	for x in $hint $basedir/$hint; do
-		if [[ -d $x && -f $x/$setupfile ]]; then
-			echo $(realpath -L $x)
+	for x in "$hint" "$basedir/$hint"; do
+		if [[ -d "$x" && -f "$x/$setupfile" ]]; then
+			echo $(realpath -L "$x")
 			debug "resolved as snapshot dir name"
 			return 0
 		fi
@@ -1196,8 +1196,8 @@ function __gc_resolve_snapshot() {
 
 	# if a folder, try to resolve all subfolders
 	found=0
-	for x in $hint $basedir/$hint; do 
-		if [[ -d $x ]]; then
+	for x in "$hint" "$basedir/$hint"; do 
+		if [[ -d "$x" ]]; then
 			for x in $(find -L $x -name $setupfile); do
 				echo $(realpath -L $(dirname $x))
 				found=1
@@ -1258,10 +1258,10 @@ EOF
 		for x in "$@"; do
 			if [[ "$x" == "-" ]]; then
 				while read x; do
-					__gc_resolve_snapshot $basedir $x
+					__gc_resolve_snapshot $basedir "$x"
 				done
 			else 
-				__gc_resolve_snapshot $basedir $x
+				__gc_resolve_snapshot $basedir "$x"
 			fi
 		done
 	) | __gc_remove
@@ -1312,11 +1312,18 @@ function __query_snapshots() {
 
 	local snapshots=( "$@" )
 	[[ ${#snapshots[@]} == 0 ]] && snapshots=( "*" )
-
-	for x in ${snapshots[@]}; do
-		__gc_resolve_snapshot $basedir $x
-	done | sort | { [[ $verbose == 1 ]] && cat || { while read a; do basename $a; done; }; }
+	for x in "${snapshots[@]}"; do
+		__gc_resolve_snapshot $basedir "$x"
+	done | sort -u | { 
+		cnt=0 
+		while read a; do 
+			[[ $verbose == 1 ]] && echo $a || basename $a
+			((cnt++))
+		done
+		info "$cnt snapshots listed"
+	}
 }
+
 
 function command_60_query() {
 	function __usage() {
