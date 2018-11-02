@@ -366,12 +366,12 @@ EOF
 	prepare_meta -u
 
 	# update proprietary drivers repo 
-	[[ -d ${RESOURCES[path]}/.git ]] && {
-		info "Updating resources repository ${RESOURCES[path]}"
-		pushd ${RESOURCES[path]} >/dev/null
-			git pull
-		popd >/dev/null
-	}
+#	[[ -d ${RESOURCES[path]}/.git ]] && {
+#		info "Updating resources repository ${RESOURCES[path]}"
+#		pushd ${RESOURCES[path]} >/dev/null
+#			git pull
+#		popd >/dev/null
+#	}
 
 	local opts="-t $machine -f $flavour -o $outdir -l $mirdir -e wipeconfig -e cleartemp -e rm_work -p ${RESOURCES[path]}"
 	local ts0=$(getts)
