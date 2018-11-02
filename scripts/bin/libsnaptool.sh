@@ -747,6 +747,15 @@ EOF
 		rsync $rsyncopts $pkgdir/ $destdir/rpm/ || rollback
 	}
 
+	# copy build log
+	local logfile
+	for x in $BB_BUILD/tmp/log/cooker/$MACHINE/console-latest.log; do
+		logfile=build_$(basename $(dirname $x)).log
+		info "Copying build log $x to $destdir/$logfile"
+		cp $x $destdir/$logfile
+	done
+	[[ -z "$logfile" ]] && warning "No log file found in $BB_BUILD/tmp/log/cooker/"
+
 	local ts=$(getts)
 	cat <<EOF >>$setupfile
 # ---------- published at $(date -u -Iseconds -d @$ts) -------
