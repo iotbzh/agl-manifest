@@ -697,21 +697,30 @@ EOF
 	local imgfile imgdir
 	[[ "$doimage" == "y" ]] && {
 		imgdir="$BB_DEPLOY/images/${MACHINE}/"
-		[[ ! -d "$imgdir" ]] && fatal "No image dir found at $imgdir" 
+		[[ ! -d "$imgdir" ]] && {
+			error "No image dir found at $imgdir"
+			doimagte=n
+		}
 	}
 
 	# locate SDK
 	local sdkfile sdkdir
 	[[ "$dosdk" == "y" ]] && {
 		sdkdir="$BB_DEPLOY/sdk/"
-		[[ ! -d $sdkdir ]] && fatal "No SDK dir found at $sdkdir"
+		[[ ! -d $sdkdir ]] && {
+			error "No SDK dir found at $sdkdir"
+			dosdk=n
+		}
 	}
 
 	# locate packages
 	local pkgdir
 	[[ "$dopackages" == "y" ]] && {
 		pkgdir="$BB_DEPLOY/rpm"
-		[[ ! -d $pkgdir ]] && fatal "No packages dir found at $pkgdir"
+		[[ ! -d $pkgdir ]] && {
+			error "No packages dir found at $pkgdir"
+			dopackages=n
+		}
 	}
 
 	# mount publish folder
