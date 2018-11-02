@@ -67,7 +67,7 @@ EOF
 					# create 1G sparse file
 					[[ -f $dir/payload ]] || truncate -s $(( (RANDOM + 16384)*1024*1024/4 )) $dir/payload
 					
-					create_indices $dir
+					__create_indices $dir
 				done
 			done
 		done

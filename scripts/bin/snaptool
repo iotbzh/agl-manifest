@@ -17,7 +17,7 @@
 SCRIPTNAME=$(basename $BASH_SOURCE .sh)
 
 # load libsnaptool
-. $(dirname $BASH_SOURCE)/libsnaptool.sh
+. $(dirname $BASH_SOURCE)/libsnaptool.sh || fatal "Fatal error. Exiting."
 
 # ------------------------- options parsing -------------------------------------
 

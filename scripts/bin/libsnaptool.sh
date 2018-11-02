@@ -175,12 +175,11 @@ function folders_init() {
 }
 
 function folders_mount() {
-	info "Mounting folders..."
 	for x in $FOLDERS; do
 		typeset -n folder=$x
 		mkdir -p ${folder[path]}
 		[[ -n "${folder[mount]}" ]] && {
-			log "Running mount command for $x: ${folder[mount]}"
+			log "mounting $x"
 			eval ${folder[mount]} || fatal "mount failed"
 		} || debug "Nothing to do for $x"
 	done
@@ -188,11 +187,10 @@ function folders_mount() {
 }
 
 function folders_umount() {
-	info "Unmounting folders..."
 	for x in $FOLDERS; do
 		typeset -n folder=$x
 		[[ -n "${folder[umount]}" ]] && {
-			log "Running umount command for $x: ${folder[umount]}"
+			log "unmounting $x"
 			eval ${folder[umount]} 
 		} || debug "Nothing to do for $x"
 	done
@@ -367,6 +365,14 @@ EOF
 	# first upgrade script if needed
 	prepare_meta -u
 
+	# update proprietary drivers repo 
+	[[ -d ${RESOURCES[path]}/.git ]] && {
+		info "Updating resources repository ${RESOURCES[path]}"
+		pushd ${RESOURCES[path]} >/dev/null
+			git pull
+		popd >/dev/null
+	}
+
 	local opts="-t $machine -f $flavour -o $outdir -l $mirdir -e wipeconfig -e cleartemp -e rm_work -p ${RESOURCES[path]}"
 	local ts0=$(getts)
 	log "Running: prepare_meta $opts"
@@ -485,77 +491,88 @@ EOF
 # ------------------------------ PUBLISH -----------------------------------------
 
 # maintain 'latest' link in a given folder
-function update_latest_link() {
-	local dir=$1 setupfile=$(basename $(get_setupfile))
-	[[ ! -d $dir ]] && { error "Invalid index dir '$dir'"; return 0; }
+function __update_latest_link() {
+	# subshell to avoid vars pollution
+	(
+		local dir=$1 setupfile=$(basename $(get_setupfile))
+		debug "__update_latest_link $dir"
+		[[ ! -d $dir ]] && { warning "update_latest: Invalid index dir '$dir'"; return 0; }
 
-	pushd $dir >/dev/null || { error "Invalid snapshots dir $dir"; return 0; } #{
-		hights=0
-		latest=
-		for x in $(ls */$setupfile); do
-			. $x
-			[[ -n "$BB_TS" ]] && [[ "$BB_TS" -gt "$hights" ]] && { hights=$BB_TS; latest=$(dirname $x); }
-		done
+		pushd $dir >/dev/null || { warning "update_latest: Invalid snapshots dir $dir"; return 0; } #{
+			hights=0
+			latest=
+			rm -f latest
+			for x in $(ls */$setupfile 2>/dev/null); do
+				. $x
+				[[ -n "$BB_TS" ]] && [[ "$BB_TS" -gt "$hights" ]] && { hights=$BB_TS; latest=$(dirname $x); }
+			done
 
-		rm -f latest
-		[[ -z "$latest" ]] && {
-			debug "No latest link to create in $dir"
-		} || {
-			debug "Creating 'latest' link: $dir/latest => $latest"
-			ln -nsf $latest latest
-		}
-	popd >/dev/null #}
+			[[ -z "$latest" ]] && {
+				debug "No latest link to create in $dir"
+			} || {
+				debug "Creating 'latest' link: $dir/latest => $latest"
+				ln -nsf $latest latest
+			}
+		popd >/dev/null #}
+	)
 }
 
 # create other ways to access snapshots
-function create_indices() {
-	local snapdir=$1
-	[[ ! -d $snapdir ]] && fatal "Invalid snapshot dir $snapdir"
-	local setupfile=$(get_setupfile $snapdir)
-	[[ ! -f $setupfile ]] && fatal "Invalid setupfile $setupfile"
+function __create_indices() {
+	# subshell to avoid vars pollution
+	(
+		local snapdir=$1
+		[[ ! -d $snapdir ]] && fatal "Invalid snapshot dir $snapdir"
+		local setupfile=$(get_setupfile $snapdir)
+		[[ ! -f $setupfile ]] && fatal "Invalid setupfile $setupfile"
 
-	. $setupfile
+		. $setupfile
 
-	for x in FLAVOUR MACHINE TAG SNAPSHOT_ID SNAPSHOT_TS SNAPSHOT_DATE SNAPSHOT_DATETIME; do
-		[[ -z "${!x}" ]] && { error "Invalid value for $x. Check $setupfile."; return 1; }
-	done
-
-	local indices=(
-		by-flavour/$FLAVOUR/$TAG/$MACHINE/$SNAPSHOT_DATETIME
-		by-machine/$MACHINE/$FLAVOUR/$TAG/$SNAPSHOT_DATETIME
-		by-date/$SNAPSHOT_DATE/$FLAVOUR/$TAG/$MACHINE/$SNAPSHOT_DATETIME
-		by-tag/$TAG/$FLAVOUR/$MACHINE/$SNAPSHOT_DATETIME
-	)
-
-	pushd ${PUBLISH[path]} >/dev/null #{
-		echo "INDICES=( )" >>$setupfile
-		for x in ${indices[@]}; do
-			destdir=$(dirname $x)
-			mkdir -p $destdir
-			ln -nsf $(realpath -L --relative-to=$destdir $snapdir) $x
-			echo "INDICES+=( $x )" >>$setupfile
-			# maintain 'latest' link
-			update_latest_link $(realpath $destdir)
+		for x in FLAVOUR MACHINE TAG SNAPSHOT_ID SNAPSHOT_TS SNAPSHOT_DATE SNAPSHOT_DATETIME; do
+			[[ -z "${!x}" ]] && { error "Invalid value for $x. Check $setupfile."; return 1; }
 		done
-	popd >/dev/null #}
+
+		local indices=(
+			by-flavour/$FLAVOUR/$TAG/$MACHINE/$SNAPSHOT_DATETIME
+			by-machine/$MACHINE/$FLAVOUR/$TAG/$SNAPSHOT_DATETIME
+			by-date/$SNAPSHOT_DATE/$FLAVOUR/$TAG/$MACHINE/$SNAPSHOT_DATETIME
+			by-tag/$TAG/$FLAVOUR/$MACHINE/$SNAPSHOT_DATETIME
+		)
+
+		pushd ${PUBLISH[path]} >/dev/null #{
+			echo "INDICES=( )" >>$setupfile
+			for x in ${indices[@]}; do
+				destdir=$(dirname $x)
+				mkdir -p $destdir
+				ln -nsf $(realpath -L --relative-to=$destdir $snapdir) $x
+				echo "INDICES+=( $x )" >>$setupfile
+				# maintain 'latest' link
+				__update_latest_link $(realpath $destdir)
+			done
+		popd >/dev/null #}
+	)
 }
 
-function delete_indices() {
-	local snapdir=$1
-	[[ ! -d $snapdir ]] && { error "Invalid snapshot dir $snapdir"; return 0; }
-	local setupfile=$(get_setupfile $snapdir)
-	[[ ! -f $setupfile ]] && { error "setupfile $setupfile not found"; return 0; }
+function __delete_indices() {
+	# subshell to avoid vars pollution
+	(
+		local snapdir=$1
+		[[ ! -d $snapdir ]] && { warning "__delete_indices: Invalid snapshot dir $snapdir"; return 0; }
+		local setupfile=$(get_setupfile $snapdir)
+		[[ ! -f $setupfile ]] && { warning "__delete_indices: setupfile $setupfile not found"; return 0; }
 
-	[[ ${#INDICES} == 0 ]] && return 0
+		. $setupfile
+		[[ ${#INDICES[@]} == 0 ]] && return 0
 
-	pushd ${PUBLISH[path]} >/dev/null #{
-		for x in ${INDICES[@]}; do
-			destdir=$(dirname $x)
-			rm -f $x # remove symlink
-			update_latest_link $(realpath $destdir)
-			rmdir --ignore-fail-on-non-empty -p $destdir # remove parent dirs if empty
-		done
-	popd >/dev/null #}
+		pushd ${PUBLISH[path]} >/dev/null #{
+			for x in ${INDICES[@]}; do
+				destdir=$(dirname $x)
+				rm -f $x # remove symlink
+				__update_latest_link $(realpath $destdir)
+				rmdir --ignore-fail-on-non-empty -p $destdir # remove parent dirs if empty
+			done
+		popd >/dev/null #}
+	)
 }
 
 function command_30_publish() {
@@ -615,12 +632,10 @@ EOF
 	[[ -z "$SNAPSHOT_TS" ]] && fatal "Invalid snapshot ts. Check $setupfile."
 
 	# compute destination dir
-	local destdir=$(get_snapshotdir $FLAVOUR $TAG $MACHINE $SNAPSHOT_TS)
 
 	info "Starting publishing"
 	log "   source dir:      $BB_DEPLOY"
 	log "   snapshot id:     $SNAPSHOT_ID"
-	log "   destination dir: $destdir"
 	log "   image:           $doimage"
 	log "   packages:        $dopackages"
 	log "   sdk:             $dosdk"
@@ -651,7 +666,9 @@ EOF
 	folders_mount
 	trap "folders_umount" STOP INT QUIT EXIT
 
+	local destdir=$(get_snapshotdir $FLAVOUR $TAG $MACHINE $SNAPSHOT_TS)
 	mkdir -p $destdir
+	log "   destination dir: $destdir"
 
 	local rsyncopts="-a --delete --no-o --no-g --omit-link-times"
 	for x in ${exclude_pattern}; do
@@ -678,10 +695,6 @@ EOF
 		rsync $rsyncopts $pkgdir/ $destdir/rpm/ || rollback
 	}
 
-	info "Copying config file to $destdir"
-	cp $setupfile $destdir/ || rollback
-	setupfile=$(get_setupfile $destdir)
-
 	local ts=$(getts)
 	cat <<EOF >>$setupfile
 # ---------- published at $(date -u -Iseconds -d @$ts) -------
@@ -689,8 +702,11 @@ PUBLISH_TS=$ts
 SNAPSHOT_DIR=$(realpath -L --relative-to=${PUBLISH[path]} $destdir)
 EOF
 
+	info "Copying config file to $destdir"
+	cp $setupfile $destdir/ || rollback
+
 	# maintain other indices
-	create_indices $destdir
+	__create_indices $destdir
 }
 
 # ------------------------------ MIRROR -----------------------------------------
@@ -776,6 +792,11 @@ EOF
 # ---------- mirror updated at $(date -u -Iseconds -d @$ts) -------
 MIRROR_TS=$ts
 SOURCE=$SNAPSHOT_ID
+EOF
+
+	cat <<EOF >>$setupfile
+# ---------- mirror updated at $(date -u -Iseconds -d @$ts) -------
+MIRROR_TS=$ts
 EOF
 
 	info "Mirrorupdate done"
@@ -980,24 +1001,72 @@ function __gc_date() {
 }
 
 __gc_dryrun=0
+__gc_dontask=0
+exec 9<&0 # save "real" stdin
 function __gc_remove() {
+	function del_snapshot() {
+		local victim=$1
+		if [[ "$__gc_dontask" != 1 ]]; then
+			while true; do
+				echo 
+				echo -n "${color_white}Confirm deletion of $victim ?${color_orange} [y/n/q/a/?] ${color_red}(n)${color_none}: " 
+				read -r -n 1 -e ans <&9
+				case $ans in
+					Y|y)
+						break
+						;;
+					N|n|"")
+						log "Skipping $victim"
+						return 1;
+						;;
+					Q|q)
+						return 2;
+						;;
+					A|a)
+						__gc_dontask=1
+						break
+						;;
+					'?')
+						cat <<EOF
+   y   : confirm snapshot removal ($victim)
+   n   : skip removal
+   q   : abort removal procedure
+   a   : remove all remaining entries
+   ?   : get this help
+EOF
+						;;
+					*)
+						warning "Invalid answer."
+						;;
+				esac		
+			done
+		fi
+
+		__delete_indices $victim
+		rm -rf $victim
+		rmdir --ignore-fail-on-non-empty -p $(dirname $victim) # remove parent dirs if empty
+		log "Removed $victim"
+		return 0
+	}
+
 	# read snapshots dir to remove from stdin
 	sort -u | (
 		local cnt=0
+		local victim
+		local rc
 		while read victim; do
 			if [[ -d $victim ]]; then
 				if [[ "$__gc_dryrun" == 1 ]]; then
 					echo "DRYRUN - removing $victim"
+					((cnt++))
 				else
-					echo -n "Removing $victim ... "
-					delete_indices $victim
-					rm -rf $victim
-					rmdir --ignore-fail-on-non-empty -p $(dirname $victim) # remove parent dirs if empty
-					echo "Done"
+					del_snapshot $victim && ((cnt++)) || {
+						rc=$?
+						[[ $rc -eq 2 ]] && { info "Aborting."; break; }
+					}
 				fi
-				((cnt++))
 			else
-				error "Invalid snapshot to remove: $victim"
+				warning "Invalid snapshot to remove: $victim"
 			fi
 		done
 
@@ -1017,6 +1086,7 @@ Usage: $COMMAND [options]
    options:
       -n|--dryrun : do nothing
       -h|--help   : get this help
+      -i|--interactive : ask for user confirmation
       -p|--publish-dir : publish dir to consider for GC
       -s|--size <size>  : keep most recent snapshots until <size> is reached
          accepted suffixes for size: TtGgMmKkBb (default is M)
@@ -1046,7 +1116,7 @@ Usage: $COMMAND [options]
 EOF
 	}
 
-	local opts="-o p:,s:,d:,v:,n,h --long publish-dir:,size:,date:,variable:,dryrun,help" tmp
+	local opts="-o p:,s:,d:,v:,i,n,h --long publish-dir:,size:,date:,variable:,interactive,dryrun,help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
 		error $tmp; _usage; return 1
@@ -1059,9 +1129,13 @@ EOF
 	local varparams=auto
 	local basedir=$(get_snapshots_basedir)
 
+	# WARNING: running 'gc' is by not interactive by default
+	__gc_dontask=1
+
 	while true; do	
 		case "$1" in 
 			-n|--dryrun) __gc_dryrun=1; shift;;
+			-i|--interactive) __gc_dontask=0; shift;;
 			-h|--help) __usage; return 0;;
 			-p|--publish-dir) basedir=$2; shift 2;;
 			-s|--size) [[ -n "$method" ]] && fatal "GC method already set to '$method'" ; method=size; szlimit=$2; shift 2;;
@@ -1072,9 +1146,13 @@ EOF
 		esac
 	done
 
+	[[ ! -t 0 && $__gc_dontask == 0 ]] && fatal "Shell is not interactive. Can't use -i for confirmation."
+
+	folders_mount
+	trap "folders_umount" STOP INT QUIT EXIT
+
 	[[ ! -d "$basedir" ]] && fatal "No directory '$basedir' found."
 	[[ -z "$method" ]] && method=variable
-
 	(
 		case $method in
 			size)
@@ -1108,7 +1186,7 @@ function __gc_resolve_snapshot() {
 	done
 
 	lst=( $(ls -d $basedir/*/*/*/$hint/$setupfile 2>/dev/null) )
-	if [[ ${#lst} -gt 0 ]]; then
+	if [[ ${#lst[@]} -gt 0 ]]; then
 		for x in ${lst[@]}; do
 			echo $(realpath -L $(dirname $x))
 		done
@@ -1140,13 +1218,15 @@ function command_55_rmsnapshot() {
 		cat <<EOF >&2
 Usage: $COMMAND [options] <snapshot_id> [snapshot_id ...]
    if <snapshot_id> is '-', the list of snapshots is taken from standard input
+   <snapshot_id> can also be a glob pattern, like 'master_*' or '*20181025*' or '*_intel*'
    options:
       -n|--dryrun : do nothing
+      -f|--force  : don't ask for confirmation (or to be used in non-interactive shells)
       -h|--help   : get this help
 EOF
 	}
 
-	local opts="-o p:,n,h --long publish-dir:,dryrun,help" tmp
+	local opts="-o p:,n,f,h --long publish-dir:,dryrun,force,help" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
 		error $tmp; _usage; return 1
@@ -1160,12 +1240,19 @@ EOF
 			-n|--dryrun) __gc_dryrun=1; shift;;
 			-h|--help) __usage; return 0;;
 			-p|--publish-dir) basedir=$2; shift 2;;
+			-f|--force) __gc_dontask=1; shift ;;
 			--) shift; break;;
 			*) fatal "Internal error";;
 		esac
 	done
 
+	folders_mount
+	trap "folders_umount" STOP INT QUIT EXIT
+
 	[[ ! -d "$basedir" ]] && fatal "No directory '$basedir' found."
+	[[ $# -eq 0 ]] && { error "Missing snapshot id/folder."; __usage; return 1; }
+
+	[[ ! -t 0 && $__gc_dontask == 0 ]] && fatal "Shell is not interactive. Use -f to force deletion."
 
 	(
 		for x in "$@"; do
@@ -1180,4 +1267,103 @@ EOF
 	) | __gc_remove
 }
 
+# ------------------------------ LIST/EXPORT AVAILABLE SNAPSHOTS ------------------------------------
+
+function __query_status() {
+	local setupfile=$(get_setupfile)
+
+	if [[ -f $setupfile ]]; then
+		echo "in_progess: yes"
+		(
+			. $setupfile
+			echo -n "build_prepared: "
+			[[ -n "$PREPARE_TS" ]] && echo "yes" || echo "no"
+
+			echo -n "build_status: "
+			[[ -n "$BB_STATUS" ]] && echo $BB_STATUS || echo "pending"
+
+			echo -n "published: "
+			if [[ -n "$PUBLISH_TS" ]]; then
+				echo "yes"
+				echo "snapshot_dir: $SNAPSHOT_DIR"
+			else
+				echo "no"
+			fi
+
+			echo -n "mirror_updated: "
+			if [[ -n "$MIRROR_TS" ]]; then
+				echo "yes"
+				echo "mirror_dir: $MIRROR_DIR"
+			else
+				echo "no"
+			fi
+		)
+	else
+		echo "build_in_progess: no"
+	fi
+}
+
+function __query_snapshots() {
+	folders_mount
+	trap "folders_umount" STOP INT QUIT EXIT
+
+	local basedir=$(get_snapshots_basedir)
+	[[ ! -d "$basedir" ]] && fatal "No directory '$basedir' found."
+
+	local snapshots=( "$@" )
+	[[ ${#snapshots[@]} == 0 ]] && snapshots=( "*" )
+
+	for x in ${snapshots[@]}; do
+		__gc_resolve_snapshot $basedir $x
+	done | sort | { [[ $verbose == 1 ]] && cat || { while read a; do basename $a; done; }; }
+}
+
+function command_60_query() {
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] [topic [topic args...]]
+   options:
+      -v|--verbose : increase verbosity
+      -h|--help    : get this help
+
+   topic can be:
+      'status'  : get summary (default topic)
+      'snapshot': query snapshots - snapshot_id patterns are accepted as arguments
+EOF
+	}
+
+	local opts="-o v,h --long verbose,help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; _usage; return 1
+	}
+	eval set -- $tmp
+
+	local verbose=0
+	while true; do	
+		case "$1" in 
+			-h|--help) __usage; return 0;;
+			-v|--verbose) verbose=1; info "Enabling verbose mode"; shift;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	local topic=${1:-status}
+	shift
+	
+	case $topic in 
+		status)
+			__query_status "$@"
+			;;
+		snapshot|snapshots)
+			__query_snapshots "$@"
+			;;
+		*)
+			error "Invalid topic"
+			__usage
+			return 1
+			;;
+	esac
+}
 

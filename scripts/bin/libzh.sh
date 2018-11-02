@@ -16,6 +16,7 @@
 
 stdout_in_terminal=0
 [[ -t 1 ]] && stdout_in_terminal=1
+
 function color {
 	[[ $stdout_in_terminal == 0 ]] && return
 	for k in $*; do
@@ -27,11 +28,13 @@ function color {
 	done
 }
 
+color_white=$(color bold 7)
 color_green=$(color bold 2)
 color_yellow=$(color bold 3)
 color_red=$(color bold 1)
 color_blue=$(color bold 4)
 color_gray=$(color 250)
+color_orange=$(color 214)
 color_none=$(color none)
 
 function dumpcolors() {
@@ -65,7 +68,7 @@ function fatal() {
 }
 
 function warning() {
-	echo "${color_yellow}$@${color_none}" >&2
+	echo "${color_orange}$@${color_none}" >&2
 }
 
 function info() {
