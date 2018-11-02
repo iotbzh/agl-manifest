@@ -97,7 +97,7 @@ function get_snapshots_basedir() {
 }
 
 function get_snapshotdir() {
-	local flavour=$1 tag=$2 machine=$3 snapshot_ts=$4
+	local snapshot_id=$1 snapshot_ts=$2
 	local subfolder=$(date -u +%Y/%m/%d -d @$snapshot_ts)
 	echo $(get_snapshots_basedir)/$subfolder/$snapshot_id
 }
@@ -265,22 +265,46 @@ function command_89_clean() {
 		cat <<EOF >&2
 Usage: $COMMAND [options] 
    options:
-      -h|--help   : get this help
-      -f|--force  : remove everything including build dir
+      -h|--help         : get this help
+      -n|--dryrun       : dry run (do nothing)
+      -m|--meta         : cleanup meta (layers)
+      -d|--downloads    : cleanup downloads cache
+      -s|--sstate-cache : cleanup sstate-cache
+      -b|--build        : cleanup build dir
+      -a|--all          : remove everything (meta, downloads, sstate-cache, build)
 EOF
 	}
 
-	local opts="-o hf --long help,force" tmp
+	local opts="-o hnbdsma --long help,dryrun,build,downloads,sstate-cache,all" tmp
 	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
 		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
 		error $tmp; __usage; return 1
 	}
 	eval set -- $tmp
 
+	local dryrun=0
+
+	declare -A clearflags
+	clearflags[meta]=no
+	clearflags[dload]=no
+	clearflags[scache]=no
+	clearflags[build]=no
+
 	while true; do	
 		case "$1" in 
-			-h|--help) __usage; return 0;;
-			-f|--force) force=1; shift ;;
+			-h|--help)			__usage; return 0;;
+			-n|--dryrun)		dryrun=1; shift ;;
+			-m|--meta)			clearflags[meta]=yes;   shift ;;
+			-d|--downloads)		clearflags[dload]=yes;  shift ;;
+			-s|--sstate-cache)	clearflags[scache]=yes; shift ;;
+			-b|--build)			clearflags[build]=yes;  shift ;;
+			-a|--all) 
+				clearflags[meta]=yes
+				clearflags[dload]=yes
+				clearflags[scache]=yes
+				clearflags[build]=yes
+				shift 
+				;;
 			--) shift; break;;
 			*) fatal "Internal error";;
 		esac
@@ -288,20 +312,49 @@ EOF
 
 	folders_umount
 
+	function __removedir() {
+		local flag=$1
+		local name=$2
+		local dir=$3
+		[[ -n "$dir" ]] && {
+			[[ -d "$dir" ]] && {
+				[[ "$flag" == "yes" ]] && {
+					[[ "$dryrun" == 0 ]] && {
+						info "Cleaning $name dir $dir"
+						rm -rf $dir
+					} || info "DRYRUN - Would have cleaned $name dir $dir"
+				} || warning "Leaving $name dir $dir"
+			} || info "$name dir $dir is already cleaned up."
+		} || warning "$name dir is not defined."
+		return 0
+	}
+
 	local setupfile=$(get_setupfile)
+	local oldsetup=latest_$(basename $setupfile)
 	if [[ -f $setupfile ]]; then
 		# a build may have been done
 		. $setupfile
 
-		# clean the build dir if --force is used
-		if [[ -d "$BB_TOPDIR" ]]; then 
-			[[ "$force" == 1 ]] && rm -rf $BB_TOPDIR || {
-				info "Leaving build dir $BUILD_DIR."
-				info "Use 'snaptool clean -f' to remove it."
-			}
-		fi
+		__removedir ${clearflags[meta]} meta $BB_META
+		__removedir ${clearflags[dload]} downloads $BB_DOWNLOADS
+		__removedir ${clearflags[scache]} sstate-cache $BB_SSTATECACHE
+
+		# special case: build dir contains machine name (prepare_meta)
+		__removedir ${clearflags[build]} build $(dirname $BB_BUILD)
+
+		# try to remove empty folders
+		[[ "$dryrun" == 0 ]] && {
+			# remove old setup file to have a change to rmdir all hierarchy
+			rm -f $BB_TOPDIR/$oldsetup
+
+			# try to clean as much as possible
+			[[ -d $BB_TOPDIR ]] && rmdir -v --ignore-fail-on-non-empty -p $BB_TOPDIR
+
+			# if dir is still here, move/rename setupfile to it otherwise, drop it
+			[[ -d $BB_TOPDIR ]] && mv -v $setupfile $BB_TOPDIR/$oldsetup || rm -fv $setupfile
+		} || info "DRYRUN - not removing $BB_TOPDIR - keeping $setupfile"
 	fi
-	rm -f $setupfile
+	return 0
 }
 
 # ------------------------------ PREPARE -----------------------------------------
@@ -357,8 +410,7 @@ EOF
 	trap "folders_umount" STOP INT QUIT EXIT
 
 	# run prepare_meta
-	# NB; machine is added to output dir by prepare_meta
-	local outdir=${BUILD[path]}/$flavour/$tag 
+	local outdir=${BUILD[path]}/$flavour/$tag/$machine
 	mkdir -p $outdir || fatal "Unable to create dir $outdir"
 	local mirdir=${MIRROR[path]}/$flavour/$tag/$machine
 
@@ -666,7 +718,7 @@ EOF
 	folders_mount
 	trap "folders_umount" STOP INT QUIT EXIT
 
-	local destdir=$(get_snapshotdir $FLAVOUR $TAG $MACHINE $SNAPSHOT_TS)
+	local destdir=$(get_snapshotdir $SNAPSHOT_ID $SNAPSHOT_TS)
 	mkdir -p $destdir
 	log "   destination dir: $destdir"
 
@@ -1273,7 +1325,7 @@ function __query_status() {
 	local setupfile=$(get_setupfile)
 
 	if [[ -f $setupfile ]]; then
-		echo "in_progess: yes"
+		echo "in_progress: yes"
 		(
 			. $setupfile
 			echo -n "build_prepared: "

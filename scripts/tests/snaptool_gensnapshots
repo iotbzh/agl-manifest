@@ -45,7 +45,7 @@ function __gen_snapshots() {
 					snapshot_date=$(date -u "+%Y%m%d" -d "@$ts")
 					snapshot_datetime=$(date -u "+%Y%m%d_%H%M%S" -d "@$ts")
 					snapshot_id=${flavour}_${tag}_${machine}_${snapshot_datetime}
-					dir=$(get_snapshotdir $flavour $tag $machine $ts)
+					dir=$(get_snapshotdir $snapshot_id $ts)
 					echo $dir
 
 					mkdir -p $dir
