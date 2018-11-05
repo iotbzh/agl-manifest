@@ -23,6 +23,10 @@ trap 'rc=$?; error "Command failed $(where)"; exit $rc;' ERR
 # calling script must define "SCRIPTNAME"
 [[ -z "$SCRIPTNAME" ]] && error "SCRIPTNAME is undefined - check top script $0"
 
+# ------------------------------ AUTOUPGRADE -----------------------------------------
+
+# TODO
+
 # ------------------------------ CONFIG -----------------------------------------
 
 # specify config file
@@ -413,6 +417,7 @@ EOF
 	local outdir=${BUILD[path]}/$flavour/$tag/$machine
 	mkdir -p $outdir || fatal "Unable to create dir $outdir"
 	local mirdir=${MIRROR[path]}/$flavour/$tag/$machine
+	mkdir -p $mirdir || fatal "Unable to create dir $mirdir"
 
 	# first upgrade script if needed
 	prepare_meta -u
