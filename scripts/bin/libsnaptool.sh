@@ -682,13 +682,18 @@ EOF
 	[[ -z "$FLAVOUR" ]] && fatal "Invalid flavour name. Check $setupfile."
 	[[ -z "$TAG" ]] && fatal "Invalid tag name. Check $setupfile."
 	[[ -z "$MACHINE" ]] && fatal "Invalid machine name. Check $setupfile."
-	[[ "$BB_STATUS" != "ok" ]] && fatal "Last build failed. Check $setupfile."
 	[[ ! -d "$BB_DEPLOY" ]] && fatal "Invalid bitbake deploy dir. Check $setupfile."
 	[[ -z "$BB_TS" ]] && fatal "Invalid build timestamp. Check $setupfile."
 	[[ -z "$SNAPSHOT_ID" ]] && fatal "Invalid snapshot id. Check $setupfile."
 	[[ -z "$SNAPSHOT_TS" ]] && fatal "Invalid snapshot ts. Check $setupfile."
 
-	# compute destination dir
+	local snapshot_content=( )
+	[[ "$BB_STATUS" != "ok" ]] && {
+		warning "Last build failed. Publishing only logs."
+		doimage=n
+		dopackages=n
+		dosdk=n
+	}
 
 	info "Starting publishing"
 	log "   source dir:      $BB_DEPLOY"
@@ -732,6 +737,7 @@ EOF
 	folders_mount
 	trap "folders_umount" STOP INT QUIT EXIT
 
+	# compute destination dir
 	local destdir=$(get_snapshotdir $SNAPSHOT_ID $SNAPSHOT_TS)
 	mkdir -p $destdir
 	log "   destination dir: $destdir"
@@ -751,14 +757,17 @@ EOF
 	[[ "$doimage" == "y" ]] && {
 		info "Syncing $imgdir to $destdir/images ..."
 		rsync $rsyncopts $imgdir/ $destdir/images/ || rollback
+		snapshot_content+=( image )
 	}
 	[[ "$dosdk" == "y" ]] && {
 		info "Syncing $sdkdir to $destdir/sdk ..."
 		rsync $rsyncopts $sdkdir/ $destdir/sdk/ || rollback
+		snapshot_content+=( sdk )
 	}
 	[[ "$dopackages" == "y" ]] && {
 		info "Syncing $pkgdir to $destdir/rpm ..."
 		rsync $rsyncopts $pkgdir/ $destdir/rpm/ || rollback
+		snapshot_content+=( packages )
 	}
 
 	# copy build log
@@ -768,13 +777,16 @@ EOF
 		info "Copying build log $x to $destdir/$logfile"
 		cp $x $destdir/$logfile
 	done
-	[[ -z "$logfile" ]] && warning "No log file found in $BB_BUILD/tmp/log/cooker/"
+	[[ -z "$logfile" ]] && warning "No log file found in $BB_BUILD/tmp/log/cooker/" || {
+		snapshot_content+=( log )
+	}
 
 	local ts=$(getts)
 	cat <<EOF >>$setupfile
 # ---------- published at $(date -u -Iseconds -d @$ts) -------
 PUBLISH_TS=$ts
 SNAPSHOT_DIR=$(realpath -L --relative-to=${PUBLISH[path]} $destdir)
+SNAPSHOT_CONTENT="${snapshot_content[@]}"
 EOF
 
 	info "Copying config file to $destdir"
