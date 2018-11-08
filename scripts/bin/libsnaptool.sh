@@ -23,10 +23,6 @@ trap 'rc=$?; error "Command failed $(where)"; exit $rc;' ERR
 # calling script must define "SCRIPTNAME"
 [[ -z "$SCRIPTNAME" ]] && error "SCRIPTNAME is undefined - check top script $0"
 
-# ------------------------------ AUTOUPGRADE -----------------------------------------
-
-# TODO
-
 # ------------------------------ CONFIG -----------------------------------------
 
 # specify config file
@@ -1459,5 +1455,76 @@ EOF
 			return 1
 			;;
 	esac
+}
+
+# ------------------------------ AUTOUPGRADE -----------------------------------------
+
+BASE_URL="https://raw.githubusercontent.com/iotbzh/agl-manifest/master/scripts/bin/@script@"
+SCRIPTS="snaptool libsnaptool.sh libzh.sh" 
+
+function command_99_upgrade() {
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] 
+      -n|--dryrun : do nothing
+      -h|--help   : get this help
+EOF
+	}
+
+	local opts="-o n,h --long dryrun,help" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; _usage; return 1
+	}
+	eval set -- $tmp
+
+	local dryrun=0
+	while true; do	
+		case "$1" in 
+			-n|--dryrun) dryrun=1; shift;;
+			-h|--help) __usage; return 0;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	# get remote script
+	local tempfile=$(mktemp /tmp/$SCRIPTNAME.XXXXXXXX)
+	trap "rm -f $tempfile" STOP INT QUIT EXIT
+
+	local fullscript
+	local rc
+	for script in $SCRIPTS; do
+		fullscript=$(dirname $BASH_SOURCE)/$script
+
+		log "Checking for upgrade of $script ... "
+
+		# first, download reference script
+		wget --quiet -O $tempfile $(sed "s|@script@|$script|g" <<<$BASE_URL) || { error "Unable to check for upgrade. Remote script not accessible"; rm -f $tempfile; continue; }
+
+		{ diff -q $fullscript $tempfile &>/dev/null; rc=$?; } || true # don't exit on error
+
+		case $rc in
+			0)
+				;;
+			1)
+				info "A newer version of the script $script is available."
+				[[ "$dryrun" == 0 ]] && {
+					log "Upgrading script $script..."
+					cp $tempfile $fullscript
+					chmod +x $fullscript
+					info "$script upgraded successfully"
+				} || {
+					info "DRYRUN - script $fullscript would have been upgraded"
+				}
+				;;
+			*)
+				error "Error while checking for upgrade on script $script"
+				;;
+		esac
+		rm $tempfile
+	done
+
+	rm -f $tempfile
 }
 
