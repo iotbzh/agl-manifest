@@ -47,7 +47,7 @@ NAS_BASEDIR=/data/snaptool
 
 # how mirror can be mounted/unmounted and accessed locally
 MIRROR[path]=$HOME/mirror
-MIRROR[mount_init]="[[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -N '' -f ~/.ssh/id_rsa; ssh-copy-id $NAS_SSH"
+MIRROR[mount_init]="[[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -N '' -f ~/.ssh/id_rsa; ssh-copy-id -i ~/.ssh/id_rsa.pub $NAS_SSH"
 MIRROR[mount]="sshfs $NAS_SSH:$NAS_BASEDIR/refmirror -o nonempty ${MIRROR[path]}"
 MIRROR[umount]="fusermount -u ${MIRROR[path]}"
 
@@ -63,7 +63,7 @@ BUILD[targets]=agl-demo-platform-crosssdk
 
 # publishing folder
 PUBLISH[path]=$XDT_DIR/publish
-PUBLISH[mount_init]="[[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -N '' -f ~/.ssh/id_rsa; ssh-copy-id $NAS_SSH"
+PUBLISH[mount_init]="[[ ! -f ~/.ssh/id_rsa ]] && ssh-keygen -N '' -f ~/.ssh/id_rsa; ssh-copy-id -i ~/.ssh/id_rsa.pub $NAS_SSH"
 PUBLISH[mount]="sshfs $NAS_SSH:$NAS_BASEDIR/publish -o nonempty ${PUBLISH[path]}"
 PUBLISH[umount]="fusermount -u ${PUBLISH[path]}"
 EOF
