@@ -413,6 +413,9 @@ EOF
 	local outdir=${BUILD[path]}/$flavour/$tag/$machine
 	mkdir -p $outdir || fatal "Unable to create dir $outdir"
 	local mirdir=${MIRROR[path]}/$flavour/$tag/$machine
+	local mirro=yes
+	# TODO: add optional argument to specify mirror path + argument to make it read only (no mirrorupdate)
+
 	mkdir -p $mirdir || fatal "Unable to create dir $mirdir"
 
 	# first upgrade script if needed
@@ -447,6 +450,7 @@ MACHINE=$machine
 PREPARE_TS="$ts0"
 PREPARE_TIME="$(date +%H:%M:%S -u -d @$ts)"
 MIRROR_DIR=$mirdir
+MIRROR_READONLY=$mirro
 BB_TOPDIR=$outdir
 BB_META=$outdir/meta
 BB_SSTATECACHE=$outdir/sstate-cache
@@ -829,6 +833,8 @@ EOF
 	[[ ! -d "$BB_DOWNLOADS" ]] && fatal "Invalid downloads-cache folder (BB_DOWNLOADS). Check $setupfile."
 	[[ -z "$SNAPSHOT_ID" ]] && fatal "Invalid snapshot id. Check $setupfile."
 
+	[[ "$MIRROR_READONLY" == "yes" ]] && fatal "Mirror is read only. Check $setupfile."
+
 	info "Starting mirrorupdate"
 
 	folders_mount
@@ -855,7 +861,7 @@ EOF
 	# one way: https://lists.yoctoproject.org/pipermail/yocto/2015-October/026703.html
 
 	# do sync
-	mkdir -p $MIRROR_DIR || fatal "Unable to create mirror dir $mirdir"
+	mkdir -p $MIRROR_DIR || fatal "Unable to create mirror dir $MIRROR_DIR"
 
 	for dir in $BB_META $BB_DOWNLOADS $BB_SSTATECACHE; do
 		info "Syncing $dir to $MIRROR_DIR/$(basename $dir)"
