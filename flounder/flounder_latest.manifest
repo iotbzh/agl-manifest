@@ -14,7 +14,7 @@ f875c60=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gp
 
 # BSP
 origin/flounder=flounder	meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-a055159=v3.7.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
+de24bb5=v3.9.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 718bb38=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
 8e4c537=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 
