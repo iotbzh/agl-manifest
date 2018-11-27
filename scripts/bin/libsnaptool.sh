@@ -413,7 +413,7 @@ EOF
 	local outdir=${BUILD[path]}/$flavour/$tag/$machine
 	mkdir -p $outdir || fatal "Unable to create dir $outdir"
 	local mirdir=${MIRROR[path]}/$flavour/$tag/$machine
-	local mirro=yes
+	local mirro=no
 	# TODO: add optional argument to specify mirror path + argument to make it read only (no mirrorupdate)
 
 	mkdir -p $mirdir || fatal "Unable to create dir $mirdir"
