@@ -633,7 +633,7 @@ function __delete_indices() {
 }
 
 function command_30_publish() {
-	local exclude_pattern="*ostree* *otaimg *.tar.xz"
+	local exclude_pattern="*ostree* *otaimg *.tar.bz2"
 	local doimage=y dopackages=n dosdk=y 
 
 	function __usage() {
@@ -709,7 +709,7 @@ EOF
 		imgdir="$BB_DEPLOY/images/${MACHINE}/"
 		[[ ! -d "$imgdir" ]] && {
 			error "No image dir found at $imgdir"
-			doimagte=n
+			doimage=n
 		}
 	}
 
@@ -744,7 +744,7 @@ EOF
 
 	local rsyncopts="-a --delete --no-o --no-g --omit-link-times"
 	for x in ${exclude_pattern}; do
-		rsyncopts="${rsyncopts} --exclude '$e' "
+		rsyncopts="${rsyncopts} --exclude '$x' "
 	done
 
 	function rollback() {
@@ -755,6 +755,24 @@ EOF
 	}
 
 	[[ "$doimage" == "y" ]] && {
+		info "Compressing ext4 files ..."
+		pushd $imgdir >/dev/null
+			for x in $(ls *.ext4 2>/dev/null); do
+				[[ -L $x ]] && {
+					# rename link (and link target)
+					info "   Renaming link $x"
+					ln -sv $(readlink $x).xz $x.xz
+					rm -fv $x
+					continue
+				} 
+				[[ -f $x ]] && {
+					# compress file
+					info "   Compressing $x"
+					xz -v -9 -T0 $x
+				}
+			done
+		popd >/dev/null
+
 		info "Syncing $imgdir to $destdir/images ..."
 		rsync $rsyncopts $imgdir/ $destdir/images/ || rollback
 		snapshot_content+=( image )
