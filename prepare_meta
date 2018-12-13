@@ -283,7 +283,11 @@ mkdir -p $DSTDIR/meta
 for dir in ${LOCALMIRROR//:/ }; do
 	if [[ -d $dir/meta ]]; then
 		info "=== Copying $dir/meta to $DSTDIR/meta"
-		rsync -a --delete $dir/meta/ $DSTDIR/meta/
+		if [[ "$option_keepmanifest" == 1 ]]; then
+			rsync -a $dir/meta/ $DSTDIR/meta/
+		else
+			rsync -a --delete $dir/meta/ $DSTDIR/meta/
+		fi
 		break
 	fi
 done
