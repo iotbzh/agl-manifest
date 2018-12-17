@@ -10,7 +10,7 @@ eae9963=rocko				meta-openembedded     origin=git://git.openembedded.org/meta-op
 f875c60=rocko				meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
-682ad61=rocko				meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+d8b5315=rocko				meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
 origin/master=master	    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
