@@ -1,0 +1,6 @@
+@include flounder/flounder_latest.manifest
+
+origin/sandbox/sdesneux/ff_ces19=sdx_ff_ces19		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/sandbox/sdesneux/ff_ces19=sdx_ff_ces19		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/sandbox/sdesneux/ff_ces19=sdx_ff_ces19		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+
