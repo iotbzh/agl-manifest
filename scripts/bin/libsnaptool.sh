@@ -755,9 +755,9 @@ EOF
 	}
 
 	[[ "$doimage" == "y" ]] && {
-		info "Compressing ext4 files ..."
+		info "Compressing ext4 and vmdk files ..."
 		pushd $imgdir >/dev/null
-			for x in $(ls *.ext4 2>/dev/null); do
+			for x in $(ls *.ext4 *.vmdk 2>/dev/null); do
 				[[ -L $x ]] && {
 					# rename link (and link target)
 					info "   Renaming link $x"
