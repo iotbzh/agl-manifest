@@ -1,4 +1,5 @@
 @include master/agl.manifest
 
 origin/master=master    meta-iot-internal      origin=http://git.ovh.iot/iotbzh/meta-iot-internal.git
+origin/sandbox/sdesneux/qa=sdx_qa		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 
