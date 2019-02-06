@@ -2,5 +2,3 @@
 
 # IoT.bzh
 origin/master=master    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
-
-origin/sandbox/sdesneux/ces19=sdx_ces19                meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
