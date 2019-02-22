@@ -3,5 +3,7 @@
 
 BBLAYERS += " \
     @METADIR@/meta-iot-internal/meta-agl-sandbox \
+    @METADIR@/meta-browser \
+    @METADIR@/meta-rust \
     "
 

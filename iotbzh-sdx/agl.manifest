@@ -2,4 +2,5 @@
 
 origin/master=master				meta-iot-internal      origin=http://git.ovh.iot/iotbzh/meta-iot-internal.git
 201fcf27cf07=thud                   meta-qt5               origin=https://github.com/meta-qt5/meta-qt5.git
-
+924bb134726d=master                 meta-browser           origin=https://github.com/OSSystems/meta-browser.git
+f4517aaba802=master                 meta-rust              origin=https://github.com/meta-rust/meta-rust.git
