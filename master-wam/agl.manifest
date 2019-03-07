@@ -1,4 +1,0 @@
-@include master/agl.manifest
-
-# WebOS - Web App Manager (WAM)
-origin/flounder=flounder    meta-agl-lge      origin=https://github.com/webosose/meta-agl-lge
