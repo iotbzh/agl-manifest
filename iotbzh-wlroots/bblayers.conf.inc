@@ -2,7 +2,7 @@
 ##
 
 BBLAYERS += " \
-    @METADIR@/meta-iot-internal/meta-agl-sandbox \
+    @METADIR@/meta-iot-internal/meta-wlroots \
     @METADIR@/meta-browser \
     @METADIR@/meta-rust \
     "
