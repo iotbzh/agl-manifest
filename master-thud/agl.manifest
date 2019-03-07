@@ -1,0 +1,20 @@
+# AGL
+origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/master=master                          	meta-agl-extra   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl-demo    origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl-devel   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+
+# Distro
+cca27b5=thud							meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+b904775=thud							poky                  origin=git://git.yoctoproject.org/poky
+aabc30f=thud							meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+
+# Graphic
+fb4ef4d=thud							meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+
+# BSP
+9ad66b4=thud							meta-intel            origin=git://git.yoctoproject.org/meta-intel
+
+# Security
+31dc4e7=thud		                    meta-security         origin=git://git.yoctoproject.org/meta-security
+
