@@ -1,4 +1,0 @@
-@include master/agl.manifest
-
-origin/sandbox/jobol/wip-mu=master-mu		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-
