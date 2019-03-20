@@ -5,12 +5,12 @@ origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl-demo    origin=https://g
 origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl-devel   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
-2154631=thud							meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-1cab405=thud-2.6.1						poky                  origin=git://git.yoctoproject.org/poky
+6ef9657=thud							meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+f5a57e9=thud							poky                  origin=git://git.yoctoproject.org/poky
 aabc30f=thud							meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
-7fdddb6=thud							meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+0b0a608=thud							meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
 origin/sandbox/sdesneux/thud_bsp_v3.15.0=thud-3.15 meta-renesas-rcar-gen3  origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
