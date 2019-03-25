@@ -1,0 +1,3 @@
+@include master/agl.manifest
+
+origin/demo-lg-19=demo-lg-19 meta-iot-internal      origin=http://git.ovh.iot/iotbzh/meta-iot-internal.git
