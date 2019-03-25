@@ -3,6 +3,6 @@
 
 BBLAYERS += " \
     @METADIR@/meta-agl/meta-agl-profile-graphical-html5 \
-    @METADIR@/meta-iot-internal/meta-wlroots \
+    @METADIR@/meta-iot-internal/meta-demo-lg \
     "
 
