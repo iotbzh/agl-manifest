@@ -14,7 +14,7 @@ d8b5315=rocko				meta-qt5              origin=https://github.com/meta-qt5/meta-q
 
 # BSP
 origin/master=master	    meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-d4b6ebf=v3.15.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
+4de9bf0=v3.15.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 718bb38=rocko				meta-intel            origin=git://git.yoctoproject.org/meta-intel
 8e4c537=rocko				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 
