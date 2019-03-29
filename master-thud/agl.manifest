@@ -2,7 +2,7 @@
 origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=master                          	meta-agl-extra   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
 origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl-demo    origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl-devel   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/sandbox/ronan/thud-upgrade=master-thud	meta-agl-devel   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
 6ef9657=thud							meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
