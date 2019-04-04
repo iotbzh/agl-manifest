@@ -1,20 +1,20 @@
 # AGL
-origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/sandbox/sdesneux/thud-upgrade=master-thud	meta-agl         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 origin/master=master                          	meta-agl-extra   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/sandbox/scottm/thud-upgrade=master-thud	meta-agl-demo    origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/sandbox/ronan/thud-upgrade=master-thud	meta-agl-devel   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/sandbox/sdesneux/thud-upgrade=master-thud	meta-agl-demo    origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/sandbox/sdesneux/thud-upgrade=master-thud	meta-agl-devel   origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
-6ef9657=thud							meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-e4c0a8a=thud							poky                  origin=git://git.yoctoproject.org/poky
+4cd3a39=thud							meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+faeb366=thud							poky                  origin=git://git.yoctoproject.org/poky
 aabc30f=thud							meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
-f83c1ca=thud							meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+8193771=thud							meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/sandbox/sdesneux/thud_bsp_v3.15.0=thud-3.15 meta-renesas-rcar-gen3  origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-origin/thud-v3.15.0=thud-v3.15.0		meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
+origin/sandbox/sdesneux/thud-upgrade=thud-3.15 meta-renesas-rcar-gen3  origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/thud-v3.15.0=thud-3.15		    meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 27dadcf=thud							meta-intel            origin=git://git.yoctoproject.org/meta-intel
 
 # Security
