@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 
 set -e
 
@@ -168,11 +168,16 @@ pushd $SDKDIR 2>/dev/null
 popd 2>/dev/null
 
 # doc
-docfiles=$(find $SCRIPTDIR/doc -name "*.html")
-[[ -n "$docfiles" ]] && {
-	info "Copying doc files"
-	cp -av $docfiles $tmpdir
-}
+for ext in $MACHINE.html generic.html; do
+	docfiles=$(find $SCRIPTDIR/doc -name "*.$ext")
+	[[ -n "$docfiles" ]] && {
+		info "Copying doc files"
+		for x in $docfiles; do
+			dst=$(basename $x .$ext).html
+			[[ ! -e $tmpdir/$dst ]] && cp -av $x $tmpdir/$dst
+		done
+	}
+done
 
 # generate checksums
 info "Generating checksums..."
