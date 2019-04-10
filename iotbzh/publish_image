@@ -1,10 +1,44 @@
-#!/bin/bash
+#!/bin/bash -x
 
 set -e
 
+MYNAME=$(basename $0)
+
+stdout_in_terminal=0
+[[ -t 1 ]] && stdout_in_terminal=1
+function color {
+    [[ $stdout_in_terminal == 0 ]] && return
+    for k in $*; do
+        case $k in
+            bold) tput bold 2>/dev/null;;
+            none) tput sgr0 2>/dev/null;;
+            *) tput setaf $k 2>/dev/null;;
+        esac
+    done
+}
+
+color_green=$(color bold 2)
+color_yellow=$(color bold 3)
+color_red=$(color bold 1)
+color_blue=$(color bold 4)
+color_gray=$(color 250)
+color_none=$(color none)
+
 function error() {
-	echo "ERROR: $@" >&2
-	exit 1
+    echo "${color_red}$@${color_none}" >&2
+}
+function fatal() { error "$@"; exit 1; }
+
+function warning() {
+    echo "${color_yellow}$@${color_none}" >&2
+}
+
+function info() {
+    echo "${color_green}$@${color_none}" >&2
+}
+
+function log() {
+    echo "$@" >&2
 }
 
 . /etc/xdtrc
@@ -12,77 +46,167 @@ function error() {
 SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
 
 SERVER=apache@vm-www
-MACHINE=${1:-m3ulcb}
+MACHINE=
+SERVER_DIR=/download/public/$(date +%Y)/AGL_Images
+VERSION=
 
-SERVER_DIR=/download/public/$(date +%Y)/AGL_Images/$MACHINE
+function __usage() {
+	cat <<EOF >&2
+Usage: $MYNAME [options]
+   
+Options:
+   -h|--help: get this help
+   -m|--machine: machine name 
+      ex: m3ulcb, h3ulcb, qemux86-64, intel-corei7-64, raspberrypi3 ...
+   -s|--server: ssh server handle (user@host)
+   -d|--dir: server dir
+      ex: /download/public/$(date +%Y)/AGL_Images/
+EOF
+}
 
-echo "Using machine $MACHINE"
-echo "Destination will be $SERVER_DIR"
+function __parseopts() {
+   local opts="-o m:,s:,d:,n,h --long machine:,server:,dir:,dryrun,help" tmp
+   tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+      tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+      error $tmp; __usage; exit 1;
+   }
+   eval set -- $tmp
+
+   while true; do
+      case "$1" in 
+         -h|--help)		 usage; exit 0;;
+         -m|--machine)	 MACHINE=$2; shift 2;;
+         -s|--server)    SERVER=$2; shift 2;;
+         -d|--dir)       SERVER_DIR=$2; shift 2;;
+         -n|--dryrun)    dryrun=1; shift;;
+         --)             shift; break;;
+         *)              error "Internal error"; exit 56;;
+      esac
+   done
+}
+
+__parseopts "$@"
+
+[[ -z "$MACHINE" ]] && { error "Invalid machine"; __usage; exit 2; }
+[[ -z "$SERVER" ]] && { error "Invalid server"; __usage; exit 2; }
+[[ -z "$SERVER_DIR" ]] && { error "Invalid server dir"; __usage; exit 2; }
+
+info "Using machine $MACHINE"
+info "Destination will be $SERVER:$SERVER_DIR/$MACHINE"
+
+tmpdir=$(mktemp -d /tmp/$MYNAME.XXXXXX)
+trap "echo 'cleaning tempdir $tmpdir'; rm -rf $tmpdir" STOP INT QUIT EXIT 
+
+##################################################################################
 
 IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
 SDKDIR=$XDT_BUILD/$MACHINE/tmp/deploy/sdk/
 
-# locate image
-[[ ! -d $IMGDIR ]] && error "No images dir in $IMGDIR"
-pushd $IMGDIR
-lnkname=$(find . -type l -name "*.wic.xz")
-[[ ! -e $lnkname ]] && lnkname=$(find . -type l -name "*.vmdk")
-[[ ! -e $lnkname ]] && error "No image link found in $IMGDIR" || echo "Found image link $lnkname"
-imgfile=$(readlink $lnkname)
-[[ ! -f $imgfile ]] && error "No image found in $IMGDIR" || echo "Found image file $imgfile"
+# locate and copy image
+[[ ! -d $IMGDIR ]] && fatal "No images dir in $IMGDIR"
+pushd $IMGDIR 2>/dev/null
+	lnkname=$(find . -type l -name "*.wic.xz")
+	[[ ! -e $lnkname ]] && lnkname=$(find . -type l -name "*.vmdk")
+	[[ ! -e $lnkname ]] && fatal "No image link found in $IMGDIR" || echo "Found image link $lnkname"
+	imgfile=$(readlink $lnkname)
+	[[ ! -f $imgfile ]] && fatal "No image found in $IMGDIR" || echo "Found image file $imgfile"
 
-bmaplnkname=$(find . -type l -name "*.wic.bmap")
-[[ -e $bmaplnkname ]] && bmapfile=$(readlink $bmaplnkname) && echo "Found bmap link $bmaplnkname, file $bmapfile"
-popd
+	bmaplnkname=$(find . -type l -name "*.wic.bmap")
+	[[ -e $bmaplnkname ]] && bmapfile=$(readlink $bmaplnkname) && echo "Found bmap link $bmaplnkname, file $bmapfile"
 
-# locate SDK
-[[ ! -d $SDKDIR ]] && error "No SDK dir in $SDKDIR"
-pushd $SDKDIR
-sdkfile=$(find . -type f -name "poky-*.sh")
-[[ ! -f $sdkfile ]] && error "Unable to find SDK file in $SDKDIR"
-popd
+	# determine version
+	[[ "$imgfile" =~ -([0-9]+).rootfs.wic. ]] && VERSION=${BASH_REMATCH[1]} || fatal "Unable to find image version"
+	info "Detected image version $VERSION"
 
-# determine version
-[[ "$imgfile" =~ -([0-9]+).rootfs.wic.xz$ ]] && VERSION=${BASH_REMATCH[1]} || error "Unable to find image version"
+	mkdir -p $tmpdir/images
+	info "Copying image..."
+	for x in \
+		$imgfile \
+		$bmapfile \
+		build-info \
+	; do
+		[[ -f $x ]] && cp -av $x $tmpdir/images/
+	done
 
-### push everything
+	if [[ -f $tmpdir/images/*.vmdk ]]; then
+		info "Compressing vmdk image..."
+		xz -T0 $tmpdir/images/*.vmdk
+		imgfile="${imgfile}.xz"
+		lnkname="${lnkname}.xz"
+	fi
+	ln -sfv $imgfile $tmpdir/images/$lnkname
+	[[ -n "$bmaplnkname" ]] && ln -sfv $bmapfile $tmpdir/images/$bmaplnkname
 
-# create remote
-ssh $SERVER mkdir -p $SERVER_DIR/$VERSION/{sdk,images,firmware}
-
-# create a temp dir, push everything there, then rsync
-# TODO
-
-# send files
-RSYNCPATH=$SERVER:$SERVER_DIR/$VERSION
-rsync -Pav $IMGDIR/$imgfile $RSYNCPATH/images/
-rsync -Pav $IMGDIR/build-info $RSYNCPATH/images/
-rsync -Pav $(find $IMGDIR -type f -name "*.srec") $RSYNCPATH/firmware/
-[[ -e $IMGDIR/$bmapfile ]] && rsync -Pav $IMGDIR/$bmapfile $RSYNCPATH/images/
-rsync -Pav $SDKDIR/ $RSYNCPATH/sdk/
-
-# TODO: generate and push doc
-#rsync -Pav $SCRIPTDIR/*.html $RSYNCPATH/
-
-cat <<EOF | ssh $SERVER "cat >$SERVER_DIR/$VERSION/firmware/README"
+	# firmware
+	fwfiles=$(find  -type f -name "*.srec")
+	if [[ -n "$fwfiles" ]]; then
+		info "Copying firmware for R-car gen3"
+		mkdir -p $tmpdir/firmware
+		cp -av $fwfiles $tmpdir/firmware/
+		cat <<EOF >$tmpdir/firmware/README.firmware
 The files here can be used to flash the $MACHINE board firmware.
 
-Full procedure is detailed here: https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware
+Full procedure is detailed here depending on the board:
+* for M3: https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware
+* for H3: https://elinux.org/R-Car/Boards/H3SK#Flashing_firmware
 EOF
+	fi
+popd 2>/dev/null
 
+# locate and copy SDK
+[[ ! -d $SDKDIR ]] && warning "No SDK dir in $SDKDIR"
+pushd $SDKDIR 2>/dev/null
+	sdkfile=$(find . -type f -name "poky-*.sh")
+	if [[ ! -f $sdkfile ]]; then
+		warning "Unable to find SDK file in $SDKDIR"
+	else
+		mkdir -p $tmpdir/sdk
+		info "Copying SDK..."
+		cp -av * $tmpdir/sdk/
+		ln -sfv $sdkfile $tmpdir/sdk/agl-sdk-latest.sh
+	fi
+popd 2>/dev/null
 
-# create links
-CMD="ln -sfv $imgfile $SERVER_DIR/$VERSION/images/$lnkname"
-[[ -n "$bmaplnkname" ]] && CMD="$CMD; ln -sfv $bmapfile $SERVER_DIR/$VERSION/images/$bmaplnkname"
-CMD="$CMD; ln -sfv $sdkfile $SERVER_DIR/$VERSION/sdk/agl-sdk-latest.sh"
-CMD="$CMD; ln -snfv $SERVER_DIR/$VERSION $SERVER_DIR/latest"
-CMD="$CMD; rm -f $SERVER_DIR/latest_is_*"
-CMD="$CMD; ln -snfv $SERVER_DIR/$VERSION $SERVER_DIR/latest_is_$VERSION"
-CMD="$CMD; echo $VERSION >$SERVER_DIR/latest.txt"
-CMD="$CMD; pushd $SERVER_DIR/$VERSION/images; md5sum * >files.md5; popd"
+# doc
+docfiles=$(find $SCRIPTDIR/doc -name "*.html")
+[[ -n "$docfiles" ]] && {
+	info "Copying doc files"
+	cp -av $docfiles $tmpdir
+}
 
-ssh $SERVER "$CMD"
+# generate checksums
+info "Generating checksums..."
+pushd $tmpdir 2>/dev/null
+sha256sum $(find . -type f) >files.sha256
+popd 2>/dev/null
 
-echo "Image successfully pushed to: http://iot.bzh$SERVER_DIR/$VERSION"
+if [[ -n "$dryrun" ]]; then
+	warning "DRY RUN ENABLED"
+	pushd $tmpdir 2>/dev/null
+	ls -alR
+	popd 2>/dev/null
+else
+	[[ -z "$VERSION" ]] && fatal "Invalid build version"
 
+	# create remote dir
+	MACDIR=$SERVER_DIR/$MACHINE
+	DESTDIR=$MACDIR/$VERSION
 
+	info "Creating remote dir $DESTDIR/"
+exit 0 #TODO
+	ssh $SERVER mkdir -p $DESTDIR
+
+	# send files
+	RSYNCPATH=$SERVER:$DESTDIR
+	rsync  #TODO
+
+	# create links on server
+	CMD="ln -snfv $DESTDIR $MACDIR/latest"
+	CMD="$CMD; rm -f $MACDIR/latest_is_*"
+	CMD="$CMD; ln -snfv $DESTDIR $MACDIR/latest_is_$VERSION"
+	CMD="$CMD; echo $VERSION >$MACDIR/latest.txt"
+
+	ssh $SERVER "$CMD"
+
+	info "Image successfully pushed to: http://iot.bzh$SERVER_DIR/$VERSION"
+fi
