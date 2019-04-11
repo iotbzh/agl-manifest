@@ -37,6 +37,10 @@ Click on login, and connect to one Amazon Account you have.
 
 Alexa should be connected at this point.
 
-To talk to her, you can either start your question with "Alexa ..." or click the blue
-button on the homescreen.
+To talk to her, you can either click the blue button on the homescreen, or issue this
+command in a ssh terminal:
+
+```
+afb-client-demo --human 'localhost:31029/api?token=HELLO&uuid=magic' alexa-voiceagent startListening
+```
 
