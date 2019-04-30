@@ -56,6 +56,7 @@ Usage: $MYNAME [options]
    
 Options:
    -h|--help: get this help
+   -n|--dryrun: dry run mode (do nothing)
    -m|--machine: machine name 
       ex: m3ulcb, h3ulcb, qemux86-64, intel-corei7-64, raspberrypi3 ...
    -s|--server: ssh server handle (user@host)
@@ -96,6 +97,9 @@ info "Destination will be $SERVER:$SERVER_DIR/$MACHINE"
 
 tmpdir=$(mktemp -d /tmp/$MYNAME.XXXXXX)
 trap "echo 'cleaning tempdir $tmpdir'; rm -rf $tmpdir" STOP INT QUIT EXIT 
+
+# rsync will copy permissions to server: folder must be readable by apache group to be published
+chmod 755 $tmpdir
 
 ##################################################################################
 
@@ -198,17 +202,15 @@ else
 	DESTDIR=$MACDIR/$VERSION
 
 	info "Creating remote dir $DESTDIR/"
-exit 0 #TODO
 	ssh $SERVER mkdir -p $DESTDIR
 
 	# send files
 	RSYNCPATH=$SERVER:$DESTDIR
-	rsync  #TODO
+	rsync -Pav --delete $tmpdir/ $RSYNCPATH/
 
 	# create links on server
 	CMD="ln -snfv $DESTDIR $MACDIR/latest"
 	CMD="$CMD; rm -f $MACDIR/latest_is_*"
-	CMD="$CMD; ln -snfv $DESTDIR $MACDIR/latest_is_$VERSION"
 	CMD="$CMD; echo $VERSION >$MACDIR/latest.txt"
 
 	ssh $SERVER "$CMD"

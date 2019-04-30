@@ -6,7 +6,7 @@ title: Booting AGL images from SDCard
 ## IMPORTANT AGREEMENT
 
 By downloading the binary images provided here, ***you implicitely accept*** the following [license](LICENSE.html).
-The License comes: [https://www.renesas.com/us/en/solutions/automotive/rcar-download/rcar-demoboard-2.html](https://www.renesas.com/us/en/solutions/automotive/rcar-download/rcar-demoboard-2.html)
+The License comes from: [https://www.renesas.com/us/en/solutions/automotive/rcar-download/rcar-demoboard-2.html](https://www.renesas.com/us/en/solutions/automotive/rcar-download/rcar-demoboard-2.html)
 
 ## Purpose
 
