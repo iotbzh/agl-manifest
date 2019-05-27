@@ -6,7 +6,7 @@ origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinu
 
 # Distro
 4cd3a39=thud				meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-faeb366=thud				poky                  origin=git://git.yoctoproject.org/poky
+e7f0177=thud				poky                  origin=git://git.yoctoproject.org/poky
 aabc30f=thud				meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
@@ -17,6 +17,9 @@ origin/master=master	    meta-renesas-rcar-gen3 origin=https://gerrit.automotive
 5aecbd9=v3.15.0				meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 27dadcf=thud				meta-intel            origin=git://git.yoctoproject.org/meta-intel
 c71d79e=thud				meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
+f5c9322=iotbzh				meta-freescale		  origin=https://git.yoctoproject.org/git/meta-freescale
+9e9db02=iotbzh				meta-ti				  origin=https://git.yoctoproject.org/git/meta-ti
+8ac86cd=iotbzh				meta-qcom             origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
 31dc4e7=master				meta-security         origin=git://git.yoctoproject.org/meta-security
