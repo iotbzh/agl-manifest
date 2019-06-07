@@ -22,7 +22,7 @@ Requirements:
     ```
 * Find your device and set DEVICE variable:
     ```bash
-    $ lsblk -dli -o NAME,TYPE,HOTPLUG | grep "disk\s+1$"
+    $ lsblk -dli -o NAME,TYPE,HOTPLUG | grep "disk\s\+1$"
     sdk  disk       1    # <= use /dev/sdk
     $ DEVICE=/dev/sdX
     ```
@@ -77,7 +77,7 @@ Download the image and the associated bmap file:
     The following commands which lists all removable disks can help to find the information:
 
     ```bash
-    $ lsblk -dli -o NAME,TYPE,HOTPLUG | grep "disk\s+1$"
+    $ lsblk -dli -o NAME,TYPE,HOTPLUG | grep "disk\s\+1$"
     sdk  disk       1
     ```
 

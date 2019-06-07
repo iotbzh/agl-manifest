@@ -92,7 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">wget</span> http://...../*.wic.xz
 <span class="fu">wget</span> http://...../*.wic.bmap</code></pre></div></li>
 <li><p>Find your device and set DEVICE variable:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">lsblk</span> -dli -o NAME,TYPE,HOTPLUG <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;disk\s+1$&quot;</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">lsblk</span> -dli -o NAME,TYPE,HOTPLUG <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;disk\s\+1$&quot;</span>
 <span class="ex">sdk</span>  disk       1    # <span class="op">&lt;</span>= use /dev/sdk
 $ <span class="va">DEVICE=</span>/dev/sdX</code></pre></div></li>
 <li><p>Run <em>bmaptool</em>:</p>
@@ -122,7 +122,7 @@ $ <span class="va">DEVICE=</span>/dev/sdX</code></pre></div></li>
 <li><p>Insert a SDcard (minimum 2GB)</p></li>
 <li><p>Find the removable device for your card:</p>
 <p>The following commands which lists all removable disks can help to find the information:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">lsblk</span> -dli -o NAME,TYPE,HOTPLUG <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;disk\s+1$&quot;</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">lsblk</span> -dli -o NAME,TYPE,HOTPLUG <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;disk\s\+1$&quot;</span>
 <span class="ex">sdk</span>  disk       1</code></pre></div>
 <p>Here, the device we'll use is /dev/sdk.</p>
 <p>Alternatively, a look at the kernel log will help:</p>
@@ -156,7 +156,7 @@ $ <span class="va">DEVICE=</span>/dev/sdX</code></pre></div></li>
 </ol>
 <!-- Links below are generated automatically by /home/sdx/Cloud/NextCloud/bin/md2html -->
 <div class="footer">
-	<span style="float:left;">Booting AGL images from SDCard - Rev.20190410_1715</span>
+	<span style="float:left;">Booting AGL images from SDCard - Rev.20190607_2109</span>
 	<span style="float:right">
 <span class="author">Stephane Desneux <a href="mailto:sdx@iot.bzh">sdx@iot.bzh</a> - </span>
 	IoT.bzh 2019</span>
