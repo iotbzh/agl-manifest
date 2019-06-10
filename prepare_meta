@@ -332,9 +332,9 @@ function checkout_gits() {
 		while read tag value; do
 			case $tag in
 				DIR)
-					[[ -d "$DESTDIR/$value" ]] || mkdir "$DESTDIR/$value"
-					[[ -d "$DESTDIR/$value/.git" ]] || git init "$DESTDIR/$value"
 					info "=== $srcname: fetch/checkout $value"
+					[[ -d "$DESTDIR/$value" ]] || mkdir -p "$DESTDIR/$value"
+					[[ -d "$DESTDIR/$value/.git" ]] || git init "$DESTDIR/$value"
 					cd "$DESTDIR/$value"
 					;;
 				REPO)
