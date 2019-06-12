@@ -21,7 +21,10 @@ MIRRORDIR=${1:-~/mirror}
 
 SRCDIR=$XDT_DIR
 
-$XDT_META/poky/scripts/sstate-cache-management.sh \
+SCRIPT=$(ls $XDT_META/{.,*,*/*}/poky/scripts/sstate-cache-management.sh 2>/dev/null)
+[[ ! -f $SCRIPT ]] && { echo "Unable to find sstate-cache management script"; exit 1; }
+
+$SCRIPT \
 	--cache-dir=$XDT_SSTATECACHE \
 	--remove-duplicated --yes --verbose
 
@@ -32,7 +35,7 @@ for sdir in $XDT_BUILD/*/tmp/stamps; do
 	rsync -a $sdir/ $XDT_BUILD/tmp_stamps/
 done
 
-$SRCDIR/meta/poky/scripts/sstate-cache-management.sh \
+$SCRIPT \
 	--cache-dir=$XDT_SSTATECACHE \
 	--stamps-dir=$XDT_BUILD/tmp_stamps \
 	--yes \

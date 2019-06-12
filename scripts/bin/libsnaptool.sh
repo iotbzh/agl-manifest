@@ -861,7 +861,7 @@ EOF
 	# do some cleanup in sstate-cache (remove duplicates and useless entries)
 	info "Clean sstate-cache $BB_SSTATECACHE ..."
 
-	local bbmanage=$BB_META/poky/scripts/sstate-cache-management.sh
+	local bbmanage=$(ls $BB_META/{.,*}/poky/scripts/sstate-cache-management.sh 2>/dev/null)
 	[[ -f $bbmanage ]] && {
 		chmod +x $bbmanage
 		$bbmanage \
