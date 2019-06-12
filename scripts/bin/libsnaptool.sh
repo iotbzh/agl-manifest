@@ -892,7 +892,7 @@ EOF
 	done
 
 	# always remove agl-manifest from mirror to force refresh on manifest files
-	rm -rf $MIRROR_DIR/$(basename $BB_META)/agl-manifest
+	rm -rf $MIRROR_DIR/$(basename $BB_META)/*-manifest
 
 	local ts=$(getts)
 	cat >$MIRROR_DIR/LAST_UPDATE <<EOF

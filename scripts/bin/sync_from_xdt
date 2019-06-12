@@ -48,8 +48,8 @@ for dir in $XDT_META $XDT_DOWNLOADCACHE $XDT_SSTATECACHE; do
 	rsync -a --delete $dir/ $MIRRORDIR/$(basename $dir)/
 done
 
-# always remove agl-manifest from mirror to force refresh on manifest files
-rm -rf $MIRRORDIR/$(basename $XDT_META)/agl-manifest
+# always remove *-manifest from mirror to force refresh on manifest files
+rm -rf $MIRRORDIR/$(basename $XDT_META)/*-manifest
 
 info "sync done"
 
