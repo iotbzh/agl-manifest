@@ -67,7 +67,7 @@ for x in $CONFIG_FILES; do
 	[[ -f $x ]] && . $x
 done
 
-VERSION=1.0.5
+VERSION=1.0.6
 
 function usage() {
 	cat <<EOF >&2
@@ -398,32 +398,25 @@ function checkout_gits() {
 					;;
 			esac
 		done
-}
 
-pushd $DSTDIR/meta >/dev/null #{
-
-	checkout_gits . $MANIFEST_FILE
-
-popd >/dev/null #}
-
-##################################### apply patches ####################################
-
-info "=== apply patches"
-pushd $DSTDIR/meta >/dev/null #{
-	for file in $FLAVOUR_DIR/patches/*/*.patch; do
-		# file may be the pattern itself if no matches
-		if [[ -f $file ]]; then
-			meta=$(dirname $(realpath --relative-to=$FLAVOUR_DIR/patches $file))
+	# apply patches if any, for the current manifest
+	patchdir=$(dirname $(realpath $srcfile))/patches
+	if [[ -d $patchdir ]]; then 
+		info "=== apply patches from $patchdir"
+		for file in $(find $patchdir -name "*.patch" 2>/dev/null); do
+			meta=$(dirname $(realpath --relative-to=$patchdir $file))
 
 			log "Patching meta $meta with patch $file"
 
 			pushd $DSTDIR/meta/$meta >/dev/null
 				patch -p1 <$file
 			popd >/dev/null
-		fi
+		done
+	fi
+}
 
-	done
-
+pushd $DSTDIR/meta >/dev/null #{
+	checkout_gits . $MANIFEST_FILE
 popd >/dev/null #}
 
 ##################################### setup build ######################################
