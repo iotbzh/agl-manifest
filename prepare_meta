@@ -67,7 +67,7 @@ for x in $CONFIG_FILES; do
 	[[ -f $x ]] && . $x
 done
 
-VERSION=1.0.4
+VERSION=1.0.5
 
 function usage() {
 	cat <<EOF >&2
@@ -413,7 +413,7 @@ pushd $DSTDIR/meta >/dev/null #{
 	for file in $FLAVOUR_DIR/patches/*/*.patch; do
 		# file may be the pattern itself if no matches
 		if [[ -f $file ]]; then
-			meta=$(basename $(dirname $file))
+			meta=$(dirname $(realpath --relative-to=$FLAVOUR_DIR/patches $file))
 
 			log "Patching meta $meta with patch $file"
 
