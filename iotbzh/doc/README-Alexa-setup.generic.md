@@ -1,3 +1,8 @@
+---
+author: Stephane Desneux <sdx@iot.bzh>
+title: Alexa Setup
+---
+
 There are some manual steps to have Alexa working:
 
 1) set the right microphone for voice agent
