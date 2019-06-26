@@ -1,0 +1,4 @@
+@include master/agl.manifest
+
+# IoT.bzh
+origin/next=next    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
