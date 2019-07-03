@@ -53,11 +53,11 @@ JUST_UPGRADE=
 
 #default options values
 option_ccache=0
-option_upgrade=1
+option_upgrade=0
 option_wipeconfig=0
 option_keepcache=0
 option_rm_work=0
-option_keepmanifest=0
+option_keepmanifest=1
 option_cleartemp=0
 
 # --------- default values ------------------------------------
@@ -383,7 +383,7 @@ function checkout_gits() {
 					sha="${value%%=*}"
 					branch="${value#*=}"
 					for x in $(git remote); do
-						git fetch -p $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/* +refs/tags/*:refs/remote/tags/*
+						git fetch $x +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/changes/* +refs/tags/*:refs/remote/tags/*
 						git fetch -f -t $x
 					done
 					git checkout -f "$sha" -B "$branch"
