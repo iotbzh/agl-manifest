@@ -50,6 +50,7 @@ REMOTEMIRROR=
 PROPRIETARY_RENESAS_DIR=
 TARGET=m3ulcb
 JUST_UPGRADE=
+BUILD_ONLY=0
 
 #default options values
 option_ccache=0
@@ -113,6 +114,8 @@ Options:
       valid options: porter, m3ulcb, h3ulcb, salvator, m3ulcb-kingfisher, intel-corei7-64, qemux86, qemux86-64, wandboard ...
    -u|--upgrade
       Check for and perform an update to the script without prompting user, then exit.
+   -b|--build-only
+      Do not checkout all repository. Only process to configuration and build. Will build the previous checked out AGL repositories.
    -h|--help
       get this help
 
@@ -158,7 +161,7 @@ function log() {
 
 # save global args in case we reuse them after upgrade
 GLOBAL_ARGS=("$@")
-TEMP=$(getopt -o f:o:l:r:p:e:d:t:uh --long flavour:,outputdir:,localmirror:,remotemirror:,proprietary:,enable:,disable:,target:,upgrade,help -n $SCRIPT -- "$@")
+TEMP=$(getopt -o f:o:l:r:p:e:d:t:u:h:b --long flavour:,outputdir:,localmirror:,remotemirror:,proprietary:,enable:,disable:,target:,build-only:,upgrade,help -n $SCRIPT -- "$@")
 [[ $? != 0 ]] && usage
 eval set -- "$TEMP"
 
@@ -173,6 +176,7 @@ while true; do
 		-d|--disable) eval option_$2=0; shift 2;;
 		-t|--target) TARGET=$2; shift 2;;
 		-u|--upgrade) JUST_UPGRADE=1; shift ;;
+		-b|--buid-only) BUILD_ONLY=1; shift;;
 		-h|--help) HELP=1; shift ;;
 		--) shift; break;;
 		*) error "Internal error"; exit 1;;
@@ -416,7 +420,7 @@ function checkout_gits() {
 }
 
 pushd $DSTDIR/meta >/dev/null #{
-	checkout_gits . $MANIFEST_FILE
+	[[ $BUILD_ONLY == 0 ]] && checkout_gits . $MANIFEST_FILE
 popd >/dev/null #}
 
 ##################################### setup build ######################################
