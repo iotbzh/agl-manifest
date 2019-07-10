@@ -1,4 +1,4 @@
-@include master/agl.manifest
+@include iotbzh/agl.manifest
 
-# IoT.bzh
-origin/master=master    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
+origin/develop=develop  meta-influx       origin=https://github.com/C-X1/meta-influx
+
