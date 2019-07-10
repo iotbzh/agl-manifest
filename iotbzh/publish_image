@@ -2,7 +2,19 @@
 
 set -e
 
+. /etc/xdtrc
+
+FLAVOUR=iotbzh
+MACHINE=
+
+#SERVER=apache@vm-www
+#SERVER_DIR=/download/public/$(date +%Y)/AGL_Images
+
+SERVER=ein@ein
+SERVER_DIR=/data/custom-builds/$FLAVOUR
+
 MYNAME=$(basename $0)
+SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
 
 stdout_in_terminal=0
 [[ -t 1 ]] && stdout_in_terminal=1
@@ -41,15 +53,6 @@ function log() {
     echo "$@" >&2
 }
 
-. /etc/xdtrc
-
-SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
-
-SERVER=apache@vm-www
-MACHINE=
-SERVER_DIR=/download/public/$(date +%Y)/AGL_Images
-VERSION=
-
 function __usage() {
 	cat <<EOF >&2
 Usage: $MYNAME [options]
@@ -75,7 +78,7 @@ function __parseopts() {
 
    while true; do
       case "$1" in 
-         -h|--help)		 usage; exit 0;;
+         -h|--help)		 __usage; exit 0;;
          -m|--machine)	 MACHINE=$2; shift 2;;
          -s|--server)    SERVER=$2; shift 2;;
          -d|--dir)       SERVER_DIR=$2; shift 2;;
@@ -105,6 +108,7 @@ chmod 755 $tmpdir
 
 IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
 SDKDIR=$XDT_BUILD/$MACHINE/tmp/deploy/sdk/
+VERSION=
 
 # locate and copy image
 [[ ! -d $IMGDIR ]] && fatal "No images dir in $IMGDIR"
