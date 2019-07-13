@@ -4,14 +4,14 @@ set -e
 
 . /etc/xdtrc
 
-FLAVOUR=iotbzh
+FLAVOUR=$(dirname $(realpath $BASH_SCRIPT))
 MACHINE=
 
-#SERVER=apache@vm-www
-#SERVER_DIR=/download/public/$(date +%Y)/AGL_Images
+SERVER_PRIVATE=ein@ein
+SERVER_PRIVATE_DIR=/data/custom-builds/$FLAVOUR
 
-SERVER=ein@ein
-SERVER_DIR=/data/custom-builds/$FLAVOUR
+SERVER_PUBLIC=apache@vm-www
+SERVER_PUBLIC_DIR=/download/public/$(date +%Y)/AGL_Images
 
 MYNAME=$(basename $0)
 SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
@@ -65,11 +65,12 @@ Options:
    -s|--server: ssh server handle (user@host)
    -d|--dir: server dir
       ex: /download/public/$(date +%Y)/AGL_Images/
+   -p|--public: use public server by default (may be overriden by -s)
 EOF
 }
 
 function __parseopts() {
-   local opts="-o m:,s:,d:,n,h --long machine:,server:,dir:,dryrun,help" tmp
+   local opts="-o m:,s:,d:,p,n,h --long machine:,server:,dir:,public,dryrun,help" tmp
    tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
       tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
       error $tmp; __usage; exit 1;
@@ -83,6 +84,7 @@ function __parseopts() {
          -s|--server)    SERVER=$2; shift 2;;
          -d|--dir)       SERVER_DIR=$2; shift 2;;
          -n|--dryrun)    dryrun=1; shift;;
+         -p|--public)    PUBLIC=1; shift;;
          --)             shift; break;;
          *)              error "Internal error"; exit 56;;
       esac
@@ -92,8 +94,19 @@ function __parseopts() {
 __parseopts "$@"
 
 [[ -z "$MACHINE" ]] && { error "Invalid machine"; __usage; exit 2; }
-[[ -z "$SERVER" ]] && { error "Invalid server"; __usage; exit 2; }
-[[ -z "$SERVER_DIR" ]] && { error "Invalid server dir"; __usage; exit 2; }
+
+if [[ -z "$SERVER" ]]; then
+	case "$PUBLIC" in
+		yes|1|true) SERVER=$SERVER_PUBLIC;;
+		*) SERVER=$SERVER_PRIVATE;;
+	esac
+fi
+if [[ -z "$SERVER_DIR" ]]; then
+	case "$PUBLIC" in
+		yes|1|true) SERVER_DIR=$SERVER_DIR_PUBLIC;;
+		*) SERVER_DIR=$SERVER_DIR_PRIVATE;;
+	esac
+fi
 
 info "Using machine $MACHINE"
 info "Destination will be $SERVER:$SERVER_DIR/$MACHINE"
