@@ -1,0 +1,239 @@
+#!/bin/bash 
+
+set -e
+
+. /etc/xdtrc
+
+MYNAME=$(basename $0)
+SCRIPTDIR=$(cd $(dirname $0) && pwd -P)
+
+FLAVOUR=$(basename $SCRIPTDIR)
+MACHINE=
+
+SERVER_PRIVATE=ein@ein
+SERVER_PRIVATE_DIR=/data/custom-builds
+
+SERVER_PUBLIC=apache@vm-www
+SERVER_PUBLIC_DIR=/download/public/$(date +%Y)/AGL_Images
+
+
+stdout_in_terminal=0
+[[ -t 1 ]] && stdout_in_terminal=1
+function color {
+    [[ $stdout_in_terminal == 0 ]] && return
+    for k in $*; do
+        case $k in
+            bold) tput bold 2>/dev/null;;
+            none) tput sgr0 2>/dev/null;;
+            *) tput setaf $k 2>/dev/null;;
+        esac
+    done
+}
+
+color_green=$(color bold 2)
+color_yellow=$(color bold 3)
+color_red=$(color bold 1)
+color_blue=$(color bold 4)
+color_gray=$(color 250)
+color_none=$(color none)
+
+function error() {
+    echo "${color_red}$@${color_none}" >&2
+}
+function fatal() { error "$@"; exit 1; }
+
+function warning() {
+    echo "${color_yellow}$@${color_none}" >&2
+}
+
+function info() {
+    echo "${color_green}$@${color_none}" >&2
+}
+
+function log() {
+    echo "$@" >&2
+}
+
+function __usage() {
+	cat <<EOF >&2
+Usage: $MYNAME [options]
+   
+Options:
+   -h|--help: get this help
+   -n|--dryrun: dry run mode (do nothing)
+   -m|--machine: machine name 
+      ex: m3ulcb, h3ulcb, qemux86-64, intel-corei7-64, raspberrypi3 ...
+   -s|--server: ssh server handle (user@host)
+   -f|--flavour: set flavour manually (default: autodetected from dir name)
+   -d|--dir: server dir
+      ex: /download/public/$(date +%Y)/AGL_Images/
+   -p|--public: use public server by default (may be overriden by -s)
+EOF
+}
+
+function __parseopts() {
+   local opts="-o m:,s:,f:,d:,p,n,h --long machine:,server:,flavour:,dir:,public,dryrun,help" tmp
+   tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+      tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+      error $tmp; __usage; exit 1;
+   }
+   eval set -- $tmp
+
+   while true; do
+      case "$1" in 
+         -h|--help)		 __usage; exit 0;;
+         -m|--machine)	 MACHINE=$2; shift 2;;
+         -s|--server)    SERVER=$2; shift 2;;
+         -d|--dir)       SERVER_DIR=$2; shift 2;;
+         -n|--dryrun)    dryrun=1; shift;;
+         -p|--public)    PUBLIC=1; shift;;
+		 -f|--flavour)   FLAVOUR=$2; shift 2;;
+         --)             shift; break;;
+         *)              error "Internal error"; exit 56;;
+      esac
+   done
+}
+
+__parseopts "$@"
+
+[[ -z "$MACHINE" ]] && { error "Invalid machine"; __usage; exit 2; }
+
+if [[ -z "$SERVER" ]]; then
+	case "$PUBLIC" in
+		yes|1|true) SERVER=$SERVER_PUBLIC;;
+		*) SERVER=$SERVER_PRIVATE;;
+	esac
+fi
+if [[ -z "$SERVER_DIR" ]]; then
+	case "$PUBLIC" in
+		yes|1|true) SERVER_DIR=$SERVER_PUBLIC_DIR;;
+		*) SERVER_DIR=$SERVER_PRIVATE_DIR/$FLAVOUR;;
+	esac
+fi
+
+info "Using machine $MACHINE"
+info "Destination will be $SERVER:$SERVER_DIR/$MACHINE"
+
+tmpdir=$(mktemp -d /tmp/$MYNAME.XXXXXX)
+trap "echo 'cleaning tempdir $tmpdir'; rm -rf $tmpdir" STOP INT QUIT EXIT 
+
+# rsync will copy permissions to server: folder must be readable by apache group to be published
+chmod 755 $tmpdir
+
+##################################################################################
+
+IMGDIR=$XDT_BUILD/$MACHINE/tmp/deploy/images/$MACHINE
+SDKDIR=$XDT_BUILD/$MACHINE/tmp/deploy/sdk/
+VERSION=
+
+# locate and copy image
+[[ ! -d $IMGDIR ]] && fatal "No images dir in $IMGDIR"
+pushd $IMGDIR 2>/dev/null
+	lnkname=$(find . -type l -name "*.wic.xz")
+	[[ ! -e $lnkname ]] && lnkname=$(find . -type l -name "*.vmdk")
+	[[ ! -e $lnkname ]] && fatal "No image link found in $IMGDIR" || echo "Found image link $lnkname"
+	imgfile=$(readlink $lnkname)
+	[[ ! -f $imgfile ]] && fatal "No image found in $IMGDIR" || echo "Found image file $imgfile"
+
+	bmaplnkname=$(find . -type l -name "*.wic.bmap")
+	[[ -e $bmaplnkname ]] && bmapfile=$(readlink $bmaplnkname) && echo "Found bmap link $bmaplnkname, file $bmapfile"
+
+	# determine version
+	[[ "$imgfile" =~ -([0-9]+).rootfs.wic. ]] && VERSION=${BASH_REMATCH[1]} || fatal "Unable to find image version"
+	info "Detected image version $VERSION"
+
+	mkdir -p $tmpdir/images
+	info "Copying image..."
+	for x in \
+		$imgfile \
+		$bmapfile \
+		build-info \
+	; do
+		[[ -e $x ]] && cp -av $x $tmpdir/images/
+	done
+
+	for x in $tmpdir/images/*.vmdk; do
+		info "Compressing vmdk image..."
+		xz -T0 -v $tmpdir/images/*.vmdk
+		imgfile="${imgfile}.xz"
+		lnkname="${lnkname}.xz"
+	done
+	ln -sfv $imgfile $tmpdir/images/$lnkname
+	[[ -n "$bmaplnkname" ]] && ln -sfv $bmapfile $tmpdir/images/$bmaplnkname
+
+	# firmware
+	fwfiles=$(find  -type f -name "*.srec")
+	if [[ -n "$fwfiles" ]]; then
+		info "Copying firmware for R-car gen3"
+		mkdir -p $tmpdir/firmware
+		cp -av $fwfiles $tmpdir/firmware/
+		cat <<EOF >$tmpdir/firmware/README.firmware
+The files here can be used to flash the $MACHINE board firmware.
+
+Full procedure is detailed here depending on the board:
+* for M3: https://elinux.org/R-Car/Boards/M3SK#Flashing_firmware
+* for H3: https://elinux.org/R-Car/Boards/H3SK#Flashing_firmware
+EOF
+	fi
+popd 2>/dev/null
+
+# locate and copy SDK
+[[ ! -d $SDKDIR ]] && warning "No SDK dir in $SDKDIR"
+pushd $SDKDIR 2>/dev/null
+	sdkfile=$(find . -type f -name "poky-*.sh")
+	if [[ ! -f $sdkfile ]]; then
+		warning "Unable to find SDK file in $SDKDIR"
+	else
+		mkdir -p $tmpdir/sdk
+		info "Copying SDK..."
+		cp -av * $tmpdir/sdk/
+		ln -sfv $sdkfile $tmpdir/sdk/agl-sdk-latest.sh
+	fi
+popd 2>/dev/null
+
+# doc
+for ext in $MACHINE.html generic.html; do
+	docfiles=$(find $SCRIPTDIR/doc -name "*.$ext")
+	[[ -n "$docfiles" ]] && {
+		info "Copying doc files"
+		for x in $docfiles; do
+			dst=$(basename $x .$ext).html
+			[[ ! -e $tmpdir/$dst ]] && cp -av $x $tmpdir/$dst
+		done
+	}
+done
+
+# generate checksums
+info "Generating checksums..."
+pushd $tmpdir 2>/dev/null
+sha256sum $(find . -type f) >files.sha256
+popd 2>/dev/null
+
+if [[ -n "$dryrun" ]]; then
+	warning "DRY RUN ENABLED"
+	pushd $tmpdir 2>/dev/null
+	ls -alR
+	popd 2>/dev/null
+else
+	[[ -z "$VERSION" ]] && fatal "Invalid build version"
+
+	# create remote dir
+	MACDIR=$SERVER_DIR/$MACHINE
+	DESTDIR=$MACDIR/$VERSION
+
+	info "Creating remote dir $DESTDIR/"
+	ssh $SERVER mkdir -p $DESTDIR
+
+	# send files
+	RSYNCPATH=$SERVER:$DESTDIR
+	rsync -Pav --delete $tmpdir/ $RSYNCPATH/
+
+	# create links on server
+	CMD="ln -snfv $DESTDIR $MACDIR/latest"
+	CMD="$CMD; rm -f $MACDIR/latest_is_*"
+	CMD="$CMD; echo $VERSION >$MACDIR/latest.txt"
+
+	ssh $SERVER "$CMD"
+
+	info "Image successfully pushed to: http://iot.bzh$SERVER_DIR/$VERSION"
+fi
