@@ -12,10 +12,11 @@ MACHINE=
 
 SERVER_PRIVATE=ein@ein
 SERVER_PRIVATE_DIR=/data/custom-builds
+DOWNLOAD_PRIVATE_URL=ein::custom  # FLAVOUR/MACHINE/VERSION
 
 SERVER_PUBLIC=apache@vm-www
 SERVER_PUBLIC_DIR=/download/public/$(date +%Y)/AGL_Images
-
+DOWNLOAD_PUBLIC_URL=https://\${CREDENTIALS}iot.bzh/$SERVER_PUBLIC_DIR
 
 stdout_in_terminal=0
 [[ -t 1 ]] && stdout_in_terminal=1
@@ -67,12 +68,13 @@ Options:
    -f|--flavour: set flavour manually (default: autodetected from dir name)
    -d|--dir: server dir
       ex: /download/public/$(date +%Y)/AGL_Images/
+   -u|--url: set download url
    -p|--public: use public server by default (may be overriden by -s)
 EOF
 }
 
 function __parseopts() {
-   local opts="-o m:,s:,f:,d:,p,n,h --long machine:,server:,flavour:,dir:,public,dryrun,help" tmp
+   local opts="-o m:,s:,f:,d:,u:,p,n,h --long machine:,server:,flavour:,dir:,url:,public,dryrun,help" tmp
    tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
       tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
       error $tmp; __usage; exit 1;
@@ -88,6 +90,7 @@ function __parseopts() {
          -n|--dryrun)    dryrun=1; shift;;
          -p|--public)    PUBLIC=1; shift;;
 		 -f|--flavour)   FLAVOUR=$2; shift 2;;
+		 -u|--url)       DOWNLOAD_URL=$2; shift 2;;
          --)             shift; break;;
          *)              error "Internal error"; exit 56;;
       esac
@@ -97,6 +100,7 @@ function __parseopts() {
 __parseopts "$@"
 
 [[ -z "$MACHINE" ]] && { error "Invalid machine"; __usage; exit 2; }
+[[ -z "$FLAVOUR" ]] && { error "Invalid flavour"; __usage; exit 2; }
 
 if [[ -z "$SERVER" ]]; then
 	case "$PUBLIC" in
@@ -107,12 +111,18 @@ fi
 if [[ -z "$SERVER_DIR" ]]; then
 	case "$PUBLIC" in
 		yes|1|true) SERVER_DIR=$SERVER_PUBLIC_DIR;;
-		*) SERVER_DIR=$SERVER_PRIVATE_DIR/$FLAVOUR;;
+		*) SERVER_DIR=$SERVER_PRIVATE_DIR;;
+	esac
+fi
+if [[ -z "$DOWNLOAD_URL" ]]; then
+	case "$PUBLIC" in
+		yes|1|true) DOWNLOAD_URL=$DOWNLOAD_PUBLIC_URL;;
+		*) DOWNLOAD_URL=$DOWNLOAD_PRIVATE_URL;;
 	esac
 fi
 
 info "Using machine $MACHINE"
-info "Destination will be $SERVER:$SERVER_DIR/$MACHINE"
+info "Destination will be $SERVER:$SERVER_DIR/$FLAVOUR/$MACHINE/<image_version>"
 
 tmpdir=$(mktemp -d /tmp/$MYNAME.XXXXXX)
 trap "echo 'cleaning tempdir $tmpdir'; rm -rf $tmpdir" STOP INT QUIT EXIT 
@@ -152,9 +162,9 @@ pushd $IMGDIR 2>/dev/null
 		[[ -e $x ]] && cp -av $x $tmpdir/images/
 	done
 
-	for x in $tmpdir/images/*.vmdk; do
-		info "Compressing vmdk image..."
-		xz -T0 -v $tmpdir/images/*.vmdk
+	for x in $(ls $tmpdir/images/*.{vmdk,ext4} 2>/dev/null); do
+		info "Compressing images..."
+		xz -T0 -v $x
 		imgfile="${imgfile}.xz"
 		lnkname="${lnkname}.xz"
 	done
@@ -203,6 +213,135 @@ for ext in $MACHINE.html generic.html; do
 	}
 done
 
+# compute destination directories
+MACDIR=$SERVER_DIR/$FLAVOUR/$MACHINE
+DESTDIR=$MACDIR/$VERSION
+
+# download script
+if [[ -n "$DOWNLOAD_URL" ]]; then
+	info "Generating download script..."
+	pushd $tmpdir 2>/dev/null
+
+	script="download-snapshot.sh"
+	cat <<'EOF' >$script
+#!/bin/bash
+
+set -e
+
+function info() { echo "$@" >&2; }
+function error() { echo "ERROR: $@" >&2; }
+EOF
+
+	cat <<EOF >>$script
+DOWNLOAD_URL=$DOWNLOAD_URL
+MACHINE=$MACHINE
+VERSION=$VERSION
+FLAVOUR=$FLAVOUR
+
+EOF
+
+	cat <<'EOF' >>$script
+function usage() {
+	cat <<EOU >&2
+Usage: download-snapshot [options]
+   -m|--meta: show snapshot metadata (machine, flavour, version)
+   -d|--destination: set destionation dir (default: .)
+   -s|--sdk: download only the SDK
+   -i|--images: download only the images
+   -h|--help: this help
+
+To execute this script directly from URL, run:
+# curl -sL http://...../download-snapshot.sh | bash -s -- [arguments]
+EOU
+EOF
+
+if [[ "$DOWNLOAD_URL" =~ \{CREDENTIALS\} ]]; then
+	cat <<'EOF' >>$script
+		info "-------------- IMPORTANT ---------------------------"
+		info "Downloading may require credentials"
+		info "They can be specified by running prior to execution:"
+		info "   export CREDENTIALS=\"user:password@\""
+		info "----------------------------------------------------"
+EOF
+fi
+
+	cat <<'EOF' >>$script
+}
+TEMP=$(getopt -o md:asih --long meta,destination:,all,sdk,images,help -n download-snapshot.sh -- "$@")
+[[ $? != 0 ]] && { usage; exit 1; }
+eval set -- "$TEMP"
+
+ALL=1
+IMAGES=0
+SDK=0
+DEST=.
+
+while true; do
+	case "$1" in
+		-m|--meta) SHOWMETA=1; shift;;
+		-d|--destination) DEST=$2; shift 2;;
+		-s|--sdk) ALL=0; SDK=1; shift;;
+		-i|--images) ALL=0; IMAGES=1; shift;;
+		-h|--help) HELP=1; shift ;;
+		--) shift; break;;
+		*) error "Internal error"; exit 1;;
+	esac
+done
+
+[[ "$HELP" == 1 ]] && { usage; exit 1; }
+if [[ "$SHOWMETA" == 1 ]]; then
+	cat <<EOM
+MACHINE=$MACHINE
+VERSION=$VERSION
+FLAVOUR=$FLAVOUR
+DOWNLOAD_URL=$DOWNLOAD_URL
+EOM
+	exit 1
+fi
+[[ "$ALL" == 1 ]] && { IMAGES=1; SDK=1; }
+
+info "Using destination dir: $DEST/$FLAVOUR/$MACHINE/$VERSION"
+mkdir -p $DEST/$FLAVOUR/$MACHINE/$VERSION
+pushd $DEST/$FLAVOUR/$MACHINE/$VERSION
+EOF
+
+	if [[ "$DOWNLOAD_URL" =~ ^http ]]; then
+		# get all the files
+		for x in $(find . -type f) ./files.sha256; do
+			x=${x#./} # remove leading ./
+
+			cond=""
+			econd=""
+
+			if [[ $x =~ ^sdk/ ]]; then
+				cond="if [[ \"\$SDK\" == 1 ]]; then"
+				econd="fi"
+			elif [[ $x =~ ^images/ ]]; then
+				cond="if [[ \"\$IMAGES\" == 1 ]]; then"
+				econd="fi"
+			fi
+			cat <<EOF >>$script
+$cond
+which wget >/dev/null 2>&1 || { error "Unable to find command wget. Please install package 'wget'."; exit 2; }
+mkdir -p $(dirname $x)
+wget -O $x \$DOWNLOAD_URL/\$FLAVOUR/\$MACHINE/\$VERSION/$x
+$econd
+EOF
+		done
+	else
+		# assume rsync folder
+	cat <<EOF >>$script
+which rsync >/dev/null 2>&1 || { error "Unable to find command rsync. Please install package 'rsync'."; exit 2; }
+opts=""
+[[ "\$SDK" == 0 ]] && opts="\$opts --exclude=sdk/"
+[[ "\$IMAGES" == 0 ]] && opts="\$opts --exclude=images/"
+rsync -Pa \$opts \$DOWNLOAD_URL/\$FLAVOUR/\$MACHINE/\$VERSION/ ./
+EOF
+	fi
+
+	popd 2>/dev/null
+fi
+
 # generate checksums
 info "Generating checksums..."
 pushd $tmpdir 2>/dev/null
@@ -218,9 +357,6 @@ else
 	[[ -z "$VERSION" ]] && fatal "Invalid build version"
 
 	# create remote dir
-	MACDIR=$SERVER_DIR/$MACHINE
-	DESTDIR=$MACDIR/$VERSION
-
 	info "Creating remote dir $DESTDIR/"
 	ssh $SERVER mkdir -p $DESTDIR
 
@@ -229,11 +365,11 @@ else
 	rsync -Pav --delete $tmpdir/ $RSYNCPATH/
 
 	# create links on server
-	CMD="ln -snfv $DESTDIR $MACDIR/latest"
+	CMD="ln -snfv $(basename $DESTDIR) $MACDIR/latest"
 	CMD="$CMD; rm -f $MACDIR/latest_is_*"
 	CMD="$CMD; echo $VERSION >$MACDIR/latest.txt"
 
 	ssh $SERVER "$CMD"
 
-	info "Image successfully pushed to: http://iot.bzh$SERVER_DIR/$VERSION"
+	info "Images successfully pushed to: $RSYNCPATH"
 fi
