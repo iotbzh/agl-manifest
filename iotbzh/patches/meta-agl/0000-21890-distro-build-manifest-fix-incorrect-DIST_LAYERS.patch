@@ -1,0 +1,36 @@
+From 8611adeb40fcfe033d687fbc02f8699e26e9c49d Mon Sep 17 00:00:00 2001
+From: Stephane Desneux <stephane.desneux@iot.bzh>
+Date: Tue, 16 Jul 2019 16:12:35 +0000
+Subject: [PATCH] distro-build-manifest: fix incorrect DIST_LAYERS
+
+Using repo tool, a .repo subfolder is created beside the cloned git repositories.
+It contains also some git repositories (handled by repo tool).
+But when enumerating the layers, those extra ".repo/xxxx" git repositories must
+be ignored to get a consistent signature on layers.
+
+This patch excludes hidden folders (starting by '.') from the search.
+
+Bug-AGL: SPEC-2648
+
+Change-Id: Ibee41d4efff0898d1bf67ab661ccdf70729b6211
+Signed-off-by: Stephane Desneux <stephane.desneux@iot.bzh>
+---
+ scripts/distro-manifest-generator.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/distro-manifest-generator.sh b/scripts/distro-manifest-generator.sh
+index c6f82b0..8ce6a02 100755
+--- a/scripts/distro-manifest-generator.sh
++++ b/scripts/distro-manifest-generator.sh
+@@ -155,7 +155,7 @@ function _getgitmanifest() {
+ 
+ 	local gitrepo gitrev metagitdir sep=""
+ 	DIST_LAYERS=""
+-	for metagitdir in $(find $DIST_METADIR -maxdepth 2 -type d -exec test -d "{}/.git" \; -print -prune); do
++	for metagitdir in $(find $DIST_METADIR -maxdepth 2 -type d \( -not -path '*/.*' \) -exec test -d "{}/.git" \; -print -prune); do
+ 		gitrepo=$($REALPATH -Ls $metagitdir --relative-to=$DIST_METADIR)
+ 		pushd $DIST_METADIR/$gitrepo &>/dev/null && {
+ 			gitrev=$( { $GIT describe --long --dirty --always 2>/dev/null || echo "unknown_revision"; } | tr ' \t' '__' )
+-- 
+2.1.4
+

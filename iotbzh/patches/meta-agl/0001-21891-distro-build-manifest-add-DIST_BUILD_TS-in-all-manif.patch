@@ -1,0 +1,122 @@
+From d90dd1a4aa6fb62a69c74e9e824977351ef9f8c4 Mon Sep 17 00:00:00 2001
+From: Stephane Desneux <stephane.desneux@iot.bzh>
+Date: Tue, 16 Jul 2019 16:39:48 +0000
+Subject: [PATCH] distro-build-manifest: add DIST_BUILD_TS in all manifests
+
+The build timestamp is added to build manifests deployed in target images and SDK.
+
+Also, this patch adds a new option '-t|--timestamp' to distro-manifest-generator.sh
+to let the recipe pass the same timestamp as the one used for the image suffix
+(in Yocto 2.6/Thud, DATETIME is used). So DIST_BUILD_TS should have the same value
+as the image version suffix.
+
+Bug-AGL: SPEC-2649
+
+Change-Id: I2a9d11b2ce59753bca31ebb8e82d46c224110d68
+Signed-off-by: Stephane Desneux <stephane.desneux@iot.bzh>
+---
+ .../distro-build-manifest/distro-build-manifest.bb         |  6 +++++-
+ scripts/distro-manifest-generator.sh                       | 14 +++++++++-----
+ 2 files changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/meta-agl-profile-core/recipes-core/distro-build-manifest/distro-build-manifest.bb b/meta-agl-profile-core/recipes-core/distro-build-manifest/distro-build-manifest.bb
+index a3b3412..823cc28 100644
+--- a/meta-agl-profile-core/recipes-core/distro-build-manifest/distro-build-manifest.bb
++++ b/meta-agl-profile-core/recipes-core/distro-build-manifest/distro-build-manifest.bb
+@@ -47,6 +47,7 @@ python do_compilestep1 () {
+ 
+ do_compilestep2 () {
+     rc=99
++    timestamp=${DATETIME}
+     outfile=${B}/build-info
+     if [ -x "${DISTRO_MANIFEST_GENERATOR}" -a -f "${DISTRO_SETUP_MANIFEST}" ]; then
+ 		rc=0
+@@ -57,7 +58,7 @@ do_compilestep2 () {
+ 				ext=""
+ 			fi
+ 			for mode in deploy target sdk; do
+-				${DISTRO_MANIFEST_GENERATOR} -m $mode -f $format -s ${B}/bbinfo-${mode} ${DISTRO_SETUP_MANIFEST} >${outfile}-${mode}${ext}
++				${DISTRO_MANIFEST_GENERATOR} -m $mode -f $format -t $timestamp -s ${B}/bbinfo-${mode} ${DISTRO_SETUP_MANIFEST} >${outfile}-${mode}${ext}
+ 				rc=$?
+ 				if [ $rc -ne 0 ]; then
+ 					break
+@@ -91,6 +92,9 @@ do_compilestep1[vardeps] += " ${BUILD_MANIFEST_FIELDS_DEPLOY}"
+ do_compilestep1[vardeps] += " ${BUILD_MANIFEST_FIELDS_TARGET}"
+ do_compilestep1[vardeps] += " ${BUILD_MANIFEST_FIELDS_SDK}"
+ 
++# avoid errors "ERROR: When reparsing .../distro-build-manifest/distro-build-manifest.bb.do_compile, the basehash value changed from .... to .... . The metadata is not deterministic and this needs to be fixed."
++do_compilestep2[vardepsexclude] = "DATETIME"
++
+ # combine the two steps
+ python do_compile() {
+    bb.build.exec_func("do_compilestep1",d)
+diff --git a/scripts/distro-manifest-generator.sh b/scripts/distro-manifest-generator.sh
+index 8ce6a02..c7e8cc3 100755
+--- a/scripts/distro-manifest-generator.sh
++++ b/scripts/distro-manifest-generator.sh
+@@ -31,6 +31,7 @@ manifest=
+ verbose=0
+ format=bash
+ sourcefile=
++timestamp="$(date -u +%Y%m%d_%H%M%S_%Z)"
+ 
+ function info() { echo "$@" >&2; }
+ function error() { echo "$BASH_SOURCE: $@" >&2; }
+@@ -186,11 +187,12 @@ function _getgitmanifest() {
+ 	DIST_BUILD_HASH="F${DIST_FEATURES_MD5:0:8}-L${DIST_LAYERS_MD5:0:8}"
+ 	DIST_BUILD_ID="${DIST_DISTRO_NAME}-${DIST_MACHINE}-F${DIST_FEATURES_MD5:0:8}-L${DIST_LAYERS_MD5:0:8}"
+ 
++
+ 	# compute setup manifest path and build TS
+ 	DIST_SETUP_MANIFEST="$($REALPATH $manifest)"
+ 
+ 	# Manifest build timestamp
+-	DIST_BUILD_TS="$(date -u +%Y%m%d_%H%M%S_%Z)"
++	DIST_BUILD_TS="$timestamp"
+ 
+ 	# what to retain from setup manifest?
+ 	# to generate the full list: cat setup.manifest  | grep = | cut -f1 -d"=" | awk '{printf("%s ",$1);}'
+@@ -202,8 +204,8 @@ function _getgitmanifest() {
+ 	# extra vars not coming from setup.manifest but generated here
+ 	declare -A EXTRA_VARS
+ 	EXTRA_VARS[deploy]="DIST_SETUP_MANIFEST DIST_BUILD_TS DIST_LAYERS DIST_LAYERS_MD5 DIST_BUILD_HASH DIST_BUILD_ID"
+-	EXTRA_VARS[target]="DIST_LAYERS DIST_BUILD_HASH DIST_BUILD_ID"
+-	EXTRA_VARS[sdk]="DIST_LAYERS DIST_BUILD_HASH DIST_BUILD_ID"
++	EXTRA_VARS[target]="DIST_LAYERS DIST_BUILD_HASH DIST_BUILD_ID DIST_BUILD_TS"
++	EXTRA_VARS[sdk]="DIST_LAYERS DIST_BUILD_HASH DIST_BUILD_ID DIST_BUILD_TS"
+ 
+ 	# BITBAKE_VARS may be defined from external file to source (--source arg)
+ 	# this is used to dump extra vars from inside bitbake recipe
+@@ -234,10 +236,11 @@ function getmanifest() {
+ 
+ function __usage() {
+ 	cat <<EOF >&2
+-Usage: $BASH_SOURCE [-v|--verbose] [-f|--format <fmt>] [-m|--mode <mode>] [-s|--source <file>] <setup_manifest_file>
++Usage: $BASH_SOURCE [-v|--verbose] [-f|--format <fmt>] [-t|--timestamp <value>] [-m|--mode <mode>] [-s|--source <file>] <setup_manifest_file>
+    Options:
+       -v|--verbose: generate comments in the output file
+       -s|--source: extra file to source (get extra variables generated from bitbake recipe)
++      -t|--timestamp: set build timestamp (default: current date - may not be the same ts as bitbake)
+       -f|--format: specify output format: 'bash' or 'json'
+       -m|--mode: specify the destination for the generated manifest
+          'deploy' : for the tmp/deploy/images/* directories
+@@ -250,7 +253,7 @@ EOF
+ 
+ set -e
+ 
+-tmp=$(getopt -o h,v,m:,f:,s: --long help,verbose,mode:,format:,source: -n "$BASH_SOURCE" -- "$@") || {
++tmp=$(getopt -o h,v,m:,f:,t:,s: --long help,verbose,mode:,format:,timestamp:,source: -n "$BASH_SOURCE" -- "$@") || {
+ 	error "Invalid arguments."
+ 	__usage
+ 	exit 1
+@@ -263,6 +266,7 @@ while true; do
+ 		-v|--verbose) verbose=1; shift ;;
+ 		-f|--format) format=$2; shift 2;;
+ 		-m|--mode) mode=$2; shift 2;;
++		-t|--timestamp) timestamp=$2; shift 2;;
+ 		-s|--source) sourcefile=$2; shift 2;;
+ 		--) shift; break;;
+ 		*) fatal "Internal error";;
+-- 
+2.1.4
+
