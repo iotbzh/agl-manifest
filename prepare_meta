@@ -403,7 +403,7 @@ function checkout_gits() {
 	patchdir=$(dirname $(realpath $srcfile))/patches
 	if [[ -d $patchdir ]]; then 
 		info "=== apply patches from $patchdir"
-		for file in $(find $patchdir -name "*.patch" 2>/dev/null); do
+		for file in $(find $patchdir -name "*.patch" 2>/dev/null | sort); do
 			meta=$(dirname $(realpath --relative-to=$patchdir $file))
 
 			log "Patching meta $meta with patch $file"
