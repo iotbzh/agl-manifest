@@ -4,5 +4,5 @@
 origin/sandbox/pmarzin/e3-ebisu=sandbox/pmarzin/e3-ebisu            meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
 
 # IoT.bzh
-origin/next=next    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
+origin/master=master    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
 #origin/sandbox/ronan/next=sandbox/ronan/next    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
