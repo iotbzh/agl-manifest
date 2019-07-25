@@ -1,0 +1,4 @@
+@include halibut/agl.manifest
+
+# IoT.bzh
+origin/halibut=halibut    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh

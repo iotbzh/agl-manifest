@@ -1,8 +1,8 @@
 # AGL
-origin/master=master		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/master=master		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/halibut=halibut		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/halibut=halibut		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/halibut=halibut		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/halibut=halibut		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
 4cd3a39=thud				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
@@ -13,7 +13,7 @@ aabc30f=thud				external/meta-gplv2            origin=git://git.yoctoproject.org
 8193771=thud				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/master=master	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/halibut=halibut	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 5aecbd9=v3.15.0				bsp/meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 27dadcf=thud				bsp/meta-intel            origin=git://git.yoctoproject.org/meta-intel
 c71d79e=thud				bsp/meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
@@ -22,6 +22,5 @@ f5c9322=thud  				bsp/meta-freescale		  origin=https://git.yoctoproject.org/git/
 8ac86cd=thud  				bsp/meta-qcom             origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
-31dc4e7=thud  				external/meta-security         origin=git://git.yoctoproject.org/meta-security
-
+31dc4e7=thud   				external/meta-security         origin=git://git.yoctoproject.org/meta-security
 
