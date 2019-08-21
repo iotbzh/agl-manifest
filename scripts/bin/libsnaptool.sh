@@ -258,7 +258,7 @@ EOF
 
 # ------------------------------ CLEAN -----------------------------------------
 
-function command_89_clean() {
+function command_88_clean() {
 	local force=0
 
 	function __usage() {
@@ -354,6 +354,45 @@ EOF
 			[[ -d $BB_TOPDIR ]] && mv -v $setupfile $BB_TOPDIR/$oldsetup || rm -fv $setupfile
 		} || info "DRYRUN - not removing $BB_TOPDIR - keeping $setupfile"
 	fi
+	return 0
+}
+
+# ------------------------------ FULLCLEAN -----------------------------------------
+
+function command_89_fullclean() {
+	function __usage() {
+		cat <<EOF >&2
+Usage: $COMMAND [options] 
+   options:
+      -h|--help         : get this help
+EOF
+	}
+
+	local opts="-o h --long help,dryrun" tmp
+	tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>/dev/null) || {
+		tmp=$(getopt $opts -n "$COMMAND" -- "$@" 2>&1 >/dev/null) || true
+		error $tmp; __usage; return 1
+	}
+	eval set -- $tmp
+
+	while true; do	
+		case "$1" in 
+			-h|--help) __usage; return 0;;
+			--) shift; break;;
+			*) fatal "Internal error";;
+		esac
+	done
+
+	folders_umount
+
+	# remove any temp build dir
+	oldstuff=$(ls -d ${BUILD[path]}/* 2>/dev/null)
+	[[ -n "$oldstuff" ]] && {
+		warning "Removing old artifacts"
+		for x in $oldstuff; do warning "   - $x"; done
+		rm -rf ${BUILD[path]}/*
+	}
+
 	return 0
 }
 
