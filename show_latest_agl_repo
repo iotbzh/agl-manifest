@@ -13,4 +13,4 @@ trap "rm -f $tmpout" STOP INT QUIT EXIT ERR
 echo "Using URL: $URL"
 curl -s "$URL" >$tmpout 
 
-$(dirname $0)/repo2manifest $tmpout
+$(dirname $0)/repo2manifest $tmpout | while read a b c; do printf "%-22s %-35s %s\n" "$a" "$b" "$c"; done
