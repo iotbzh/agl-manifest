@@ -250,11 +250,11 @@ function upgrade() {
 			;;
 	esac
 
-	local ans
+	local ans=N
 	if [[ "$JUST_UPGRADE" == "1" ]]; then
 		#  No interactive query if -u|--upgrade specified
 		ans=Y
-	else
+	elif [[ -t 0 ]]; then # only if shell is run from a terminal (~interactive)
 		read -p "Do you want to proceed with upgrade ? [Y/n] " ans
 	fi
 
