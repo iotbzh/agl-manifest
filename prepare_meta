@@ -446,7 +446,7 @@ function call_aglsetup() {
 
 	source $script --version >/dev/null 2>&1 || true
 	if [[ "$(echo -e "$AGLSETUP_VERSION\n$topic_minver" | sort -V | head -n1)" == $topic_minver ]]; then
-		baseopts="$baseopts --topic 'flavour:$FLAVOUR'"
+		baseopts="$baseopts --topic flavour:$FLAVOUR"
 	fi
 
 	# dump how aglsetup will be called
