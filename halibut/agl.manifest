@@ -14,7 +14,7 @@ aabc30f=thud				external/meta-gplv2            origin=git://git.yoctoproject.org
 
 # BSP
 origin/halibut=halibut	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-5aecbd9=v3.15.0				bsp/meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
+f18e57a=v3.19.0				bsp/meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 278f0b5=thud				bsp/meta-intel            origin=git://git.yoctoproject.org/meta-intel
 c71d79e=thud				bsp/meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 f5c9322=thud  				bsp/meta-freescale		  origin=https://git.yoctoproject.org/git/meta-freescale
