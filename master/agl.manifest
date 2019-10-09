@@ -24,4 +24,6 @@ d0a58e8=thud  				bsp/meta-qcom             origin=https://git.yoctoproject.org/
 # Security
 31dc4e7=thud  				external/meta-security         origin=git://git.yoctoproject.org/meta-security
 
+# Virtualization
+7685c7d=iotbzh				external/meta-virtualization	origin=https://git.yoctoproject.org/git/meta-virtualization
 
