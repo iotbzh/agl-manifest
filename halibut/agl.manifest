@@ -5,8 +5,8 @@ origin/halibut=halibut		meta-agl-demo         origin=https://gerrit.automotiveli
 origin/halibut=halibut		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
 
 # Distro
-9b3b907=thud				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-d43a86d=thud				external/poky                  origin=git://git.yoctoproject.org/poky
+446bd61=thud				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+51f6145=thud				external/poky                  origin=git://git.yoctoproject.org/poky
 aabc30f=thud				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
@@ -16,7 +16,7 @@ aabc30f=thud				external/meta-gplv2            origin=git://git.yoctoproject.org
 origin/halibut=halibut	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 e9bf790=v3.21.0				bsp/meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 278f0b5=thud				bsp/meta-intel            origin=git://git.yoctoproject.org/meta-intel
-c71d79e=thud				bsp/meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
+4e5be97=thud				bsp/meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
 f5c9322=thud  				bsp/meta-freescale		  origin=https://git.yoctoproject.org/git/meta-freescale
 2da08ed=thud  				bsp/meta-ti				  origin=https://git.yoctoproject.org/git/meta-ti
 d0a58e8=thud  				bsp/meta-qcom             origin=https://git.yoctoproject.org/git/meta-qcom
