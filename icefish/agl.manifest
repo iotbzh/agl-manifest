@@ -1,9 +1,10 @@
 # AGL
-origin/master=master		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/master=master		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/master=master		meta-agl-cluster-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-cluster-demo
-origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/icefish=icefish		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/icefish=icefish		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/icefish=icefish		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/icefish=icefish		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/icefish=icefish		meta-agl-cluster-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-cluster-demo
+origin/icefish=icefish		meta-agl-telematics-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-telematics-demo
 
 # Distro
 446bd61=thud				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
@@ -14,7 +15,7 @@ aabc30f=thud				external/meta-gplv2            origin=git://git.yoctoproject.org
 1520d5b=thud				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-origin/master=master	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/icefish=icefish	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 e9bf790=v3.21.0				bsp/meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
 278f0b5=thud				bsp/meta-intel            origin=git://git.yoctoproject.org/meta-intel
 4e5be97=thud				bsp/meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
@@ -26,5 +27,5 @@ d0a58e8=thud  				bsp/meta-qcom             origin=https://git.yoctoproject.org/
 31dc4e7=thud  				external/meta-security         origin=git://git.yoctoproject.org/meta-security
 
 # Virtualization
-7685c7d=iotbzh				external/meta-virtualization	origin=https://git.yoctoproject.org/git/meta-virtualization
+7685c7d=thud				external/meta-virtualization	origin=https://git.yoctoproject.org/git/meta-virtualization
 

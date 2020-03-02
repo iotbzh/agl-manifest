@@ -1,30 +1,31 @@
 # AGL
-origin/master=master		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/master=master		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/master=master		meta-agl-cluster-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-cluster-demo
-origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/master=master		meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/master=master		meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/master=master		meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/master=master		meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/master=master		meta-agl-cluster-demo    origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-cluster-demo
+origin/master=master		meta-agl-telematics-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-telematics-demo
 
 # Distro
-446bd61=thud				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-51f6145=thud				external/poky                  origin=git://git.yoctoproject.org/poky
-aabc30f=thud				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+bb65c27=zeus				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+5e1f52e=zeus				external/poky                  origin=git://git.yoctoproject.org/poky
+0f4eecc=zeus				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
-1520d5b=thud				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+a582fd4=zeus				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
 origin/master=master	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-e9bf790=v3.21.0				bsp/meta-rcar	          origin=https://github.com/CogentEmbedded/meta-rcar
-278f0b5=thud				bsp/meta-intel            origin=git://git.yoctoproject.org/meta-intel
-4e5be97=thud				bsp/meta-raspberrypi      origin=git://git.yoctoproject.org/meta-raspberrypi
-f5c9322=thud  				bsp/meta-freescale		  origin=https://git.yoctoproject.org/git/meta-freescale
-727411f=thud  				bsp/meta-ti				  origin=https://git.yoctoproject.org/git/meta-ti
-d0a58e8=thud  				bsp/meta-qcom             origin=https://git.yoctoproject.org/git/meta-qcom
+05b94a3=v3.21.0				bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
+b04e1ed=zeus				bsp/meta-intel             origin=git://git.yoctoproject.org/meta-intel
+85b7558=zeus				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
+610f109=zeus  				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
+19a73c9=zeus  				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
+01df13d=zeus  				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
-31dc4e7=thud  				external/meta-security         origin=git://git.yoctoproject.org/meta-security
+27ddb45=zeus  				external/meta-security     origin=git://git.yoctoproject.org/meta-security
 
 # Virtualization
-7685c7d=iotbzh				external/meta-virtualization	origin=https://git.yoctoproject.org/git/meta-virtualization
+f4262ab=zeus				external/meta-virtualization origin=https://git.yoctoproject.org/git/meta-virtualization
 
