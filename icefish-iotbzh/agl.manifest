@@ -1,0 +1,4 @@
+@include icefish/agl.manifest
+
+# IoT.bzh
+origin/icefish=icefish    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
