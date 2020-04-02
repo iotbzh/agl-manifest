@@ -1,0 +1,90 @@
+#!/bin/bash
+
+set -e
+
+manifest=$1
+branch=$2
+repofile=${3:-default}
+
+usage() {
+	cat <<EOF >&2
+$(basename $BASH_SOURCE) <manifest file> <branch> [repofile=default]
+
+Example: $(basename $BASH_SOURCE) master/agl.manifest master
+EOF
+	exit 1
+}
+
+[[ ! -f $manifest ]] && usage
+[[ -z "$branch" ]] && usage
+
+URL="https://git.automotivelinux.org/AGL/AGL-repo/plain/${repofile}.xml?h=${branch}"
+#URL="https://gerrit.automotivelinux.org/gerrit/gitweb?p=AGL/AGL-repo.git;a=blob_plain;f=${1:-default}.xml;hb=HEAD"
+
+tmpout=$(mktemp /tmp/$(basename $0).XXXXXXXX)
+trap "rm -f $tmpout" STOP INT QUIT EXIT ERR
+
+function info() { echo "$@" >&2; }
+
+info "Using repo URL: $URL"
+curl -s "$URL" >$tmpout 
+
+declare -A repo
+
+while read a b c; do
+	ref=$(echo $a | cut -f1 -d'=')
+	layer=$(basename $b)
+	repo[$layer]=$ref
+done < <($(dirname $0)/repo2manifest $tmpout)
+
+info "Repo: ${#repo[@]} layers loaded"
+#for x in ${!repo[@]}; do 
+#	echo $x=${repo[$x]}
+#done
+
+function parse_manifest() {
+	local manifest=$1
+	local layer
+	local ref
+	sed 's/#.*$//g' <$manifest | awk '/[^[:space:]]+/ { if ($1 == "@include") { for(i=2;i<=NF;i++) { print "INCLUDE " $i}; } else {print "DIR  "$2; for(i=3;i<=NF;i++) { print "REPO "$i}; print "HASH "$1 } }' | while read tag value; do
+		case $tag in
+			DIR) 
+				layer=$(basename $value)
+				;;
+			REPO)
+				name="${value%%=*}"
+				url="${value#*=}"
+				;;
+			HASH)
+				ref="${value%%=*}"
+				locbr="${value#*=}"
+				echo $layer $ref
+				;;
+			INCLUDE)
+				parse_manifest $(dirname $manifest)/$value
+				;;
+		esac
+	done
+}
+
+declare -A mani 
+
+info "Parsing manifest $manifest"
+while read layer ref; do
+	mani[$layer]=$ref
+done < <(parse_manifest $manifest)
+info "Manifest: ${#mani[@]} layers loaded"
+
+	
+info "Differences between $manifest and $branch/$repofile.xml:"
+info "-----------------------------"
+cnt=0
+for l in ${!mani[@]}; do
+	[[ "${mani[$l]}" != "${repo[$l]}" ]] && {
+		printf "%-30s %-30s\n" $l ${repo[$l]}
+		(( cnt++ ))
+	}
+done
+info "-----------------------------"
+info "$cnt differences"
+
