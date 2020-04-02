@@ -19,8 +19,8 @@ origin/master=master	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automo
 05b94a3=v3.21.0				bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
 b04e1ed=zeus				bsp/meta-intel             origin=git://git.yoctoproject.org/meta-intel
 85b7558=zeus				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
-610f109=zeus  				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
-19a73c9=zeus  				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
+db6cdd2=zeus  				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
+eeb453a=zeus  				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
 01df13d=zeus  				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
