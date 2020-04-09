@@ -1,18 +1,32 @@
 # AGL
-origin/sandbox/sdesneux/next=sdx-next	meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/master=master		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
-origin/master=master		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
-origin/master=master		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/next=next		meta-agl              origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/next=next		meta-agl-extra        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/next=next		meta-agl-demo         origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/next=next		meta-agl-devel        origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/next=next		meta-agl-cluster-demo    origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-cluster-demo
+origin/next=next		meta-agl-telematics-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-telematics-demo
 
 # Distro
-bd68035=master		meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-963ab2c=master		poky                  origin=git://git.yoctoproject.org/poky
-aabc30f=master		meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+origin/dunfell=dunfell	external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+origin/dunfell=dunfell	external/poky                  origin=git://git.yoctoproject.org/poky
+origin/dunfell=dunfell	external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+
+# Graphic
+origin/dunfell=dunfell	external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
-828ff7d8=master		meta-intel            origin=git://git.yoctoproject.org/meta-intel
+origin/master=master	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+origin/zeus-Yocto-v3.21.0=v3.21.0	bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
+origin/master=master		bsp/meta-intel             origin=git://git.yoctoproject.org/meta-intel
+origin/dunfell=dunfell		bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
+origin/master=master		bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
+origin/master=master		bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
+origin/master=master		bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
-48ccc9a=master		meta-security         origin=git://git.yoctoproject.org/meta-security
-7110b50=master		meta-security-isafw   origin=https://github.com/01org/meta-security-isafw
+origin/dunfell=dunfell		external/meta-security         origin=git://git.yoctoproject.org/meta-security
+
+# Virtualization
+origin/master=master		external/meta-virtualization origin=https://git.yoctoproject.org/git/meta-virtualization
+
 
