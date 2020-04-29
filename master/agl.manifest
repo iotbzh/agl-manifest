@@ -7,25 +7,25 @@ origin/master=master		meta-agl-cluster-demo    origin=https://gerrit.automotivel
 origin/master=master		meta-agl-telematics-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-telematics-demo
 
 # Distro
-bb65c27=zeus				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-5e1f52e=zeus				external/poky                  origin=git://git.yoctoproject.org/poky
-0f4eecc=zeus				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+b1aa5f7=dunfell				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+a44b8d2=dunfell				external/poky                  origin=git://git.yoctoproject.org/poky
+60b251c=dunfell				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 
 # Graphic
-a582fd4=zeus				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+ac7514e=dunfell				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
 origin/master=master	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
 05b94a3=v3.21.0				bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
-b04e1ed=zeus				bsp/meta-intel             origin=git://git.yoctoproject.org/meta-intel
-85b7558=zeus				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
-db6cdd2=zeus  				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
-eeb453a=zeus  				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
-01df13d=zeus  				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
+4162501=dunfell				bsp/meta-intel             origin=git://git.yoctoproject.org/meta-intel
+eaae982=dunfell				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
+07352f3=dunfell				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
+08b6034=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
+23a4efb=dunfell				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
-27ddb45=zeus  				external/meta-security     origin=git://git.yoctoproject.org/meta-security
+f1ca0f9=dunfell				external/meta-security     origin=git://git.yoctoproject.org/meta-security
 
 # Virtualization
-f4262ab=zeus				external/meta-virtualization origin=https://git.yoctoproject.org/git/meta-virtualization
+b24e0b8=dunfell				external/meta-virtualization origin=https://git.yoctoproject.org/git/meta-virtualization
 
