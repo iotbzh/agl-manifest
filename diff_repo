@@ -74,16 +74,20 @@ while read layer ref; do
 	mani[$layer]=$ref
 done < <(parse_manifest $manifest)
 info "Manifest: ${#mani[@]} layers loaded"
+#for x in ${!mani[@]}; do 
+#	echo $x=${mani[$x]}
+#done
+
 
 	
 info "Differences between $manifest and $branch/$repofile.xml:"
 info "-----------------------------"
 cnt=0
 for l in ${!mani[@]}; do
-	[[ "${mani[$l]}" != "${repo[$l]}" ]] && {
-		printf "%-30s %-30s\n" $l ${repo[$l]}
+	[[ "${mani[$l]}" != "${repo[$l]}" ]] && { 
+		printf "%-30s %-30s %-30s\n" $l ${repo[$l]} "(was: ${mani[$l]})"
 		(( cnt++ ))
-	}
+	} || true
 done
 info "-----------------------------"
 info "$cnt differences"
