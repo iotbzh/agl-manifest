@@ -11,6 +11,7 @@ b1aa5f7=dunfell				external/meta-openembedded     origin=git://git.openembedded.
 a44b8d2=dunfell				external/poky                  origin=git://git.yoctoproject.org/poky
 60b251c=dunfell				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 e2ef0dd=dunfell				external/meta-python2		   origin=https://git.openembedded.org/meta-python2
+9e62214=dunfell             external/meta-iot-cloud        origin=https://github.com/intel-iot-devkit/meta-iot-cloud
 
 # Graphic
 ac7514e=dunfell				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
