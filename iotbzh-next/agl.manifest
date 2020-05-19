@@ -1,0 +1,8 @@
+@include master/agl.manifest
+
+# next build for BSP3.21+YP3.1
+origin/sandbox/sdesneux/SPEC-3380=SPEC-3380		meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/sandbox/sdesneux/SPEC-3380=SPEC-3380	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
+
+# IoT.bzh
+origin/master=master    meta-iot-bzh      origin=https://github.com/iotbzh/meta-iot-bzh
