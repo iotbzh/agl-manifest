@@ -7,27 +7,26 @@ origin/master=master		meta-agl-cluster-demo    origin=https://gerrit.automotivel
 origin/master=master		meta-agl-telematics-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-telematics-demo
 
 # Distro
-b1aa5f7=dunfell				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-a44b8d2=dunfell				external/poky                  origin=git://git.yoctoproject.org/poky
+8a72d29=dunfell				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+febbe29=dunfell				external/poky                  origin=git://git.yoctoproject.org/poky
 60b251c=dunfell				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 e2ef0dd=dunfell				external/meta-python2		   origin=https://git.openembedded.org/meta-python2
 9e62214=dunfell             external/meta-iot-cloud        origin=https://github.com/intel-iot-devkit/meta-iot-cloud
 
 # Graphic
-ac7514e=dunfell				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+fdd1951=dunfell				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
 
 # BSP
 origin/master=master	    bsp/meta-renesas-rcar-gen3 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-renesas-rcar-gen3
-05b94a3=v3.21.0				bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
-4162501=dunfell				bsp/meta-intel             origin=git://git.yoctoproject.org/meta-intel
+0206520=v3.21.0				bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
 eaae982=dunfell				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
 08491c8=dunfell				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
 a83fb91=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
-23a4efb=dunfell				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
+f36ade4=dunfell				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
-f1ca0f9=dunfell				external/meta-security     origin=git://git.yoctoproject.org/meta-security
+217fadb=dunfell				external/meta-security     origin=git://git.yoctoproject.org/meta-security
 
 # Virtualization
-b24e0b8=dunfell				external/meta-virtualization origin=https://git.yoctoproject.org/git/meta-virtualization
+5c2de3d=dunfell				external/meta-virtualization origin=https://git.yoctoproject.org/git/meta-virtualization
 
