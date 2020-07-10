@@ -109,8 +109,8 @@ Options:
       available options: same as --enable
    -t|--target <name>
       target platform
-      default: porter
-      valid options: porter, m3ulcb, h3ulcb, ebisu, salvator, m3ulcb-kingfisher, intel-corei7-64, qemux86, qemux86-64, wandboard ...
+      default: m3ulcb
+      valid options: m3ulcb, h3ulcb, ebisu, salvator, m3ulcb-kf, h3ulcb-kf, qemux86-64, raspberrypi4 ...
    -u|--upgrade
       Check for and perform an update to the script without prompting user, then exit.
    -h|--help
@@ -475,7 +475,7 @@ EOF
 
 pushd $DSTDIR/meta >/dev/null #{
 	case "$TARGET" in
-		porter|m3ulcb|h3ulcb|ebisu|salvator|m3ulcb-kingfisher)
+		porter|m3*|h3*|ebisu)
 			if [[ -d "$PROPRIETARY_RENESAS_DIR" ]]; then
 				log "Using proprietary Renesas drivers for target $TARGET"
 				# cleanup spurious temp dir if any (may contain partially extracted files which lead to errors in rcar-genX setup scripts)

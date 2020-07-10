@@ -86,9 +86,11 @@ SRCDIR=$(realpath ${SRCDIR})
 [[ ! -d "${DSTDIR}" ]] && fatal "Invalid destination directory $DSTDIR"
 DSTDIR=$(realpath ${DSTDIR})
 
-
-IMGDIR="$SRCDIR/images/${MACHINE}/"
-[[ ! -d "$IMGDIR" ]] && fatal "No image dir found at $IMGDIR" 
+IMGDIR=
+for x in $SRCDIR/images/*; do
+	[[ -d $x ]] && { IMGDIR=$x; break; }
+done
+[[ -z "$IMGDIR" ]] && fatal "No image dir found at $IMGDIR" 
 
 # locate image
 pushd $IMGDIR &>/dev/null

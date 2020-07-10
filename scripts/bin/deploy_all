@@ -17,7 +17,7 @@
 # load libzh
 . $(dirname $BASH_SOURCE)/libzh.sh
 
-BUILD_MACHINES="m3ulcb h3ulcb qemux86-64 raspberrypi3 intel-corei7-64"
+BUILD_MACHINES="m3ulcb m3ulcb-kf h3ulcb h3ulcb-kf qemux86-64 raspberrypi3 raspberry-pi4 intel-corei7-64"
 
 # source conf file used by build_all_boards
 CONF=build_all_boards.conf
