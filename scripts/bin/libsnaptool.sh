@@ -745,8 +745,12 @@ EOF
 	# locate image 
 	local imgfile imgdir
 	[[ "$doimage" == "y" ]] && {
-		imgdir="$BB_DEPLOY/images/${MACHINE}/"
-		[[ ! -d "$imgdir" ]] && {
+		imgdir=
+		for x in $BB_DEPLOY/images/*; do
+			[[ -d $x ]] && { imgdir=$x; break; }
+		done
+
+		[[ -z "$imgdir" ]] && {
 			error "No image dir found at $imgdir"
 			doimage=n
 		}
@@ -829,7 +833,7 @@ EOF
 
 	# copy build log
 	local logfile
-	for x in $BB_BUILD/tmp/log/cooker/$MACHINE/console-latest.log; do
+	for x in $BB_BUILD/tmp/log/cooker/*/console-latest.log; do
 		logfile=build_$(basename $(dirname $x)).log
 		info "Copying build log $x to $destdir/$logfile"
 		cp $x $destdir/$logfile
