@@ -21,7 +21,7 @@ fdd1951=dunfell				external/meta-qt5              origin=https://github.com/meta
 0206520=dunfell-bsp3.21		bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
 f20ccfa=dunfell				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
 be4bd46=dunfell				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
-a83fb91=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
+f2b2b20=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
 8f3dc07=dunfell				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
