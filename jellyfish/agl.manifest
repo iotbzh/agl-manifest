@@ -1,0 +1,32 @@
+# AGL
+origin/jellyfish=jellyfish	meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/jellyfish=jellyfish	meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
+origin/jellyfish=jellyfish	meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/jellyfish=jellyfish	meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+origin/jellyfish=jellyfish	meta-agl-cluster-demo    origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-cluster-demo
+origin/jellyfish=jellyfish	meta-agl-telematics-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-telematics-demo
+
+# Distro
+cc6fc6b=dunfell				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+4e931b1=dunfell				external/poky                  origin=git://git.yoctoproject.org/poky
+60b251c=dunfell				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+e2ef0dd=dunfell				external/meta-python2		   origin=https://git.openembedded.org/meta-python2
+9e62214=dunfell             external/meta-iot-cloud        origin=https://github.com/intel-iot-devkit/meta-iot-cloud
+
+# Graphic
+0e7015f=dunfell				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+
+# BSP
+6c12c04=dunfell-bsp3.21		bsp/meta-renesas           origin=https://github.com/renesas-rcar/meta-renesas
+0dad8fb=dunfell-bsp3.21		bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
+89ca43f=dunfell				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
+6bc3d88=dunfell				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
+f2b2b20=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
+2778e16=dunfell				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
+
+# Security
+982a29b=dunfell				external/meta-security     origin=git://git.yoctoproject.org/meta-security
+
+# Virtualization
+ffd787f=dunfell				external/meta-virtualization origin=https://git.yoctoproject.org/git/meta-virtualization
+
