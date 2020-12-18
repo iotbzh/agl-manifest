@@ -1,10 +1,7 @@
 # AGL
 origin/master=master		meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
-origin/master=master		meta-agl-extra           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-extra
 origin/master=master		meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
 origin/master=master		meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
-origin/master=master		meta-agl-cluster-demo    origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-cluster-demo
-origin/master=master		meta-agl-telematics-demo origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-telematics-demo
 
 # Distro
 f2d02cb=dunfell				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
@@ -18,10 +15,10 @@ e2ef0dd=dunfell				external/meta-python2		   origin=https://git.openembedded.org
 
 # BSP
 ebacfd2=dunfell-bsp4.1 		bsp/meta-renesas           origin=https://github.com/renesas-rcar/meta-renesas
-b53f083=dunfell-bsp4.1 		bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
+f3ecbd1=dunfell-bsp4.1 		bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
 89ca43f=dunfell				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
 46f54fd=dunfell				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
-f2b2b20=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
+07209f7=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
 2778e16=dunfell				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
 
 # Security
