@@ -16,7 +16,7 @@ e2ef0dd=dunfell				external/meta-python2		   origin=https://git.openembedded.org
 # BSP
 ebacfd2=dunfell-bsp4.1 		bsp/meta-renesas           origin=https://github.com/renesas-rcar/meta-renesas
 f3ecbd1=dunfell-bsp4.1 		bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
-89ca43f=dunfell				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
+9879932=dunfell				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
 46f54fd=dunfell				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
 07209f7=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
 2778e16=dunfell				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
