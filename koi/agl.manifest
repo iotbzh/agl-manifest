@@ -1,0 +1,29 @@
+# AGL
+origin/koi=koi				meta-agl                 origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl
+origin/koi=koi				meta-agl-demo            origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-demo
+origin/koi=koi				meta-agl-devel           origin=https://gerrit.automotivelinux.org/gerrit/AGL/meta-agl-devel
+
+# Distro
+5bba794=dunfell				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
+e32d854=dunfell				external/poky                  origin=git://git.yoctoproject.org/poky
+60b251c=dunfell				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
+07dca1e=dunfell				external/meta-python2		   origin=https://git.openembedded.org/meta-python2
+4378d7c=dunfell             external/meta-iot-cloud        origin=https://github.com/intel-iot-devkit/meta-iot-cloud
+
+# Graphic
+0d8eb95=dunfell				external/meta-qt5              origin=https://github.com/meta-qt5/meta-qt5.git
+
+# BSP
+ebacfd2=dunfell-bsp4.1 		bsp/meta-renesas           origin=https://github.com/renesas-rcar/meta-renesas
+f3ecbd1=dunfell-bsp4.1 		bsp/meta-rcar	           origin=https://github.com/CogentEmbedded/meta-rcar
+9879932=dunfell				bsp/meta-raspberrypi       origin=git://git.yoctoproject.org/meta-raspberrypi
+46f54fd=dunfell				bsp/meta-freescale		   origin=https://git.yoctoproject.org/git/meta-freescale
+07209f7=dunfell				bsp/meta-ti				   origin=https://git.yoctoproject.org/git/meta-ti
+2778e16=dunfell				bsp/meta-qcom              origin=https://git.yoctoproject.org/git/meta-qcom
+
+# Security
+c74cc97=dunfell				external/meta-security     origin=git://git.yoctoproject.org/meta-security
+
+# Virtualization
+92cd346=dunfell				external/meta-virtualization origin=https://git.yoctoproject.org/git/meta-virtualization
+
