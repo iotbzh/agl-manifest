@@ -5,7 +5,7 @@ origin/master=master		meta-agl-devel           origin=https://gerrit.automotivel
 
 # Distro
 85f8047=dunfell				external/meta-openembedded     origin=git://git.openembedded.org/meta-openembedded
-2a848e9=dunfell				external/poky                  origin=git://git.yoctoproject.org/poky
+9c21861=dunfell				external/poky                  origin=git://git.yoctoproject.org/poky
 60b251c=dunfell				external/meta-gplv2            origin=git://git.yoctoproject.org/meta-gplv2
 b901080=dunfell				external/meta-python2		   origin=https://git.openembedded.org/meta-python2
 5431f91=dunfell             external/meta-iot-cloud        origin=https://github.com/intel-iot-devkit/meta-iot-cloud
