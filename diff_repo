@@ -10,7 +10,10 @@ usage() {
 	cat <<EOF >&2
 $(basename $BASH_SOURCE) <manifest file> <branch> [repofile=default]
 
-Example: $(basename $BASH_SOURCE) master/agl.manifest master
+Examples: 
+	$(basename $BASH_SOURCE) master/agl.manifest master
+	$(basename $BASH_SOURCE) koi/agl.manifest koi
+	$(basename $BASH_SOURCE) lamprey/agl.manifest lamprey
 EOF
 	exit 1
 }
