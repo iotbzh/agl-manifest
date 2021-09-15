@@ -1,0 +1,16 @@
+#!/bin/bash
+
+YEAR=2021
+MONTH=05
+
+for x in $(seq 1 31); do
+	dom=$(printf %02d $x)
+	dt=${YEAR}${MONTH}${dom}
+	dow=$(date --date "${YEAR}-${MONTH}-${dom}" +%w)
+	[[ -z "$dow" ]] && continue
+
+	# keep sunday
+	[[ "$dow" = "0" ]] && continue
+	snaptool rmsnapshot -f "*$dt*"
+done
+
